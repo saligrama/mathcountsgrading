@@ -17,9 +17,9 @@
         
             if (mysqli_connect_errno())
                 echo "Connection to database failed: " . mysqli_connect_errno() . " " . mysqli_connect_error();
+            
         
             $userdata = mysqli_query($link, "SELECT * FROM users WHERE username = '$username' AND email = '$email'");
-            
             if (mysqli_num_rows($userdata) == 0)
                 echo "Username not found."
             
