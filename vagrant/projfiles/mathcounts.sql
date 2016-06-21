@@ -83,7 +83,7 @@ CREATE TABLE student_answers(
   GID INT NOT NULL,
   competition_date DATE NOT NULL,
   problem_number INT NOT NULL AUTO_INCREMENT,
-  problem_type ENUM('Sprint', 'Target', 'Team') NOT NULL,
+  problem_type ENUM('sprint', 'target1', 'target2', 'target3', 'target4' 'team') NOT NULL,
   answer VARCHAR(30),
   points INT NOT NULL
 );
