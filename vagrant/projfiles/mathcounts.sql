@@ -56,7 +56,7 @@ CREATE TABLE team_answers(
 );
 
 CREATE TABLE mathlete_info(
-  SID INT NOT NULL,
+  SID INT NOT NULL AUTO_INCREMENT,
   SCID INT NOT NULL,
   last_name VARCHAR(30),
   first_name VARCHAR(30),
@@ -72,7 +72,7 @@ CREATE TABLE mathlete_scores(
   target_raw2 INT NOT NULL,
   target_raw3 INT NOT NULL,
   target_raw4 INT NOT NULL
-  target_total INT NOT NULL,
+  target_raw_total INT NOT NULL,
   main_total INT NOT NULL,
   mathlete_rank INT NOT NULL
 );
