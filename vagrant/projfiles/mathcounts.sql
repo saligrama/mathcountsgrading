@@ -48,58 +48,58 @@ CREATE TABLE school_info(
 );
 
 CREATE TABLE team_answers(
-	CID INT NOT NULL,
-	SCID INT NOT NULL,
-	GID INT NOT NULL,
-	problem_number INT NOT NULL,
-	team_answer VARCHAR(30)
+  CID INT NOT NULL,
+  SCID INT NOT NULL,
+  GID INT NOT NULL,
+  problem_number INT NOT NULL,
+  team_answer VARCHAR(30)
 );
 
 CREATE TABLE mathlete_info(
-	SID INT NOT NULL,
-	SCID INT NOT NULL,
-	last_name VARCHAR(30),
-	first_name VARCHAR(30),
-	nickname VARCHAR(30),
-	gender ENUM('Male', 'Female', 'Other') NOT NULL
+  SID INT NOT NULL,
+  SCID INT NOT NULL,
+  last_name VARCHAR(30),
+  first_name VARCHAR(30),
+  nickname VARCHAR(30),
+  gender ENUM('Male', 'Female', 'Other') NOT NULL
 );
 
 CREATE TABLE mathlete_scores(
-	SID INT NOT NULL,
-	CID INT NOT NULL,
+  SID INT NOT NULL,
+  CID INT NOT NULL,
   sprint_raw INT NOT NULL,
-	target_raw1 INT NOT NULL,
-	target_raw2 INT NOT NULL,
-	target_raw3 INT NOT NULL,
-	target_raw4 INT NOT NULL
-	target_total INT NOT NULL,
-	main_total INT NOT NULL,
-	mathlete_rank INT NOT NULL
+  target_raw1 INT NOT NULL,
+  target_raw2 INT NOT NULL,
+  target_raw3 INT NOT NULL,
+  target_raw4 INT NOT NULL
+  target_total INT NOT NULL,
+  main_total INT NOT NULL,
+  mathlete_rank INT NOT NULL
 );
 
 CREATE TABLE student_answers(
-	CID INT NOT NULL,
-	SID INT NOT NULL,
-	GID INT NOT NULL,
-	competition_date DATE NOT NULL,
-	problem_number INT NOT NULL AUTO_INCREMENT,
-	problem_type ENUM('Sprint', 'Target', 'Team') NOT NULL,
-	answer VARCHAR(30),
-	points INT NOT NULL
+  CID INT NOT NULL,
+  SID INT NOT NULL,
+  GID INT NOT NULL,
+  competition_date DATE NOT NULL,
+  problem_number INT NOT NULL AUTO_INCREMENT,
+  problem_type ENUM('Sprint', 'Target', 'Team') NOT NULL,
+  answer VARCHAR(30),
+  points INT NOT NULL
 );
 
 CREATE TABLE team_cleaner(
-	SCID INT NOT NULL,
-	CID INT NOT NULL,
-	team_raw INT NOT NULL
+  SCID INT NOT NULL,
+  CID INT NOT NULL,
+  team_raw INT NOT NULL
 );
 
 CREATE TABLE student_cleaner(
-	SID INT NOT NULL,
-	CID INT NOT NULL,
-	sprint_raw INT NOT NULL,
-	target_raw1 INT NOT NULL,
-	target_raw2 INT NOT NULL,
-	target_raw3 INT NOT NULL,
-	target_raw4 INT NOT NULL
+  SID INT NOT NULL,
+  CID INT NOT NULL,
+  sprint_raw INT NOT NULL,
+  target_raw1 INT NOT NULL,
+  target_raw2 INT NOT NULL,
+  target_raw3 INT NOT NULL,
+  target_raw4 INT NOT NULL
 );
