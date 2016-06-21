@@ -1,0 +1,56 @@
+CREATE TABLE TeamAnswers(
+	CID INT NOT NULL,
+	SCID INT NOT NULL,
+	GID INT NOT NULL,
+	ProblemNo INT NOT NULL,
+	TeamAnswer VARCHAR(30)
+);
+
+CREATE TABLE MathleteInfo(
+	SID INT NOT NULL,
+	SCID INT NOT NULL,
+	LastName VARCHAR(30),
+	FirstName VARCHAR(30),
+	NickName VARCHAR(30),
+	Gender ENUM('Male', 'Female', 'Other') NOT NULL
+);
+
+CREATE TABLE MathleteScores(
+	SID INT NOT NULL,
+	CID INT NOT NULL,
+	SprintRaw INT NOT NULL,
+	TargetRaw1 INT NOT NULL,
+	TargetRaw2 INT NOT NULL,
+	TargetRaw3 INT NOT NULL,
+	TargetRaw4 INT NOT NULL,
+	Target INT NOT NULL,
+	Total INT NOT NULL,
+	MRank INT NOT NULL
+);
+
+CREATE TABLE StudentAnswers(
+	CID INT NOT NULL,
+	SID INT NOT NULL,
+	GID INT NOT NULL,
+	CDate DATE NOT NULL,
+	ProblemNumber INT NOT NULL AUTO_INCREMENT,
+	ProblemType ENUM('Sprint', 'Target', 'Team') NOT NULL,
+	Answer VARCHAR(30),
+	Points INT NOT NULL
+);
+
+CREATE TABLE TeamCleaner(
+	SCID INT NOT NULL,
+	CID INT NOT NULL,
+	TeamRaw INT NOT NULL
+);
+
+CREATE TABLE StudentCleaner(
+	SID INT NOT NULL,
+	CID INT NOT NULL,
+	SprintRaw INT NOT NULL,
+	TargetRaw1 INT NOT NULL,
+	TargetRaw2 INT NOT NULL,
+	TargetRaw3 INT NOT NULL,
+	TargetRaw4 INT NOT NULL
+); 
