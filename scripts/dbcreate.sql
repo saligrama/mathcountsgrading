@@ -65,6 +65,7 @@ CREATE TABLE mathlete_info(
   first_name VARCHAR(100) ,
   nickname VARCHAR(100) ,
   gender ENUM('Male', 'Female', 'Other') NOT NULL,
+  is_team BOOLEAN NOT NULL,
   PRIMARY KEY(SID)
 );
 
