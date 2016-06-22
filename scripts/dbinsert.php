@@ -44,7 +44,7 @@
                     $statement->execute([$row[0],$row[1],$row[2],$row[3],$row[4]]);
                     break;
                 case "user.csv":
-                    $statement->execute([$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7],crypt($row[8])]);
+                    $statement->execute([$row[1],$row[2],$row[3],password_hash($row[4], PASSWORD_DEFAULT)]);
                     break;
 
             }
@@ -64,25 +64,25 @@
         switch($data) {
 
             case "competition_answers.csv":
-                insert("INSERT INTO competition_answers SET CID=?,problem_type=?,problem_number=?,answer=?,tie_index=?", $data)
+                insert("INSERT INTO competition_answers SET CID=?,problem_type=?,problem_number=?,answer=?,tie_index=?", $data);
                 break;
             case "competition.csv":
-                insert("INSERT INTO competition SET competition_date=?,competition_type=?,status_sprint=?,status_target1=?,status_target2=?,status_target3=?,status_target4=?,status_team=?", $data)
+                insert("INSERT INTO competition SET competition_date=?,competition_type=?,status_sprint=?,status_target1=?,status_target2=?,status_target3=?,status_target4=?,status_team=?", $data);
                 break;
             case "competition_participants.csv":
-                insert("INSERT INTO competition_answers SET CID=?,SCID=?", $data)
+                insert("INSERT INTO competition_participants SET CID=?,SCID=?", $data);
                 break;
             case "mathlete_info.csv":
-                insert("INSERT INTO competition_answers SET SCID=?,last_name=?,first_name=?,nickname=?,gender=?,is_team=?", $data)
+                insert("INSERT INTO mathlete_info SET SCID=?,last_name=?,first_name=?,nickname=?,gender=?,is_team=?", $data);
                 break;
             case "school_info.csv":
-                insert("INSERT INTO competition_answers SET team_name=?,town=?,coach=?,address=?,contact_email=?,first_year=?,ly_rank=?,ly_score=?", $data)
+                insert("INSERT INTO school_info SET team_name=?,town=?,coach=?,address=?,contact_email=?,first_year=?,ly_rank=?,ly_score=?", $data);
                 break;
             case "team_answers.csv":
-                insert("INSERT INTO competition_answers SET CID=?,SCID=?,GID=?,problem_number=?,team_answer=?", $data)
+                insert("INSERT INTO team_answers SET CID=?,SCID=?,GID=?,problem_number=?,team_answer=?", $data);
                 break;
             case "user.csv":
-                insert("INSERT INTO competition_answers SET last_name=?,first_name=?,email=?,password=?", $data)
+                insert("INSERT INTO user SET last_name=?,first_name=?,email=?,password=?", $data);
                 break;
 
         }
