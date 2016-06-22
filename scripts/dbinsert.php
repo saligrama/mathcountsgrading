@@ -3,10 +3,14 @@
 
     function insert($st, $csv) {
 
-        try
-            $db = new PDO('mysql:dbname=mathcountsgrading;host=localhost', 'rot', 'root');
-        catch (Exception $exception)
+        try {
+            $db = new PDO('mysql:dbname=mathcountsgrading;host=localhost', 'root', 'root');
+        } catch (Exception $exception) {
             echo "Error while connecting to database.";
+            break;
+        }
+
+        echo "Connected!";
 
         $d = fopen($csv, "r");
 
