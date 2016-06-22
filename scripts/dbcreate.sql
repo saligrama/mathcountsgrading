@@ -34,7 +34,7 @@ CREATE TABLE competition_answers(
   problem_type ENUM('sprint', 'target1', 'target2', 'target3', 'target4', 'team') NOT NULL,
   problem_number INT NOT NULL,
   answer VARCHAR(100) NOT NULL,
-  tie_index TINYINT NOT NULL
+  tie_index TINYINT
 );
 
 CREATE TABLE school_info(
