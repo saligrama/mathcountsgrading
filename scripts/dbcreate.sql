@@ -39,7 +39,6 @@ CREATE TABLE competition_answers(
 
 CREATE TABLE school_info(
   SCID INT NOT NULL AUTO_INCREMENT,
-  CID INT NOT NULL,
   team_name VARCHAR(100) NOT NULL,
   town VARCHAR(100) NOT NULL,
   coach VARCHAR(100) NOT NULL,
