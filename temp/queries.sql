@@ -53,4 +53,4 @@ SELECT team_name, SCID FROM school_info WHERE SCID NOT IN (SELECT SCID FROM team
 SELECT COUNT(*) FROM student_answers WHERE SID=1 AND problem_type='sprint';
 
 /* 3B: Make sure entries match and return unmatched answers */
-SELECT problem_number, answer FROM student_answers WHERE CID=1 AND SID=1 AND GID=1 AND team_answer NOT IN (SELECT answer FROM student_answers WHERE CID=1 AND SID=1 AND GID=2);
+SELECT problem_number, answer FROM student_answers WHERE CID=1 AND SID=1 AND GID=1 AND answer NOT IN (SELECT answer FROM student_answers WHERE CID=1 AND SID=1 AND GID=2);
