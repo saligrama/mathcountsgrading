@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `student_answers` (
   `GID` int(11) NOT NULL,
   `competition_date` date NOT NULL,
   `problem_number` int(11) NOT NULL,
-  `problem_type` enum('sprint','target1','target2','target3','target4','team') NOT NULL,
+  `problem_type` enum('sprint','target1','target2','target3','target4') NOT NULL,
   `answer` varchar(100) DEFAULT NULL,
   `points` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
