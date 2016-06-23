@@ -40,3 +40,6 @@ SELECT a.first_name, a.last_name, a.nickname FROM mathlete_info a WHERE (a.CID =
 SELECT status_sprint, status_target1, status_target2, status_target3, status_target4, status_team FROM competition WHERE CID = curr;
 
 
+/* 2) */
+SELECT team_name, SCID FROM school_info WHERE SCID NOT IN (SELECT SCID FROM team_cleaner WHERE CID = 1);
+
