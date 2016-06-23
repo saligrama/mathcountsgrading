@@ -39,10 +39,12 @@ SELECT a.first_name, a.last_name, a.nickname FROM mathlete_info a WHERE (a.CID =
 /* screen 9 */
 SELECT status_sprint, status_target1, status_target2, status_target3, status_target4, status_team FROM competition WHERE CID = curr;
 
-
 /* extra credit /*
 /* 1A: Check for number of discrepancies in grader fillins */
 SELECT COUNT(*) FROM team_answers WHERE SCID=1 AND GID=1 AND team_answer NOT IN (SELECT team_answer FROM team_answers WHERE SCID=1 AND GID=2);
 
 /* 1B: Check for number of incorrect answers */
 SELECT COUNT(*) FROM team_answers WHERE SCID=1 AND GID=2 AND team_answer NOT IN (SELECT answer FROM competition_answers WHERE problem_type='team');
+
+/* 2) */
+SELECT team_name, SCID FROM school_info WHERE SCID NOT IN (SELECT SCID FROM team_cleaner WHERE CID = 1);
