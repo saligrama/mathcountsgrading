@@ -82,7 +82,8 @@
                 insert("INSERT INTO school_info SET team_name=?,town=?,coach=?,address=?,contact_email=?,first_year=?,ly_rank=?,ly_score=?", $data);
                 break;
             case "student_answers.csv":
-                insert("INSERT INTO student_answers SET CID=?,SID=?,GID=?,problem_number=?,problem_type=?,answer=?,points=?")
+                insert("INSERT INTO student_answers SET CID=?,SID=?,GID=?,problem_number=?,problem_type=?,answer=?,points=?", $data);
+                break;
             case "team_answers.csv":
                 insert("INSERT INTO team_answers SET CID=?,SCID=?,GID=?,problem_number=?,team_answer=?", $data);
                 break;
