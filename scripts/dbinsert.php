@@ -40,6 +40,9 @@
                 case "school_info.csv":
                     $statement->execute([$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7],$row[8]]);
                     break;
+                case "student_answers.csv":
+                    $statement->execute([$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6]]);
+                    break;
                 case "team_answers.csv":
                     $statement->execute([$row[0],$row[1],$row[2],$row[3],$row[4]]);
                     break;
@@ -78,6 +81,8 @@
             case "school_info.csv":
                 insert("INSERT INTO school_info SET team_name=?,town=?,coach=?,address=?,contact_email=?,first_year=?,ly_rank=?,ly_score=?", $data);
                 break;
+            case "student_answers.csv":
+                insert("INSERT INTO student_answers SET CID=?,SID=?,GID=?,problem_number=?,problem_type=?,answer=?,points=?")
             case "team_answers.csv":
                 insert("INSERT INTO team_answers SET CID=?,SCID=?,GID=?,problem_number=?,team_answer=?", $data);
                 break;
