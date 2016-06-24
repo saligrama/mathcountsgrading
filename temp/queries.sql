@@ -50,7 +50,16 @@ SELECT COUNT(*) FROM team_answers WHERE SCID=1 AND GID=2 AND team_answer NOT IN 
 SELECT team_name, SCID FROM school_info WHERE SCID NOT IN (SELECT SCID FROM team_cleaner WHERE CID = curr);
 
 /* 3A: Make sure there are two graders for each sprint scoring - if not equal to 60, raise error. Logistically, put aside on second cycle. */
-SELECT (SELECT COUNT(*) FROM student_answers WHERE SID=1 AND problem_type='sprint') = 60;
+SELECT COUNT(*) = 60 FROM student_answers WHERE CID = 1 AND SID=1 AND problem_type='sprint';
 
 /* 3B: Make sure entries match and return unmatched answers */
-SELECT problem_number, answer FROM student_answers WHERE CID=1 AND SID=1 AND GID=1 AND answer NOT IN (SELECT answer FROM student_answers WHERE CID=1 AND SID=1 AND GID=2);
+SELECT problem_number, answer FROM student_answers WHERE CID = 1 AND SID = 1 AND GID = 1 AND answer NOT IN (SELECT answer FROM student_answers WHERE CID = 1 AND SID = 1 AND GID = 2);
+
+
+/* student validation */
+/* check if there is an entry in student_cleaner first */
+SELECT COUNT(*) > 0 FROM student_cleaner WHERE CID = curr AND SID = stud; /* returns 1 (true) if at least one entry exists, else 0 (false) */
+/* check if there are two scores */
+SELECT COUNT(*) = 2 FROM student_answers WHERE CID = curr AND SID = stud AND problem_number = pnum;
+/* if there are 2 */
+SELECT answer FROM student_answers WHERE CID = curr and SID = stud AND problem_number = pnum;
