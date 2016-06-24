@@ -26,7 +26,7 @@
             switch($csv) {
 
                 case "competition_answers.csv":
-                    $statement->execute([$row[0],$row[1],$row[2],$row[3],$row[4]]);
+                    $statement->execute([$row[0],$row[1],$row[2],$row[3],$row[4],$row[5]]);
                     break;
                 case "competition.csv":
                     $statement->execute([$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7],$row[8]]);
@@ -64,7 +64,7 @@
         switch($data) {
 
             case "competition_answers.csv":
-                insert("INSERT INTO competition_answers SET CID=?,problem_type=?,problem_number=?,answer=?,tie_index=?", $data);
+                insert("INSERT INTO competition_answers SET CID=?,problem_type=?,problem_number=?,answer=?,has_multiple_values=?,tie_index=?", $data);
                 break;
             case "competition.csv":
                 insert("INSERT INTO competition SET competition_date=?,competition_type=?,status_sprint=?,status_target1=?,status_target2=?,status_target3=?,status_target4=?,status_team=?", $data);
