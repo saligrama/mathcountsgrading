@@ -1,0 +1,15 @@
+<?php
+
+        require("../includes/functions.php");
+	session_start();
+
+	checkSession('grader');
+
+	$conn = dbConnect();
+
+        $result = dbQuery($conn, 'SELECT team_name, SCID FROM school_info');
+
+	render("grader_form.php", ["result" => $result]);
+
+?>
+

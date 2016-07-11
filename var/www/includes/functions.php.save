@@ -26,15 +26,6 @@ function popupAlert($err)
     echo '<script type="text/javascript">alert("' . $err . '");</script>';
 }
 
-function inlineAlert($offset, $width, $err)
-{
-    echo "<div class='alert alert-danger col-sm-offset-$offset col-sm-$width' role='alert'>";
-    echo '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>';
-    echo '<span class="sr-only">Error:</span>';
-    echo $err;
-    echo '</div>';
-}
-
 function dieError($err)
 {
     popupAlert($err);
@@ -44,7 +35,6 @@ function dieError($err)
 function redirectTo($url)
 {
     echo "<script type='text/javascript'>window.location.replace('$url');</script>";
-    exit;
 }
 
 function endLoginSession()
@@ -67,8 +57,8 @@ function checkSession($type)
     if(!session_id())
         session_start();
 
-    if(isset($_SESSION['UID']))
-    {
+    if(isset($_SESSION['UID'])) {
+
         if(time() - $_SESSION['starttime'] > MAX_SESSION_TIME)
         {
             endLoginSession();
@@ -81,8 +71,9 @@ function checkSession($type)
         if($_SESSION['type'] != $type)
             redirectTo($type == 'admin' ? 'grader.php' : 'admin.php');
     }
-    else
+    else {
         redirectTo('login.php');
+    }
 
     $_SESSION['starttime'] = time();
 }

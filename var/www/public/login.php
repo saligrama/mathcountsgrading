@@ -1,65 +1,62 @@
 <?php
 
-    require("../includes/functions.php")
+require("../includes/functions.php");
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+$error = 0;
 
-        $username = $_POST["username"];
+if($_POST) {
+	$passwd = $name = "";
+        $passwd = htmlspecialchars($_POST["passwd"]);
 
-        $email = $_POST["email"];
+	$name = htmlspecialchars($_POST["logname"]);
 
-        if (empty($_POST["username"] || empty($_POST["password"])))
-            echo "Username or password empty. Please try again."
+	if(!$passwd || !$name) {
+		$error = 1;
+	}
+	else {
+		$conn = dbConnect();
 
-        else {
+		$name = mysqli_real_escape_string($conn, $name);
+		$passwd = mysqli_real_escape_string($conn, $passwd);
 
-            $link = mysqli_connect("localhost", "root", "root", "mathcounts")
+		$result = dbQuery($conn, "SELECT UID, password, type FROM user WHERE email = '$name';");
+		if(mysqli_num_rows($result) != 1) {
+			$error = 2;
+			render("login_form.php", ["error" => $error]);
+			exit;
+		}
 
-            if (mysqli_connect_errno())
-                echo "Connection to database failed: " . mysqli_connect_errno() . " " . mysqli_connect_error();
+		$row = mysqli_fetch_assoc($result);
+		if(!password_verify($passwd, $row['password'])) {
+			$error = 2;
+			render("login_form.php", ["error" => $error]);
+			exit;
+		}
+
+		session_start();
+		$_SESSION['UID'] = $row['UID'];
+		$_SESSION['type'] = $row['type'];
+		$_SESSION['starttime'] = time();
 
 
-            $userdata = mysqli_query($link, "SELECT * FROM users WHERE username = '$username' AND email = '$email'");
-            if (mysqli_num_rows($userdata) == 0)
-                echo "Username not found."
+		switch ($row['type'])
+		{
+		case 'admin':
+			redirectTo('admin.php');
+			break;
+		case 'grader':
+			redirectTo('grader.php');
+			break;
+		default:
+			endLoginSession();
 
-            else {
+			dieError('We\'re sorry, there was an internal error. Please try again');
+		};
 
-                $user = $userdata[0];
+		echo "Success! Username and password matched\n";
+	}
+}
 
-                if (crypt($_POST["password"], $user["password_hash"]) == $user["password_hash"]) {
-
-                    $_SESSION["user_id"] = $user["user_id"];
-                    $_SESSION["role"] = $user["role"];
-                    $_SESSION["affiliation"] = $user["affiliation"];
-
-                    if ($_SESSION["role"] == "grader")
-                        header('Location: /index-grader.php');
-                    else
-                        header('Location: /index-admin.php');
-
-                }
-
-                else {
-
-                    echo "Bad password";
-
-                    sleep(2);
-
-                    header('Location: /login.php');
-
-                }
-
-            }
-
-        }
-
-    }
-
-    else {
-
-        render("login_form.php", ["title" => "Log In"]);
-
-    }
+render("login_form.php", ["error" => $error]);
 
 ?>
