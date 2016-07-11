@@ -61,5 +61,8 @@ SELECT problem_number, answer FROM student_answers WHERE CID = 1 AND SID = 1 AND
 SELECT COUNT(*) > 0 FROM student_cleaner WHERE CID = curr AND SID = stud; /* returns 1 (true) if at least one entry exists, else 0 (false) */
 /* check if there are two scores */
 SELECT COUNT(*) = 2 FROM student_answers WHERE CID = curr AND SID = stud AND problem_number = pnum;
-/* if there are 2 */
-SELECT answer FROM student_answers WHERE CID = curr and SID = stud AND problem_number = pnum;
+/* if there are 2, check if their answers match*/
+SELECT (SELECT answer FROM student_answers WHERE CID = curr and SID = stud AND problem_number = pnum LIMIT 1) = 
+(SELECT answer FROM student_answers WHERE CID = curr and SID = stud AND problem_number = pnum LIMIT 1 OFFSET 1);
+/* if they do match, enter into student cleaner */
+INSERT INTO student_cleaner (SID , CID, sprint_raw
