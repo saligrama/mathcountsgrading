@@ -120,7 +120,7 @@ default:
                         <div class="row">
                                 <label class="text-center col-sm-12" for="answers"><h5><?php echo $type_name; ?></h5></label>
                         </div>
-                        <form id="answers" method="post" onsubmit="return checkSubmit()" action="">
+                        <form id="answers" method="post" onsubmit="return checkSubmit();" action="">
                                 <?php for($j = 0; $j < 3; $j++): ?>
                                         <div class="form-group col-sm-4">
 						<?php for($i = 1; $i <= 10; $i++): ?>
@@ -146,7 +146,7 @@ default:
 			<div class="row">
 				<label class="text-center col-sm-12" for="answers"><h5><?php echo $type_name; ?></h5></label>
 			</div>
-			<form id="answers" method="post" onsubmit="return checkSubmit()" action="">
+			<form id="answers" method="post" onsubmit="return checkSubmit();" action="">
 				<?php for($i = 1; $i <= $numq; $i++): ?>
 					<div class='input-group'>
 						<span class='input-group-addon'><?php echo $i; ?> </span>

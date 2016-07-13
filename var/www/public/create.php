@@ -1,14 +1,21 @@
 <?php
+    require("../includes/functions.php");
 
-        require("../includes/functions.php");
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["go"])) {
 
-	checkSession('admin');
+            $conn = dbConnect();
+    }
+    else {
 
-	$conn = dbConnect();
+        checkSession('admin');
 
-	$result = mysqli_query($conn, "SELECT * FROM school_info");
+        $conn = dbConnect();
 
-	render("create_form.php", ["title" => "Create competition", "result" => $result]);
+        $result = dbQuery($conn, "SELECT * FROM school_info;");
+
+        render("create_form.php", ["title" => "Create competition", "result" => $result]);
+
+    }
+
 
 ?>
-

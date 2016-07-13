@@ -24,7 +24,10 @@
 }
 
 .panel {
-	min-width: 350px;
+	margin-left: auto;
+	margin-right: auto;
+	min-width: 300px;
+	max-width: 450px;
 }
 
 </style>
@@ -35,12 +38,12 @@
 <body>
 
 <div class="container-fluid main">
-	<div class="panel panel-primary col-sm-4 col-sm-offset-4">
+	<div class="container-fluid panel panel-primary">
 		<div class="panel-heading"><h4>Choose an existing or create a new competition</h4></div>
 		<div class="panel-body container-fluid">
 			<div class="row">
 		       		<form id="selectcomp" class="form-group" method="post" action="add.php">
-                			<select class="col-sm-9">
+                			<select class="col-xs-8">
                     				<?php while($row = mysqli_fetch_assoc($result)): ?>
 							<?php if($row["competition_name"] != ""): ?>
                         					<option value=<?= $row["CID"] ?>><?= $row["competition_name"] ?> (<?= $row["competition_date"] ?>)</option>
@@ -49,14 +52,14 @@
 							<?php endif; ?>
 						<?php endwhile ?>
                 			</select>
-                			<button type="submit" class="btn btn-primary col-sm-3">Go</button>
+                			<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-3">Go</button>
         			</form>
 			</div>
 			<br>
 			<br>
 			<div class="row">
                                 <form id="createcomp" class="form-group" method="post" action="create.php">
-                                        <button type="submit" class="btn btn-primary col-sm-offset-2 col-sm-8">Create New Competition</button>
+                                        <button type="submit" class="btn btn-primary col-xs-offset-2 col-xs-8">Create New Competition</button>
                                 </form>
                         </div>
 		</div>

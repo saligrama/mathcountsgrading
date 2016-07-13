@@ -107,8 +107,8 @@ function dbQuery($conn, $query)
 
     if(!$result) {
 	endLoginSession();
-	popupAlert('We\'re sorry, there was an internal error. Please press ok to log back in');
-	redirectTo('login.php');
+	popupAlert('We\'re sorry, there was an internal error. Please refresh the page');
+	exit;
     }
     else {
 	return $result;
