@@ -186,5 +186,6 @@ CREATE TABLE IF NOT EXISTS `user` (
   `first_name` varchar(100) DEFAULT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
+  `SCID` int(11) DEFAULT NULL,
   PRIMARY KEY (`UID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
