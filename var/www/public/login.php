@@ -4,7 +4,8 @@ require("../includes/functions.php");
 
 $error = 0;
 
-if($_POST) {
+if($_SESSION["REQUEST_METHOD"] == "POST") {
+
 	$passwd = $name = "";
         $passwd = htmlspecialchars($_POST["passwd"]);
 
@@ -13,33 +14,34 @@ if($_POST) {
 	if(!$passwd || !$name) {
 		$error = 1;
 	}
+
 	else {
-		$conn = dbConnect();
+		$conn = dbConnect_new();
 
-		$name = mysqli_real_escape_string($conn, $name);
-		$passwd = mysqli_real_escape_string($conn, $passwd);
+		$result = dbQuery_new($conn, "SELECT UID, password, type FROM user WHERE email = :name", ["name" => $name]);
 
-		$result = dbQuery($conn, "SELECT UID, password, type FROM user WHERE email = '$name';");
-		if(mysqli_num_rows($result) != 1) {
+		if(empty($result)) {
 			$error = 2;
 			render("login_form.php", ["error" => $error]);
 			exit;
 		}
 
-		$row = mysqli_fetch_assoc($result);
-		if(!password_verify($passwd, $row['password'])) {
-			$error = 2;
-			render("login_form.php", ["error" => $error]);
-			exit;
+		foreach($result as $row) {
+
+			if(!password_verify($passwd, $row['password'])) {
+				$error = 2;
+				render("login_form.php", ["error" => $error]);
+				exit;
+			}
+
+			session_start();
+			$_SESSION['UID'] = $row['UID'];
+			$_SESSION['type'] = $row['type'];
+			$_SESSION['starttime'] = time();
+
 		}
 
-		session_start();
-		$_SESSION['UID'] = $row['UID'];
-		$_SESSION['type'] = $row['type'];
-		$_SESSION['starttime'] = time();
-
-
-		switch ($row['type'])
+		switch ($_SESSION['type'])
 		{
 		case 'admin':
 			redirectTo('admin.php');
@@ -56,7 +58,7 @@ if($_POST) {
 		echo "Success! Username and password matched\n";
 	}
 }
-
-render("login_form.php", ["error" => $error]);
+else
+	render("login_form.php", ["error" => $error]);
 
 ?>

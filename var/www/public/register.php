@@ -14,7 +14,6 @@
             $passwd = htmlspecialchars($_POST["passwd"]);
             $confirm = htmlspecialchars($_POST["confirm"]);
             $name = htmlspecialchars($_POST["logname"]);
-            $schaf = $_POST["schaf"];
 
             if (!$passwd || !$name || !isset($_POST["schaf"]))
                 $error = 1;
@@ -22,26 +21,29 @@
                 $error = 1;
             else {
 
-                $conn = dbConnect();
+                $conn = dbConnect_new();
 
-                $name = mysqli_real_escape_string($conn, $name);
-                $passwd = mysqli_real_escape_string($conn, $passwd);
+                $result = dbQuery_new(
 
-                $ph = password_hash($passwd, PASSWORD_DEFAULT);
+                                      $conn, "INSERT INTO user SET
+                                      email=':name',
+                                      password=':ph',
+                                      SCID=':schaf',
+                                      type=':type'", [
+                                              "name" => $name,
+                                              "ph" => password_hash($passwd, PASSWORD_DEFAULT),
+                                              "schaf" => $_POST["schaf"],
+                                              "type" => $_POST["schaf"] ? 'grader' : 'admin'
+                                      ]
 
-		$type = $schaf ? 'grader' : 'admin';
+                );
 
-                $result = mysqli_query($conn, "INSERT INTO user SET email='$name', password='$ph', SCID='$schaf', type='$type'");
+                popupAlert("Success! You can now log in");
+                redirectTo("/login.php");
 
-                if (!$result) {
-		    $error = 2;
-		}
-		else {
-		    popupAlert("Success! You can now log in");
-		    redirectTo("/login.php");
-		}
+	    }
 
-            }
+        }
 
     }
     else {
@@ -50,7 +52,7 @@
 
     switch($error) {
 	case 0:
-	    render("register_form.php", ["schoolrows" => dbQuery(dbConnect(), "SELECT * FROM school_info;")]);
+	    render("register_form.php", ["schoolrows" => dbQuery_new(dbConnect_new(), "SELECT * FROM school_info;")]);
 	    break;
 	case 1:
 	    popupAlert("Woopsie! Something went wrong. Please try again");
@@ -62,4 +64,3 @@
 	    break;
     }
 ?>
-

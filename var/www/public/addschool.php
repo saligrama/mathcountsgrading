@@ -1,35 +1,35 @@
 <?php
 
-        require("../includes/functions.php");
+    require(dirname(__FILE__) . "/../includes/functions.php");
 
 	checkSession('admin');
 
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["createschool"])) {
 
-		if ($_POST) {
+		$conn = dbConnect_new();
 
-			$conn = dbConnect();
+        dbQuery_new($conn,
+            "INSERT INTO school_info SET
+             team_name=:teamname,
+             town=:town,
+             coach=:coach,
+             address=:address,
+             contact_email=:email,
+             first_year=:firstyear", [
+                 "team_name" => $_POST["teamname"],
+                 "town" => $_POST["town"],
+                 "coach" => $_POST["coach"],
+                 "address" => $_POST["address"],
+                 "email" => $_POST["email"],
+                 "firstyear" => (isset($_POST["firstyear"]) && $_POST["firstyear"] == "yes") ? 1 : 0
+             ]
 
-                        $teamname = mysqli_real_escape_string($conn, $_POST["teamname"]);
-                        $town = mysqli_real_escape_string($conn, $_POST["town"]);
-                        $coach = mysqli_real_escape_string($conn, $_POST["coach"]);
-                        $address = mysqli_real_escape_string($conn, $_POST["address"]);
-                        $email = mysqli_real_escape_string($conn, $_POST["email"]);
-                        $firstyear = (isset($_POST["firstyear"]) && $_POST["firstyear"] == "yes") ? 1 : 0;
+        );
 
-                        dbQuery($conn, "INSERT INTO school_info SET team_name='$teamname',town='$town',coach='$coach',address='$address',contact_email='$email',first_year='$firstyear';");
-
-			redirectTo("admin.php");
-		}
-		else {
-			render("add_form.php");
-		}
+		redirectTo("admin.php");
 
 	}
-	else {
-
+	else
 		render("add_form.php");
-
-	}
 
 ?>

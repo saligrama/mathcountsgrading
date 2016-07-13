@@ -1,16 +1,15 @@
 <?php
-	require("../includes/functions.php");
+
+        require(dirname(__FILE__) . "/../includes/functions.php");
 
         checkSession('grader');
 
-	$conn = dbConnect();
+	$conn = dbConnect_new();
 
 	if(!isset($_POST["goptsubmit"]))
                 redirectTo('grader.php');
 
-	$school = $_POST["School"];
-        $studentrows = dbQuery($conn, "SELECT * FROM mathlete_info WHERE SCID = $school;");
+        $studentrows = dbQuery_new($conn, "SELECT * FROM mathlete_info WHERE SCID = :school;", ["school" => $_POST["SCHOOL"]]);
 
         render("grade_form.php", ["studentrows" => $studentrows, "sheet_type" => $_POST["Sheet_Type"]]);
 ?>
-

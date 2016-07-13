@@ -61,10 +61,10 @@
 				</div>
 			</form>
 			<div class="row inline_alert">
-				<?php 
+				<?php
 				if($error) {
 					if($error > 1)
-						inlineAlert(0, 12, " Wrong email or password"); 
+						inlineAlert(0, 12, " Wrong email or password");
 					else
 						inlineAlert(0, 12, " Please enter an email and password");
 				}

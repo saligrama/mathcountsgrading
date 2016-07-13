@@ -104,9 +104,9 @@ default:
 			<div class="form-group row">
 				<select class="form-control col-sm-12" id="studentlist">
 					<option disabled selected value="0">-- select a student --</option>
-					<?php while($row = mysqli_fetch_assoc($studentrows)): ?>
+					<?php foreach($studentrows as $row) ?>
 						<option value=<?= $row['SID']?>> <?=$row['first_name'] . " " . $row['last_name'] ?> </option>
-					<?php endwhile; ?>
+					<?php endforeach; ?>
 				</select>
 			</div>
 		</div>

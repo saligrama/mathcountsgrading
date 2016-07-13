@@ -62,9 +62,9 @@ function checkSubmit()
 			<form class="form-group" id="input_form" method="post" onsubmit="return checkSubmit();" action="grade.php">
 				<div class="row">
 					<select name="School" id="school_list" class="dropdown col-sm-offset-1 col-sm-10" required>
-                				<?php while($row = mysqli_fetch_assoc($result)): ?>
+                				<?php foreach($result as $row): ?>
                     					<option value='<?= $row["SCID"] ?>'><?= $row["team_name"] ?></option>
-              					<?php endwhile ?>
+              					<?php endforeach; ?>
 					</select>
 				</div>
 				<div class="row">
@@ -83,4 +83,3 @@ function checkSubmit()
 	</div>
 </div>
 </body>
-

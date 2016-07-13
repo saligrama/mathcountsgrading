@@ -1,47 +1,38 @@
 <?php
 
-        require("../includes/functions.php");
-
+    require(dirname(__FILE__) . "/../includes/functions.php");
+    
 	checkSession('admin');
 
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"])) {
 
-		if (isset($_POST["finalize"])) {
+		$conn = dbConnect_new();
 
-			$conn = dbConnect();
+        dbQuery_new($conn,
+            "UPDATE school_info SET
+            team_name=:teamname,
+            town=:town,
+            coach=:coach,
+            address=:address,
+            contact_email=:email,
+            first_year=:firstyear", [
+                "team_name" => $_POST["teamname"],
+                "town" => $_POST["town"],
+                "coach" => $_POST["coach"],
+                "address" => $_POST["address"],
+                "email" => $_POST["email"],
+                "firstyear" => (isset($_POST["firstyear"]) && $_POST["firstyear"] == "yes") ? 1 : 0
+            ]
 
-                        $teamname = mysqli_real_escape_string($conn, $_POST["teamname"]);
-                        $town = mysqli_real_escape_string($conn, $_POST["town"]);
-                        $coach = mysqli_real_escape_string($conn, $_POST["coach"]);
-                        $address = mysqli_real_escape_string($conn, $_POST["address"]);
-                        $email = mysqli_real_escape_string($conn, $_POST["email"]);
-                        $firstyear = ($_POST["firstyear"] ? 1 : 0);
-			$SCID = $_POST["scid"];
-
-                        $query = "UPDATE school_info SET team_name='$teamname',town='$town',coach='$coach',address='$address',contact_email='$email',first_year='$firstyear' WHERE SCID = $SCID;";
-
-			$result = mysqli_query($conn, $query);
-
-			if ($result === false)
-				echo ("Error editing school" . mysqli_error($conn));
-			else
-				redirectTo("/create.php");
-
-		}
+        );
 
 	}
+
 	else {
 
-		$conn = dbConnect();
+		$conn = dbConnect_new();
 
-		$scid = $_GET["SCID"];
-
-		$query = "SELECT * FROM school_info WHERE SCID=$scid";
-
-		$result = mysqli_query($conn, $query);
-
-		if ($result === false)
-			echo "Error executing SQL statement: " . mysqli_error($conn);
+		$result = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID=:scid", ["scid" => $_GET["SCID"]]);
 
 		render("edit_form.php", ["result" => $result]);
 

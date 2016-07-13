@@ -44,13 +44,13 @@
 			<div class="row">
 		       		<form id="selectcomp" class="form-group" method="post" action="add.php">
                 			<select class="col-xs-8">
-                    				<?php while($row = mysqli_fetch_assoc($result)): ?>
-							<?php if($row["competition_name"] != ""): ?>
-                        					<option value=<?= $row["CID"] ?>><?= $row["competition_name"] ?> (<?= $row["competition_date"] ?>)</option>
-                    					<?php else: ?>
-								<option value=<?= $row["CID"] ?>><?= $row["competition_date"] ?></option>
-							<?php endif; ?>
-						<?php endwhile ?>
+                    		<?php foreach($result as $row): ?>
+								<?php if($row["competition_name"] != ""): ?>
+                        			<option value=<?= $row["CID"] ?>><?= $row["competition_name"] ?> (<?= $row["competition_date"] ?>)</option>
+                    			<?php else: ?>
+									<option value=<?= $row["CID"] ?>><?= $row["competition_date"] ?></option>
+								<?php endif; ?>
+							<?php endforeach ?>
                 			</select>
                 			<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-3">Go</button>
         			</form>
@@ -58,16 +58,14 @@
 			<br>
 			<br>
 			<div class="row">
-                                <form id="createcomp" class="form-group" method="post" action="create.php">
-                                        <button type="submit" class="btn btn-primary col-xs-offset-2 col-xs-8">Create New Competition</button>
-                                </form>
-                        </div>
+                <form id="createcomp" class="form-group" method="post" action="create.php">
+                    <button type="submit" class="btn btn-primary col-xs-offset-2 col-xs-8">Create New Competition</button>
+                </form>
+            </div>
 		</div>
 	</div>
 </div>
 
 </body>
 
-
 </html>
-

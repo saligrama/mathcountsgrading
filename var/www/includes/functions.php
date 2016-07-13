@@ -2,53 +2,56 @@
 
 require("constants.php");
 
-function render($template, $values = [])
-{
+function render($template, $values = []) {
+
     // if template exists, render it
-    if (file_exists("../templates/$template"))
-    {
+    if (file_exists("../templates/$template")) {
         // extract variables into local scope
         extract($values);
 
         // render template
         require("../templates/$template");
+
     }
 
     // else err
     else
-    {
         trigger_error("Invalid template: $template", E_USER_ERROR);
-    }
+
 }
 
-function popupAlert($err)
-{
+function popupAlert($err) {
+
     echo '<script type="text/javascript">alert("' . $err . '");</script>';
+
 }
 
-function inlineAlert($offset, $width, $err)
-{
+function inlineAlert($offset, $width, $err) {
+
     echo "<div class='alert alert-danger col-sm-offset-$offset col-sm-$width' role='alert'>";
     echo '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>';
     echo '<span class="sr-only">Error:</span>';
     echo $err;
     echo '</div>';
+
 }
 
-function dieError($err)
-{
+function dieError($err) {
+
     popupAlert($err);
     exit;
+
 }
 
-function redirectTo($url)
-{
+function redirectTo($url) {
+
     echo "<script type='text/javascript'>window.location.replace('$url');</script>";
     exit;
+
 }
 
-function endLoginSession()
-{
+function endLoginSession() {
+
     if(isset($_SESSION['type']))
     	unset($_SESSION['type']);
 
@@ -60,59 +63,69 @@ function endLoginSession()
 
     if(session_id())
         session_destroy();
+
 }
 
-function checkSession($type)
-{
+function checkSession($type) {
     if(!session_id())
         session_start();
 
-    if(isset($_SESSION['UID']))
-    {
-        if(time() - $_SESSION['starttime'] > MAX_SESSION_TIME)
-        {
+    if(isset($_SESSION['UID'])) {
+
+        if(time() - $_SESSION['starttime'] > MAX_SESSION_TIME) {
+
             endLoginSession();
 
             popupAlert('The session has expired. Please press ok to log back in');
 
             redirectTo('login.php');
+
         }
 
-        if($_SESSION['type'] != $type)
-            redirectTo($type == 'admin' ? 'grader.php' : 'admin.php');
+        if($_SESSION['type'] != $type && $_SESSION['type'] == 'grader')
+            redirectTo('grader.php');
+
     }
     else
         redirectTo('login.php');
 
     $_SESSION['starttime'] = time();
+
 }
 
-function dbConnect()
-{
-    $conn = mysqli_connect('localhost', 'root', 'root', 'mathcountsgrading');
+function dbConnect_new() {
 
-    if(!$conn) {
-	endLoginSession();
-	popupAlert('Could not connect to database!');
-	return 0;
-    }
-    else {
-	return $conn;
-    }
+    $dsn = "mysql:host=" . MYSQL_HOSTNAME . ";dbname=" . MYSQL_DBNAME . "charset=utf8";
+
+    $opts = [
+
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_ERRMODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+
+    ];
+
+    $conn = new PDO($dsn, MYSQL_USERNAME, MYSQL_PASSWORD, $opts);
+    return $conn;
+
 }
+function dbQuery_new($conn, $query, $opts = NULL) {
 
-function dbQuery($conn, $query)
-{
-    $result = mysqli_query($conn, $query);
+    if (isset($opts)) {
 
-    if(!$result) {
-	endLoginSession();
-	popupAlert('We\'re sorry, there was an internal error. Please refresh the page');
-	exit;
+        $stmt = $conn->prepare($query);
+        $stmt->execute($opts);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     }
+
     else {
-	return $result;
+
+        $stmt = $conn->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     }
+
 }
 
 ?>
