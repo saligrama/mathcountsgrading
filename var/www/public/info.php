@@ -4,9 +4,9 @@
 
     checkSession('admin');
 
-    $conn = dbConnect();
+    $conn = dbConnect_new();
 
-    $eventrows = dbQuery($conn, "SELECT * FROM competition");
+    $eventrows = dbQuery_new($conn, "SELECT * FROM competition");
 
     render("info_form.php", ["eventrows" => $eventrows]);
 

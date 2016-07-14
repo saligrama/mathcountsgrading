@@ -10,12 +10,14 @@
 
         dbQuery_new($conn,
             "UPDATE school_info SET
-            team_name=:teamname,
+            team_name=:team_name,
             town=:town,
             coach=:coach,
             address=:address,
             contact_email=:email,
-            first_year=:firstyear", [
+            first_year=:firstyear
+	    WHERE SCID=:scid", [
+		"scid" => $_POST["scid"],
                 "team_name" => $_POST["teamname"],
                 "town" => $_POST["town"],
                 "coach" => $_POST["coach"],
@@ -25,6 +27,8 @@
             ]
 
         );
+	
+	redirectTo("create.php");
 
 	}
 
@@ -32,7 +36,7 @@
 
 		$conn = dbConnect_new();
 
-		$result = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID=:scid", ["scid" => $_GET["SCID"]]);
+		$result = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID = :scid", ["scid" => $_GET["SCID"]]);
 
 		render("edit_form.php", ["result" => $result]);
 

@@ -104,7 +104,7 @@ default:
 			<div class="form-group row">
 				<select class="form-control col-sm-12" id="studentlist">
 					<option disabled selected value="0">-- select a student --</option>
-					<?php foreach($studentrows as $row) ?>
+					<?php foreach($studentrows as $row): ?>
 						<option value=<?= $row['SID']?>> <?=$row['first_name'] . " " . $row['last_name'] ?> </option>
 					<?php endforeach; ?>
 				</select>

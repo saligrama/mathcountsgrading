@@ -95,7 +95,7 @@ function checkSession($type) {
 
 function dbConnect_new() {
 
-    $dsn = "mysql:host=" . MYSQL_HOSTNAME . ";dbname=" . MYSQL_DBNAME . "charset=utf8";
+    $dsn = "mysql:host=" . MYSQL_HOSTNAME . ";dbname=" . MYSQL_DBNAME . ";charset=utf8";
 
     $opts = [
 

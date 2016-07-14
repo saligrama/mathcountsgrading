@@ -72,7 +72,7 @@
 			</div>
 		</div>
 		<div class="panel-footer">
-			<button type="submit" class="btn btn-primary text-center" form="input_form">Login</button>
+			<button type="submit" name="login" class="btn btn-primary text-center" form="input_form">Login</button>
 		</div>
 	</div>
 </div>

@@ -111,7 +111,7 @@ function checkSubmit()
 				<label for="schaf">School Affiliation</label><br>
 				<select class="col-xs-8" id="schaf" name="schaf" class="dropdown"><br>
                                         <option value="0">None (admin)</option>
-                                        <?php foreach($result as $row): ?>
+                                        <?php foreach($schoolrows as $row): ?>
                                                 <option value='<?= $row["SCID"] ?>'><?= $row["team_name"] ?></option>
                                         <?php endforeach; ?>
                                 </select><br><br>

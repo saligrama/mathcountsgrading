@@ -23,13 +23,11 @@
 
                 $conn = dbConnect_new();
 
-                $result = dbQuery_new(
-
-                                      $conn, "INSERT INTO user SET
-                                      email=':name',
-                                      password=':ph',
-                                      SCID=':schaf',
-                                      type=':type'", [
+                $result = dbQuery_new($conn, "INSERT INTO user SET
+                                      email=:name,
+                                      password=:ph,
+                                      SCID=:schaf,
+                                      type=:type", [
                                               "name" => $name,
                                               "ph" => password_hash($passwd, PASSWORD_DEFAULT),
                                               "schaf" => $_POST["schaf"],
@@ -42,8 +40,6 @@
                 redirectTo("/login.php");
 
 	    }
-
-        }
 
     }
     else {

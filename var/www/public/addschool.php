@@ -16,7 +16,7 @@
              address=:address,
              contact_email=:email,
              first_year=:firstyear", [
-                 "team_name" => $_POST["teamname"],
+                 "teamname" => $_POST["teamname"],
                  "town" => $_POST["town"],
                  "coach" => $_POST["coach"],
                  "address" => $_POST["address"],

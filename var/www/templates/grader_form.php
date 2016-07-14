@@ -63,7 +63,7 @@ function checkSubmit()
 				<div class="row">
 					<select name="School" id="school_list" class="dropdown col-sm-offset-1 col-sm-10" required>
                 				<?php foreach($result as $row): ?>
-                    					<option value='<?= $row["SCID"] ?>'><?= $row["team_name"] ?></option>
+                    					<option value="<?= $row['SCID'] ?>"><?= $row["team_name"] ?></option>
               					<?php endforeach; ?>
 					</select>
 				</div>
@@ -83,3 +83,6 @@ function checkSubmit()
 	</div>
 </div>
 </body>
+
+</html>
+

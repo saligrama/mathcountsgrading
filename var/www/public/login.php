@@ -4,14 +4,14 @@ require("../includes/functions.php");
 
 $error = 0;
 
-if($_SESSION["REQUEST_METHOD"] == "POST") {
+if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
 
 	$passwd = $name = "";
         $passwd = htmlspecialchars($_POST["passwd"]);
 
 	$name = htmlspecialchars($_POST["logname"]);
 
-	if(!$passwd || !$name) {
+	if(!$passwd || !$name || $passwd == "" || $name == "") {
 		$error = 1;
 	}
 
@@ -58,7 +58,7 @@ if($_SESSION["REQUEST_METHOD"] == "POST") {
 		echo "Success! Username and password matched\n";
 	}
 }
-else
-	render("login_form.php", ["error" => $error]);
+
+render("login_form.php", ["error" => $error]);
 
 ?>

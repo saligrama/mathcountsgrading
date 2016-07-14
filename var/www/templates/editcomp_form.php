@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 
+<?php $crow = mysqli_fetch_assoc($result); ?>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
@@ -7,7 +9,7 @@
 
 <head>
 
-<title>Create new competition</title>
+<title>Edit competition</title>
 
 <style>
 
@@ -79,19 +81,15 @@ function checkSubmit()
 		return false;
 	}
 
-	var mes = "Are you sure you want to create a ";
-	mes += document.getElementById("comptype").options[document.getElementById("comptype").selectedIndex].value;
-	mes += " competition on the date ";
-	mes += document.getElementById("compdate").value;
-	mes += " with the name '";
-	mes += document.getElementById("compname").value;
-	mes += "'?";
+	var mes = "Are you sure you want to finalize your changes?";
 
 	if(confirm(mes))
 		return true;
 
 	return false;
 }
+
+
 
 </script>
 
@@ -100,14 +98,14 @@ function checkSubmit()
 <body>
 <div class="container-fluid main">
 	<div class="container-fluid panel panel-primary">
-		<div class="panel-heading"><h4>Create new competition</h4></div>
+		<div class="panel-heading"><h4>Editing competition "<?= $crow['competition_name']; ?>"</h4></div>
 		<div class="panel-body">
 			<form id="schools" onsubmit="return checkSubmit();" action="create.php" method="post">
         			<div class="col-xs-offset-2 col-xs-8">
 					<div class="row">
 						<div class="form-group">
 							<label for="compdate">Competition Date</label>
-							<input id="compdate" type="date" class="form-control" name="compdate" placeholder="Date (yyyy-mm-dd)" value="<?php echo date('Y-m-d'); ?>" required>
+							<input id="compdate" type="date" class="form-control" name="competition_date" placeholder="Date (yyyy-mm-dd)" value=<?= $crow['competition_date']; ?> required>
         					</div>
 					</div>
 					<div class="row">
@@ -115,9 +113,9 @@ function checkSubmit()
 							<label for="comptype">Competition Type</label>
 							<div class="dropdown">
 								<select name="comptype" id="comptype" class="col-xs-12">
-									<option value="chapter">Chapter</option>
-									<option value="state">State</option>
-									<option value="national">National</option>
+									<option value="chapter" <?= $crow['competition_type'] == 'chapter' ? "selected" : "" ?>>Chapter</option>
+									<option value="state" <?= $crow['competition_type'] == 'state' ? "selected" : "" ?>>State</option>
+									<option value="national" <?= $crow['competition_type'] == 'national' ? "selected" : "" ?>>National</option>
 								</select>
 							</div>
 						</div>
@@ -125,7 +123,7 @@ function checkSubmit()
 					<div class="row">
 						<div class="form-group">
 							<label for="compname">Competition Name</label>
-							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name" required>
+							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name" value="<?= $crow['competition_name'] ?>" required>
 						</div>
 					</div><br>
 					<div class="row">
@@ -135,16 +133,15 @@ function checkSubmit()
 								<span class="caret"></span>
 							</button>
 							<ul class="dropdown-menu container-fluid" id="schooldrop" aria-labelledby="schoolmenu">
-        							<?php foreach($result as $row): ?>
+        							<?php while($row = mysqli_fetch_assoc($schoolrows)): ?>
 									<li>
 										<div class="row">
 											<div class="checkbox col-xs-offset-1 col-xs-7">
-												<label><input type="checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="On"><p class="labelcheck"><?= $row["team_name"] ?></p></label>
+												<label><input type="checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes" <?= $row['SCID'] ><p class="labelcheck"><?= $row["team_name"] ?></p></label>
            	 									</div>
-											<a class="btn btn-sm btn-success col-xs-2" href=<?php echo "/editschool.php?SCID=" . $row["SCID"]; ?>>Edit</a><br>
         									</div>
 									</li>
-								<?php endforeach; ?>
+								<?php endwhile ?>
 							</ul>
 						</div>
 					</div><br>

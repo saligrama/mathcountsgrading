@@ -78,11 +78,11 @@ function checkSubmit()
 
 function checkDiff()
 {
-	if(document.getElementById("teamname").value != '<?php echo $team_name; ?>' ||
-	   document.getElementById("town").value != '<?php echo $town; ?>' ||
-	   document.getElementById("address").value != '<?php echo $address; ?>' ||
-	   document.getElementById("coach").value != '<?php echo $coach; ?>' ||
-	   document.getElementById("email").value != '<?php echo $email; ?>')
+	if(document.getElementById("teamname").value != '<?php echo $row["team_name"]; ?>' ||
+	   document.getElementById("town").value != '<?php echo $row["town"]; ?>' ||
+	   document.getElementById("address").value != '<?php echo $row["address"]; ?>' ||
+	   document.getElementById("coach").value != '<?php echo $row["coach"]; ?>' ||
+	   document.getElementById("email").value != '<?php echo $row["contact_email"]; ?>')
 	{
 		document.getElementById("finalizebtn").disabled = false;
 	}
@@ -106,31 +106,31 @@ function checkDiff()
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="teamname">Team name</label>
-                                                                <input id="teamname" type="text" oninput="checkDiff()" class="form-control" name="teamname" placeholder="School Name" value=<?= "'$row['team_name']'" ?> required>
+                                                                <input id="teamname" type="text" oninput="checkDiff()" class="form-control" name="teamname" placeholder="School Name" value='<?= "$row[team_name]" ?>' required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="town">Town</label>
-                                                                <input id="town" type="text" oninput="checkDiff()" class="form-control" name="town" placeholder="Town" value=<?= "'$row['town']'" ?> required>
+                                                                <input id="town" type="text" oninput="checkDiff()" class="form-control" name="town" placeholder="Town" value='<?= "$row[town]" ?>' required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="address">Address</label>
-                                                                <input id="address" type="text" oninput="checkDiff()" class="form-control" name="address" placeholder="School Address" value=<?= "'$row['address']'" ?> required>
+                                                                <input id="address" type="text" oninput="checkDiff()" class="form-control" name="address" placeholder="School Address" value='<?= "$row[address]" ?>' required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="coach">Coach</label>
-                                                                <input id="coach" type="text" oninput="checkDiff()" class="form-control" name="coach" placeholder="Coach Name" value=<?= "'$row['coach']'" ?> required>
+                                                                <input id="coach" type="text" oninput="checkDiff()" class="form-control" name="coach" placeholder="Coach Name" value='<?= "$row[coach]" ?>' required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="email">Email</label>
-                                                                <input id="email" type="email" oninput="checkDiff()" class="form-control" name="email" placeholder="Contact Email" value=<?= "'$row['email']'" ?> required>
+                                                                <input id="email" type="email" oninput="checkDiff()" class="form-control" name="email" placeholder="Contact Email" value='<?= "$row[contact_email]" ?>' required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
@@ -138,7 +138,7 @@ function checkDiff()
                                                                 <label><input class="check" type="checkbox" name="firstyear" value="yes" <?php echo ($row['first_year'] == 1 ? "checked" : ""); ?>><strong>First Year?</strong></label>
                                                         </div>
                                                 </div>
-        					<input type="hidden" name="scid" value=<?= "'$row['SCID']'" ?>>
+        					<input type="hidden" name="scid" value=<?= $row['SCID'] ?>>
                                                 <br><br>
                                         <?php endforeach; ?>
                                 </div>
