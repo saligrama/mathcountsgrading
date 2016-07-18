@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 
+<?php $row = $result[0] ?>
+
 <head>
 
 <title>Welcome</title>
@@ -82,12 +84,23 @@ function checkDiff()
 	   document.getElementById("town").value != '<?php echo $row["town"]; ?>' ||
 	   document.getElementById("address").value != '<?php echo $row["address"]; ?>' ||
 	   document.getElementById("coach").value != '<?php echo $row["coach"]; ?>' ||
-	   document.getElementById("email").value != '<?php echo $row["contact_email"]; ?>')
+	   document.getElementById("email").value != '<?php echo $row["contact_email"]; ?>' ||
+	   (document.getElementById("firstyear").checked ? 1 : 0) != '<?php echo $row["first_year"]; ?>')
 	{
 		document.getElementById("finalizebtn").disabled = false;
 	}
 	else
+	{
 		document.getElementById("finalizebtn").disabled = true;
+	}
+}
+
+function deleteSchool()
+{
+	if(confirm('Are you sure you want to delete the team/school \'' + '<?php echo $row["team_name"]; ?>' + '\'?'))
+		return true;
+
+	return false;
 }
 
 </script>
@@ -97,7 +110,7 @@ function checkDiff()
 
 <body>
 <div class="container-fluid main">
-        <div class="panel panel-primary col-sm-offset-3 col-sm-6">
+        <div class="panel panel-primary col-sm-offset-3 col-sm-7 col-xs-offset-1 col-xs-10">
                 <div class="panel-heading"><h4>Make any necessary changes to the boxes below</h4></div>
                 <div class="panel-body">
                         <form id="schoolinfo" onsubmit="return checkSubmit();" action="" method="post">
@@ -135,18 +148,24 @@ function checkDiff()
                                                 </div>
                                                 <div class="row">
                                                         <div class="checkbox">
-                                                                <label><input class="check" type="checkbox" name="firstyear" value="yes" <?php echo ($row['first_year'] == 1 ? "checked" : ""); ?>><strong>First Year?</strong></label>
+                                                                <label><input id="firstyear" class="check" type="checkbox" onchange="checkDiff()" name="firstyear" value="yes" <?php echo ($row['first_year'] == 1 ? "checked" : ""); ?>><strong>First Year?</strong></label>
                                                         </div>
                                                 </div>
         					<input type="hidden" name="scid" value=<?= $row['SCID'] ?>>
-                                                <br><br>
+                                                <br>
                                         <?php endforeach; ?>
                                 </div>
                         </form>
+		</div>
+		<div class="panel-footer">
                         <div class="row">
-                                <a class="btn btn-danger col-xs-offset-1 col-xs-4" href="/create.php">Back to competition</a>
-                                <button id="finalizebtn" type="submit" class="btn btn-primary col-xs-offset-1 col-xs-5" form="schoolinfo" name="finalize" disabled>Finalize changes</button>
-                        </div>
+				<button id="finalizebtn" type="submit" class="btn btn-primary col-sm-offset-0 col-sm-4 col-xs-offset-2 col-xs-8" form="schoolinfo" name="finalize" disabled>Finalize changes</button>
+                                <a class="btn btn-danger col-xs-offset-1 col-xs-4 col-sm-offset-1 col-sm-2" href="/create.php">Back</a>
+				<form onsubmit="return deleteSchool();" method="post" action="">
+					<button class="btn btn-danger col-sm-offset-1 col-xs-offset-1 col-xs-5 col-sm-4" name="delete" type="submit">Delete school</button>
+					<input type="hidden" name="scid" value=<?= $row['SCID'] ?>>
+				</form>
+			</div>
                 </div>
         </div>
 </div>

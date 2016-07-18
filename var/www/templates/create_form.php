@@ -4,6 +4,10 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js" crossorigin="anonymous"></script>
+
 
 <head>
 
@@ -107,7 +111,7 @@ function checkSubmit()
 					<div class="row">
 						<div class="form-group">
 							<label for="compdate">Competition Date</label>
-							<input id="compdate" type="date" class="form-control" name="compdate" placeholder="Date (yyyy-mm-dd)" value="<?php echo date('Y-m-d'); ?>" required>
+							<input id="compdate" data-provide="datepicker" class="form-control input-group date datepicker" data-date-format="yyyy-mm-dd" name="compdate" placeholder="Date (yyyy-mm-dd)" value="<?php echo date('Y-m-d'); ?>" required>
         					</div>
 					</div>
 					<div class="row">
@@ -153,9 +157,9 @@ function checkSubmit()
 		</div>
 		<div class="panel-footer">
 			<div class="row">
-				<a class="btn btn-danger col-xs-3" href="/admin.php">Cancel</a>
-	        		<input type="submit" class="btn btn-primary col-xs-offset-1 col-xs-4" value="Create" name="go" form="schools">
-				<a class="btn btn-primary col-xs-offset-1 col-xs-3" href="/addschool.php">New school</a>
+				<a class="btn btn-bot btn-danger col-xs-3 col-sm-3" href="/admin.php">Cancel</a>
+	        		<input type="submit" class="btn btn-bot btn-primary col-xs-4 col-sm-offset-1 col-sm-4" value="Create" name="go" form="schools">
+				<a class="btn btn-bot btn-primary col-sm-offset-1 col-xs-5 col-sm-3" href="/addschool.php">New school</a>
 			</div>
 		</div>
 	</div>

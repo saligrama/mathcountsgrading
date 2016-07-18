@@ -1,0 +1,66 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "9a08fc09aa50b1da3dcdc6086c97875e",
+    "content-hash": "a8eb39ae1a2720fba003e1b56c18313d",
+    "packages": [
+        {
+            "name": "mossadal/math-parser",
+            "version": "v1.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mossadal/math-parser.git",
+                "reference": "ce1000d6fb9977f6817f49a8f668724601b165d1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mossadal/math-parser/zipball/ce1000d6fb9977f6817f49a8f668724601b165d1",
+                "reference": "ce1000d6fb9977f6817f49a8f668724601b165d1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpdocumentor/phpdocumentor": "2.*",
+                "phpunit/php-code-coverage": "~3",
+                "phpunit/phpunit": "5.1.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MathParser\\": "src/MathParser"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Frank Wikström",
+                    "email": "frank@mossadal.se",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP parser for mathematical expressions, including elementary functions, variables and implicit multiplication. Also supports symbolic differentiation.",
+            "homepage": "https://github.com/mossadal/math-parser",
+            "keywords": [
+                "mathematics",
+                "parser"
+            ],
+            "time": "2016-03-21 23:00:54"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

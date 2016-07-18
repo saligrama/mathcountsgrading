@@ -32,11 +32,11 @@
 
 <body>
 <div class="container-fluid main">
-	<div class="panel panel-primary col-sm-offset-3 col-sm-6">
+	<div class="panel panel-primary col-sm-offset-3 col-sm-6 col-xs-offset-1 col-xs-10">
 		<div class="panel-heading"><h4>Fill out the boxes below to create a new school</h4></div>
         	<div class="panel-body">
 			<form id="schoolinfo" action="" method="post">
-                		<div class="col-sm-offset-1 col-sm-10">
+                		<div class="col-xs-offset-1 col-xs-10">
 					<div class="row">
 						<div class="form-group">
 							<label for="teamname">Team name</label>
@@ -69,15 +69,17 @@
 					</div>
 					<div class="row">
 						<div class="checkbox">
-							<label><input type="checkbox" name="firstyear" value="yes">First Year?</label>
+							<label><input type="checkbox" name="firstyear" value="yes"><strong>First Year?</strong></label>
 						</div>
 					</div>
 					<br>
 				</div>
 			</form>
+		</div>
+		<div class="panel-footer">
 			<div class="row">
-				<a class="btn btn-danger col-xs-offset-1 col-xs-4" href="/create.php">Back to competition</a>
-                		<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-5" form="schoolinfo" name="createschool">Create school</button>
+				<a class="btn btn-danger col-xs-3 col-sm-offset-1 col-sm-3" href="/create.php">Back</a>
+                		<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-8 col-sm-offset-1 col-sm-6" form="schoolinfo" name="createschool">Create school</button>
 			</div>
 		</div>
 	</div>

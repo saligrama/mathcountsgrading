@@ -1,46 +1,103 @@
 <?php
 
-        require("../includes/functions.php");
+    require(dirname(__FILE__) . "/../includes/functions.php");
 
-	checkSession('admin');
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"])) {
 
-	if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"]))
-	{
-		$conn = dbConnect();
+        $set_schools = $unset_schools = $cur_participants = [];
 
-                $teamname = mysqli_real_escape_string($conn, $_POST["teamname"]);
-                $town = mysqli_real_escape_string($conn, $_POST["town"]);
-                $coach = mysqli_real_escape_string($conn, $_POST["coach"]);
-                $address = mysqli_real_escape_string($conn, $_POST["address"]);
-                $email = mysqli_real_escape_string($conn, $_POST["email"]);
-                $firstyear = (isset($_POST["firstyear"]) && $_POST["firstyear"] == "yes") ? 1 : 0;
-		$SCID = $_POST["scid"];
+        $conn = dbConnect_new();
 
-                $query = "UPDATE school_info SET team_name='$teamname',town='$town',coach='$coach',address='$address',contact_email='$email',first_year='$firstyear' WHERE SCID = $SCID;";
+        $scids_list = dbQuery_new($conn, "SELECT SCID FROM school_info");
+        $cur_participants_list = dbQuery_new($conn, "SELECT SCID FROM competition_participants WHERE CID=:cid", ["cid" => $_POST["cid"]]);
+	$cur_participants = $set_schools = $unset_schools = [];
 
-		$result = mysqli_query($conn, $query);
+        foreach ($cur_participants_list as $cur_participant)
+            array_push($cur_participants, $cur_participant["SCID"]);
 
-		if ($result === false)
-			echo ("Error editing school" . mysqli_error($conn));
-		else
-			redirectTo("/create.php");
-	}
-	else {
-		$conn = dbConnect();
+        foreach ($scids_list as $row) {
 
-		if(!isset($_GET["CID"]))
-			redirectTo("/admin.php");
+            if (isset($_POST[$row["SCID"]]) && $_POST[$row["SCID"]] == "yes" && !in_array($row["SCID"], $cur_participants))
+                array_push($set_schools, $row["SCID"]);
+	    else if (!isset($_POST[$row["SCID"]]) && in_array($row["SCID"], $cur_participants))
+                array_push($unset_schools, $row["SCID"]);
 
-		$cid = $_GET["CID"];
+        }
 
-		$result = mysqli_query($conn, "SELECT * FROM competition WHERE CID=$cid;");
-		$schoolrows = mysqli_query($conn, "SELECT * FROM school_info;");
-		$participants = mysqli_query($conn, "SELECT * FROM school_info WHERE SCID IN (SELECT SCID FROM competition_participants WHERE CID=$cid);");
+        dbQuery_new($conn, "UPDATE competition SET
+                            competition_date = :compdate,
+                            competition_type = :comptype,
+                            competition_name = :compname
+                            WHERE CID=:cid", [
+                                "compdate" => $_POST["compdate"],
+                                "comptype" => $_POST["comptype"],
+                                "compname" => $_POST["compname"],
+                                "cid" => $_POST["cid"]
+                            ]
+       );
 
-		if ($result === false || $schoolrows === false || $participants == false)
-			echo "Error executing SQL statement: " . mysqli_error($conn);
+        foreach($set_schools as $i) {
 
-		render("editcomp_form.php", ["result" => $result, "schoolrows" => $schoolrows, "participants" => $participants]);
-	}
+            dbQuery_new($conn, "INSERT INTO competition_participants SET
+                                CID = :cid,
+                                SCID = :scid", [
+                                    "cid" => $_POST["cid"],
+                                    "scid" => $i
+                                ]
+           );
+
+        }
+
+        foreach($unset_schools as $i) {
+
+            dbQuery_new($conn, "DELETE FROM competition_participants WHERE
+                                CID = :cid,
+                                SCID = :scid", [
+                                    "cid" => $_POST["cid"],
+                                    "scid" => $i
+                                ]
+            );
+
+        }
+
+	    redirectTo("admin.php");
+
+    }
+    elseif($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete"])) {
+
+	dbQuery_new(dbConnect_new(), "DELETE FROM competition WHERE CID = :cid", ["cid" => $_GET["CID"]]);
+
+	popupAlert("Success! The competition has been deleted");
+	redirectTo("/admin.php");
+
+    }
+    else {
+
+        checkSession('admin');
+
+	if(!isset($_GET["CID"]))
+		redirectTo("/admin.php");
+
+        $conn = dbConnect_new();
+        $schinfo = dbQuery_new($conn, "SELECT * FROM school_info");
+        $compinfo = dbQuery_new($conn, "SELECT * FROM competition WHERE CID=:cid", ["cid" => $_GET["CID"]]);
+        $participants = dbQuery_new($conn, "SELECT * FROM competition_participants WHERE CID=:cid", ["cid" => $_GET["CID"]]);
+
+        $participants_row = [];
+
+        foreach($participants as $participant)
+            array_push($participants_row, $participant["SCID"]);
+
+        render("editcomp_form.php", [
+               "title" => "Edit competition",
+               "schinfo" => $schinfo,
+               "compinfo" => $compinfo,
+               "participants_row" => $participants_row
+              ]
+        );
+
+    }
+
 
 ?>
+

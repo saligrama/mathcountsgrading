@@ -26,8 +26,19 @@
 .panel {
 	margin-left: auto;
 	margin-right: auto;
-	min-width: 300px;
+	min-width: 320px;
 	max-width: 450px;
+}
+
+.btn-sm {
+        padding: 3px;
+        font-size: 12px;
+        border-radius: 4px;
+        margin-top: 10px;
+}
+
+.dropdown-menu {
+        min-width: 300px;
 }
 
 </style>
@@ -43,25 +54,36 @@
 		<div class="panel-body container-fluid">
 			<div class="row">
 		       		<form id="selectcomp" class="form-group" method="post" action="add.php">
-                			<select class="col-xs-8">
-                    		<?php foreach($result as $row): ?>
-								<?php if($row["competition_name"] != ""): ?>
-                        			<option value=<?= $row["CID"] ?>><?= $row["competition_name"] ?> (<?= $row["competition_date"] ?>)</option>
-                    			<?php else: ?>
-									<option value=<?= $row["CID"] ?>><?= $row["competition_date"] ?></option>
-								<?php endif; ?>
-							<?php endforeach ?>
-                			</select>
-                			<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-3">Go</button>
-        			</form>
+                			<div class="dropdown col-xs-8">
+						<button id="compmenu1" class="btn btn-default dropdown-toggle col-xs-12" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        		            			Select a competition
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu container-fluid" id="compdrop" aria-labelledby="compmenu1">
+							<?php foreach($result as $row): ?>
+								<li>
+									<div class="row">
+										<div class="radio col-xs-offset-1 col-xs-7">
+											<?php if($row["competition_name"] != ""): ?>
+                        									<label><input type="radio" value=<?= $row["CID"] ?> name="comp"><?= $row["competition_name"] ?> (<?= $row["competition_date"] ?>)</label>
+                    									<?php else: ?>
+												<label><input type="radio" value=<?= $row["CID"] ?> name="comp"><?= $row["competition_date"] ?></label>
+											<?php endif; ?>
+										</div>
+										<a class="btn btn-sm btn-success col-xs-2" href=<?php echo "/editcompetition.php?CID=" . $row["CID"]; ?>>Edit</a>
+									</div>
+								</li>
+							<?php endforeach; ?>
+                				</ul>
+					</div>
+                			<a href="/info.php" type="submit" class="btn btn-primary col-xs-offset-1 col-xs-3">Go</a>
+				</form>
 			</div>
 			<br>
 			<br>
 			<div class="row">
-                <form id="createcomp" class="form-group" method="post" action="create.php">
-                    <button type="submit" class="btn btn-primary col-xs-offset-2 col-xs-8">Create New Competition</button>
-                </form>
-            </div>
+                    		<a href="/create.php" class="btn btn-primary col-xs-offset-2 col-xs-8">Create New Competition</a>
+			</div>
 		</div>
 	</div>
 </div>

@@ -26,7 +26,8 @@
 
         );
 
-		redirectTo("admin.php");
+		popupAlert("Success! school created");
+		redirectTo("/create.php");
 
 	}
 	else
