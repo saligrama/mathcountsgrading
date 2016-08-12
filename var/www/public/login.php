@@ -4,6 +4,13 @@ require("../includes/functions.php");
 
 $error = 0;
 
+
+$conn = dbConnect_new();
+
+if(empty(dbQuery_new($conn, "SELECT * FROM user;")))
+	redirectTo("register.php");
+
+
 if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
 
 	$passwd = $name = "";
@@ -16,8 +23,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
 	}
 
 	else {
-		$conn = dbConnect_new();
-
 		$result = dbQuery_new($conn, "SELECT UID, password, type FROM user WHERE email = :name", ["name" => $name]);
 
 		if(empty($result)) {

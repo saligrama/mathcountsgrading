@@ -115,7 +115,7 @@ function dbConnect_new() {
 }
 function dbQuery_new($conn, $query, $values = NULL) {
 
-    if (isset($opts)) {
+    if (isset($values)) {
 
         $stmt = $conn->prepare($query);
         $stmt->execute($values);

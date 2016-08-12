@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<?php
+$fullname = "";
 
+$name = $namerows[0];
+
+if($name["first_name"] == NULL || $name["first_name"] == "") {
+	if($name["last_name"] == NULL || $name["last_name"] == "")
+        	$fullname = $name["email"];
+	else
+		$fullname = $name["last_name"];
+}
+else {
+	if($name["last_name"] == NULL || $name["last_name"] == "")
+		$fullname = $name["first_name"];
+	else
+		$fullname = $name["first_name"] . " " . $name["last_name"];
+}
+?>
 
 <head>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
+<script src="./bootstrap/dist/js/bootstrap.js"></script>
 <title>Welcome</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,7 +37,8 @@
 }
 
 .main {
-	margin-top: 10px;
+	margin-top: 30px;
+	min-width: 600px;
 }
 
 .panel {
@@ -41,6 +59,54 @@
         min-width: 300px;
 }
 
+.mnavbar {
+}
+
+.mnavlist {
+	min-width: 600px;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #666666;
+}
+
+.mnavcontainer {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 1000px;
+        min-width: 600px;
+}
+
+.mnavcontainer li a, .mnav-text {
+	display: block;
+	padding: 14px 16px;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+}
+
+.mnav-text {
+	margin-bottom: -10px;
+}
+
+.mnav-left {
+        float: left;
+}
+
+.mnav-right {
+        float: right;
+}
+
+.mnavcontainer a:hover {
+	background-color: #444444;
+	color: #eeeeee;
+}
+
+.mnavcontainer a:active {
+	background-color: #222222;
+}
+
 </style>
 
 </head>
@@ -48,6 +114,16 @@
 
 <body>
 
+<nav class="mnavbar">
+        <ul class="mnavlist">
+		<div class="container mnavcontainer">
+			<li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+			<li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
+			<li class="mnav-right"><a href="">Edit Profile</a></li>
+        		<li class="mnav-right"><a class="logout" href="">Logout</a></li>
+		</div>
+	</ul>
+</nav>
 <div class="container-fluid main">
 	<div class="container-fluid panel panel-primary">
 		<div class="panel-heading"><h4>Choose an existing or create a new competition</h4></div>

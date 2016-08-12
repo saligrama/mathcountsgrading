@@ -2,9 +2,13 @@
 
     require("../includes/functions.php");
 
-    checkSession('admin');
-
     $error = 0;
+
+    $conn = dbConnect_new();
+
+    if(!empty(dbQuery_new($conn, "SELECT * FROM user;")))
+        checkSession('admin');
+
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
@@ -20,8 +24,6 @@
             elseif (!$confirm || $confirm !== $passwd)
                 $error = 1;
             else {
-
-                $conn = dbConnect_new();
 
                 $result = dbQuery_new($conn, "INSERT INTO user SET
                                       email=:name,
