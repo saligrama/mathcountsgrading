@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.min.css" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js" crossorigin="anonymous"></script>
 
+<link rel="stylesheet" type="text/css" href="./styles/mnavbar.css">
 
 <head>
 
@@ -16,12 +17,13 @@
 <style>
 
 .main {
-	margin-top: 10px;
+	padding-top: 10px;
+	min-width: 550px;
+	max-width: 930px;
 }
 
 .panel {
 	max-width: 500px;
-	min-width: 300px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -97,11 +99,34 @@ function checkSubmit()
 	return false;
 }
 
+function checkLogout()
+{
+        if(confirm("Are you sure you want to logout?"))
+                return true;
+        else
+                return false;
+}
+
 </script>
 
 </head>
 
+
 <body>
+<nav class="mnavbar">
+        <div class="mnavcontainer container">
+                <ul class="mnavlist">
+                        <li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
+                        <li class="mnav-right">
+                                <form method="post" onsubmit="return checkLogout();" action="/login.php">
+                                        <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
+                                </form>
+                        </li>
+                        <li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
+                </ul>
+        </div>
+</nav>
 <div class="container-fluid main">
 	<div class="container-fluid panel panel-primary">
 		<div class="panel-heading"><h4>Create new competition</h4></div>
@@ -157,9 +182,9 @@ function checkSubmit()
 		</div>
 		<div class="panel-footer">
 			<div class="row">
-				<a class="btn btn-bot btn-danger col-xs-3 col-sm-3" href="/admin.php">Cancel</a>
-	        		<input type="submit" class="btn btn-bot btn-primary col-xs-4 col-sm-offset-1 col-sm-4" value="Create" name="go" form="schools">
-				<a class="btn btn-bot btn-primary col-sm-offset-1 col-xs-5 col-sm-3" href="/addschool.php">New school</a>
+				<a class="btn btn-danger col-xs-3" href="/admin.php">Cancel</a>
+	        		<input type="submit" class="btn btn-success col-xs-4 col-xs-offset-1" value="Create" name="go" form="schools">
+				<a class="btn btn-primary col-xs-offset-1 col-xs-3" href="/addschool.php">New school</a>
 			</div>
 		</div>
 	</div>

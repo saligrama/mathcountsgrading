@@ -1,23 +1,5 @@
 <!DOCTYPE html>
 
-<?php
-$fullname = "";
-
-$name = $namerows[0];
-
-if($name["first_name"] == NULL || $name["first_name"] == "") {
-	if($name["last_name"] == NULL || $name["last_name"] == "")
-        	$fullname = $name["email"];
-	else
-		$fullname = $name["last_name"];
-}
-else {
-	if($name["last_name"] == NULL || $name["last_name"] == "")
-		$fullname = $name["first_name"];
-	else
-		$fullname = $name["first_name"] . " " . $name["last_name"];
-}
-?>
 
 <head>
 
@@ -40,8 +22,10 @@ else {
 }
 
 .main {
-	margin-top: 30px;
-	min-width: 600px;
+	padding-top: 30px;
+	padding-bottom: 200px;
+	min-width: 550px;
+	max-width: 930px;
 }
 
 .panel {

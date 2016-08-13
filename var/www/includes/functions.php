@@ -56,6 +56,9 @@ function redirectTo($url) {
 
 function endLoginSession() {
 
+    if(!session_id())
+	session_start();
+
     if(isset($_SESSION['type']))
     	unset($_SESSION['type']);
 
@@ -65,17 +68,14 @@ function endLoginSession() {
     if(isset($_SESSION['UID']))
     	unset($_SESSION['UID']);
 
-    if(session_id()) {
-	if (ini_get("session.use_cookies")) {
-     	    $params = session_get_cookie_params();
-        	setcookie(session_name(), '', time() - 42000,
-            	$params["path"], $params["domain"],
-            	$params["secure"], $params["httponly"]
-            );
-    	}
-	session_destroy();
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
     }
-
+    session_destroy();
 }
 
 function checkSession($type) {
@@ -167,6 +167,28 @@ function exprParse($expr) {
     $tokenizedArray = preg_split("/([()])/", $parser->parse($expr), 0, PREG_SPLIT_DELIM_CAPTURE + PREG_SPLIT_NO_EMPTY);
     return parseArray($tokenizedArray);
 
+}
+
+function getFullName($namerows)
+{
+    $fullname = "";
+
+    $name = $namerows[0];
+
+    if($name["first_name"] == NULL || $name["first_name"] == "") {
+        if($name["last_name"] == NULL || $name["last_name"] == "")
+            $fullname = $name["email"];
+        else
+            $fullname = $name["last_name"];
+    }
+    else {
+        if($name["last_name"] == NULL || $name["last_name"] == "")
+            $fullname = $name["first_name"];
+        else
+            $fullname = $name["first_name"] . " " . $name["last_name"];
+    }
+
+    return $fullname;
 }
 
 ?>

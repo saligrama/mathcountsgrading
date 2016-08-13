@@ -2,11 +2,11 @@
 
     require(dirname(__FILE__) . "/../includes/functions.php");
 
-	checkSession('admin');
+    checkSession('admin');
 
-	if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["createschool"])) {
+    $conn = dbConnect_new();
 
-		$conn = dbConnect_new();
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["createschool"])) {
 
         dbQuery_new($conn,
             "INSERT INTO school_info SET
@@ -26,11 +26,14 @@
 
         );
 
-		popupAlert("Success! school created");
-		redirectTo("/create.php");
+	popupAlert("Success! school created");
+	redirectTo("/create.php");
 
-	}
-	else
-		render("add_form.php");
+    }
+    else {
+	$namerows = dbQuery_new($conn, "SELECT first_name, last_name, email FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
+
+	render("add_form.php", ["fullname" => getFullName($namerows)]);
+    }
 
 ?>

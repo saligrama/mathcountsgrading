@@ -2,9 +2,9 @@
 
     require(dirname(__FILE__) . "/../includes/functions.php");
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["go"])) {
+    $conn = dbConnect_new();
 
-        $conn = dbConnect_new();
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["go"])) {
 
         $scids = dbQuery_new($conn, "SELECT SCID FROM school_info");
 
@@ -40,11 +40,11 @@
 
         checkSession('admin');
 
-        $conn = dbConnect_new();
-
         $result = dbQuery_new($conn, "SELECT SCID, team_name FROM school_info");
 
-        render("create_form.php", ["title" => "Create competition", "result" => $result]);
+	$namerows = dbQuery_new($conn, "SELECT first_name, last_name, email FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
+
+	render("create_form.php", ["result" => $result, "fullname" => getFullName($namerows)]);
 
     }
 
