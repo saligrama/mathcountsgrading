@@ -60,25 +60,25 @@ else {
 }
 
 .mnavbar {
-}
-
-.mnavlist {
-	min-width: 600px;
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
 	background-color: #666666;
 }
 
 .mnavcontainer {
-        margin-left: auto;
-        margin-right: auto;
-        max-width: 1000px;
-        min-width: 600px;
+	min-width: 600px;
+	max-width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #666666;
 }
 
-.mnavcontainer li a, .mnav-text {
+.mnavlist {
+       	list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+}
+
+.mnavlist li a, .mnav-text {
 	display: block;
 	padding: 14px 16px;
 	color: white;
@@ -98,12 +98,12 @@ else {
         float: right;
 }
 
-.mnavcontainer a:hover {
+.mnavlist a:hover {
 	background-color: #444444;
 	color: #eeeeee;
 }
 
-.mnavcontainer a:active {
+.mnavlist a:active {
 	background-color: #222222;
 }
 
@@ -115,14 +115,14 @@ else {
 <body>
 
 <nav class="mnavbar">
-        <ul class="mnavlist">
-		<div class="container mnavcontainer">
+	<div class="mnavcontainer container">
+		<ul class="mnavlist">
 			<li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
 			<li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
 			<li class="mnav-right"><a href="">Edit Profile</a></li>
         		<li class="mnav-right"><a class="logout" href="">Logout</a></li>
-		</div>
-	</ul>
+		</ul>
+	</div>
 </nav>
 <div class="container-fluid main">
 	<div class="container-fluid panel panel-primary">
