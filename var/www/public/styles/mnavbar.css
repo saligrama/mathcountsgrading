@@ -17,7 +17,7 @@
         overflow: hidden;
 }
 
-.mnavlist li a, .mnav-text {
+.mnavlist li a, .mnav-text, .mnav-logout {
         display: block;
         padding: 14px 16px;
         color: white;
@@ -25,8 +25,15 @@
         text-decoration: none;
 }
 
-.mnav-text {
+.mnav-text, .mnav-logout {
         margin-bottom: -10px;
+}
+
+.mnav-logout {
+	background: #666666;
+        border: 0 none;
+        -webkit-border-radius: 0px;
+        border-radius: 0px;
 }
 
 .mnav-left {
@@ -37,11 +44,11 @@
         float: right;
 }
 
-.mnavlist a:hover {
+.mnavlist a:hover, .mnav-logout:hover {
         background-color: #444444;
         color: #eeeeee;
 }
 
-.mnavlist a:active {
+.mnavlist a:active, .mnav-logout:active {
         background-color: #222222;
 }

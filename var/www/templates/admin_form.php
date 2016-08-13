@@ -25,6 +25,9 @@ else {
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
+
+<link rel="stylesheet" type="text/css" href="./styles/mnavbar.css">
+
 <title>Welcome</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -59,55 +62,19 @@ else {
         min-width: 300px;
 }
 
-.mnavbar {
-	background-color: #666666;
-}
-
-.mnavcontainer {
-	min-width: 600px;
-	max-width: 1000px;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: #666666;
-}
-
-.mnavlist {
-       	list-style-type: none;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-}
-
-.mnavlist li a, .mnav-text {
-	display: block;
-	padding: 14px 16px;
-	color: white;
-	text-align: center;
-	text-decoration: none;
-}
-
-.mnav-text {
-	margin-bottom: -10px;
-}
-
-.mnav-left {
-        float: left;
-}
-
-.mnav-right {
-        float: right;
-}
-
-.mnavlist a:hover {
-	background-color: #444444;
-	color: #eeeeee;
-}
-
-.mnavlist a:active {
-	background-color: #222222;
-}
-
 </style>
+
+<script type="text/javascript">
+
+function checkSubmit()
+{
+	if(confirm("Are you sure you want to logout?"))
+		return true;
+	else
+		return false;
+}
+
+</script>
 
 </head>
 
@@ -119,8 +86,12 @@ else {
 		<ul class="mnavlist">
 			<li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
 			<li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
-			<li class="mnav-right"><a href="">Edit Profile</a></li>
-        		<li class="mnav-right"><a class="logout" href="">Logout</a></li>
+			<li class="mnav-right">
+				<form method="post" onsubmit="return checkSubmit();" action="/login.php">
+					<input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
+				</form>
+			</li>
+			<li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
 		</ul>
 	</div>
 </nav>
