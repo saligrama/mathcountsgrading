@@ -8,7 +8,8 @@
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
 
-<link rel="stylesheet" type="text/css" href="./styles/mnavbar.css">
+<link rel="stylesheet" type="text/css" href="./styles/general.css">
+<script src="./scripts/general.js"></script>
 
 <title>Welcome</title>
 
@@ -16,62 +17,49 @@
 
 <style>
 
-.panel-heading {
-	margin-left: -15px;
-	margin-right: -15px;
-}
-
-.main {
-	padding-top: 30px;
-	padding-bottom: 200px;
-	min-width: 550px;
-	max-width: 930px;
-}
-
-.panel {
-	margin-left: auto;
-	margin-right: auto;
-	min-width: 320px;
-	max-width: 450px;
+.ncont {
+	width: 500px;
 }
 
 .btn-sm {
         padding: 3px;
         font-size: 12px;
         border-radius: 4px;
-        margin-top: 10px;
+        margin-top: 5px;
 }
 
 .dropdown-menu {
         min-width: 300px;
 }
 
-</style>
-
-<script type="text/javascript">
-
-function checkSubmit()
-{
-	if(confirm("Are you sure you want to logout?"))
-		return true;
-	else
-		return false;
+.dropdown-toggle {
+	margin-right: 7px;
 }
 
-</script>
+.compch:hover {
+	background-color: #eeeeee;
+}
+
+.nocomp {
+	font-size: 14px;
+	padding: 5px 10px 5px 10px;
+}
+
+</style>
 
 </head>
 
 
 <body>
 
+<div class="jumbotron malert"></div>
 <nav class="mnavbar">
 	<div class="mnavcontainer container">
 		<ul class="mnavlist">
 			<li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
 			<li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
 			<li class="mnav-right">
-				<form method="post" onsubmit="return checkSubmit();" action="/login.php">
+				<form method="post" onsubmit="return checkLogout();" action="/login.php">
 					<input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
 				</form>
 			</li>
@@ -80,17 +68,48 @@ function checkSubmit()
 	</div>
 </nav>
 <div class="container-fluid main">
-	<div class="container-fluid panel panel-primary">
-		<div class="panel-heading"><h4>Choose an existing or create a new competition</h4></div>
-		<div class="panel-body container-fluid">
-			<div class="row">
+	<div class="container ncont">
+		<div class="jumbotron">
+			<?php if($compname == 0): ?>
+				<h3>Whoops! The current competition hasn't been set yet.</h3>
+				<div class="btn-group">
+					<button class="btn btn-default">Select competition </button>
+					<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<?php if ($result == 0): ?>
+							<li class="nocomp">Looks like there aren't any competitions yet.</li>
+						<?php else: ?>
+							<?php foreach($result as $row): ?>
+        	                                        	<li>
+                	                                                <div class="row">
+                        	                                                <div class="col-xs-offset-1 col-xs-7">
+                                	                                        	<?php if($row["competition_name"] != ""): ?>
+                                        	                                        	<a class="btn compch" href=<?php echo "/admin.php?setComp=" . $row["CID"]; ?>><?= $row["competition_name"] ?> (<?= $row["competition_date"] ?>)</a>
+                                                	                        	<?php else: ?>
+                                                                                	<a class="btn compch" href=<?php echo "/admin.php?setComp=" . $row["CID"]; ?>><?= $row["competition_date"] ?></a>
+                                                        	                	<?php endif; ?>
+                                                                	        </div>
+	                                                                	<a class="btn btn-sm btn-primary col-xs-2" href=<?php echo "/editcompetition.php?CID=" . $row["CID"]; ?>>Edit</a>
+        	                                                	</div>
+                	                                	</li>
+                        	                	<?php endforeach; ?>
+						<?php endif; ?>
+					</ul>
+                                	<a href="/create.php" class="btn btn-default addcomp" style="border-radius: 4px;">Add competition</a>
+                        	</div>
+			<?php else: ?>
+				<h3><?= $compname ?></h3>
+			<?php endif; ?>
+		</div>
+	</div>
+</div>
 		       		<form id="selectcomp" class="form-group" method="post" action="add.php">
-                			<div class="dropdown col-xs-8">
-						<button id="compmenu1" class="btn btn-default dropdown-toggle col-xs-12" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        		            			Select a competition
+               				<div class="dropdown col-xs-8">
+						<button id="compmenu2" class="btn btn-default dropdown-toggle col-xs-12" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        		           				Select a competition
 							<span class="caret"></span>
 						</button>
-						<ul class="dropdown-menu container-fluid" id="compdrop" aria-labelledby="compmenu1">
+						<ul class="dropdown-menu container-fluid" id="compdrop" aria-labelledby="compmenu2">
 							<?php foreach($result as $row): ?>
 								<li>
 									<div class="row">
@@ -104,7 +123,7 @@ function checkSubmit()
 										<a class="btn btn-sm btn-success col-xs-2" href=<?php echo "/editcompetition.php?CID=" . $row["CID"]; ?>>Edit</a>
 									</div>
 								</li>
-							<?php endforeach; ?>
+								<?php endforeach; ?>
                 				</ul>
 					</div>
                 			<a href="/info.php" type="submit" class="btn btn-primary col-xs-offset-1 col-xs-3">Go</a>
@@ -113,7 +132,7 @@ function checkSubmit()
 			<br>
 			<br>
 			<div class="row">
-                    		<a href="/create.php" class="btn btn-primary col-xs-offset-2 col-xs-8">Create New Competition</a>
+               	    		<a href="/create.php" class="btn btn-primary col-xs-offset-2 col-xs-8">Create New Competition</a>
 			</div>
 		</div>
 	</div>

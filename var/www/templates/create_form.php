@@ -1,47 +1,31 @@
 <!DOCTYPE html>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.min.css" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js" crossorigin="anonymous"></script>
-
-<link rel="stylesheet" type="text/css" href="./styles/mnavbar.css">
-
 <head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
+<script src="./bootstrap/dist/js/bootstrap.js"></script>
+
+<link rel="stylesheet" type="text/css" href="./styles/general.css">
+<script src="./scripts/general.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js" crossorigin="anonymous"></script>
 
 <title>Create new competition</title>
 
 <style>
 
-.main {
-	padding-top: 10px;
-	min-width: 550px;
-	max-width: 930px;
-}
-
-.panel {
-	max-width: 500px;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.panel-heading {
-	margin-left: -15px;
-	margin-right: -15px;
-}
-
 .btn-sm {
 	padding: 3px;
 	font-size: 12px;
 	border-radius: 4px;
-	margin-top: 10px;
+	margin-top: 11px;
 }
 
 .labelcheck {
-	margin-top: 2px;
+	margin-top: 3px;
 	margin-left: 2px;
 }
 
@@ -99,14 +83,6 @@ function checkSubmit()
 	return false;
 }
 
-function checkLogout()
-{
-        if(confirm("Are you sure you want to logout?"))
-                return true;
-        else
-                return false;
-}
-
 </script>
 
 </head>
@@ -127,7 +103,7 @@ function checkLogout()
                 </ul>
         </div>
 </nav>
-<div class="container-fluid main">
+<div class="main">
 	<div class="container-fluid panel panel-primary">
 		<div class="panel-heading"><h4>Create new competition</h4></div>
 		<div class="panel-body">
@@ -170,7 +146,7 @@ function checkLogout()
 											<div class="checkbox col-xs-offset-1 col-xs-7">
 												<label><input type="checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="On"><p class="labelcheck"><?= $row["team_name"] ?></p></label>
            	 									</div>
-											<a class="btn btn-sm btn-success col-xs-2" href=<?php echo "/editschool.php?SCID=" . $row["SCID"]; ?>>Edit</a><br>
+											<a class="btn btn-sm btn-primary col-xs-2" href=<?php echo "/editschool.php?SCID=" . $row["SCID"]; ?>>Edit</a><br>
         									</div>
 									</li>
 								<?php endforeach; ?>

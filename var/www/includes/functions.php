@@ -121,7 +121,8 @@ function dbConnect_new() {
     return $conn;
 
 }
-function dbQuery_new($conn, $query, $values = NULL) {
+
+function dbQuery_new($conn, $query, $values = array()) {
 
     if (isset($values)) {
 

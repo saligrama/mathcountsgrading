@@ -61,7 +61,9 @@
 
 		$result = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID = :scid", ["scid" => $_GET["SCID"]]);
 
-		render("edit_form.php", ["result" => $result]);
+		$namerows = dbQuery_new($conn, "SELECT first_name, last_name, email FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
+
+		render("edit_form.php", ["result" => $result, "fullname" => getFullName($namerows)]);
 
 	}
 

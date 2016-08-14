@@ -3,46 +3,28 @@
 
 <head>
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
+<script src="./bootstrap/dist/js/bootstrap.js"></script>
 
-<link rel="stylesheet" type="text/css" href="./styles/mnavbar.css">
+<link rel="stylesheet" type="text/css" href="./styles/general.css">
+<script src="./scripts/general.js"></script>
 
 <title>Add school</title>
 
 <style>
 
-.main {
-	margin-top: 10px;
+.panel {
+	max-width: 540px;
 }
 
-.panel-heading {
-	margin-left: -15px;
-	margin-right: -15px;
-}
-
-.btn {
-	margin-bottom: 10px;
-}
-
-.row {
-	margin-top: -5px;
+.firsty {
+	margin-left: 2px;
+	margin-top: 3px;
 }
 
 </style>
-
-<script type="text/javascript">
-
-function checkLogout()
-{
-        if(confirm("Are you sure you want to logout?"))
-                return true;
-        else
-                return false;
-}
-
-</script>
 
 </head>
 
@@ -61,8 +43,8 @@ function checkLogout()
                 </ul>
         </div>
 </nav>
-<div class="container-fluid main">
-	<div class="panel panel-primary col-sm-offset-3 col-sm-6 col-xs-offset-1 col-xs-10">
+<div class="main">
+	<div class="container-fluid panel panel-primary">
 		<div class="panel-heading"><h4>Fill out the boxes below to create a new school</h4></div>
         	<div class="panel-body">
 			<form id="schoolinfo" action="" method="post">
@@ -99,17 +81,16 @@ function checkLogout()
 					</div>
 					<div class="row">
 						<div class="checkbox">
-							<label><input type="checkbox" name="firstyear" value="yes"><strong>First Year?</strong></label>
+							<label><input type="checkbox" name="firstyear" value="yes"><p class="firsty"><strong>First Year?</strong></p></input></label>
 						</div>
 					</div>
-					<br>
 				</div>
 			</form>
 		</div>
 		<div class="panel-footer">
 			<div class="row">
-				<a class="btn btn-danger col-xs-3 col-xs-offset-1" href="/create.php">Back</a>
-                		<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-6" form="schoolinfo" name="createschool">Create school</button>
+				<a class="btn btn-danger col-xs-offset-1 col-xs-3" href="/create.php">Back</a>
+                		<input type="submit" class="btn btn-success col-xs-offset-1 col-xs-6" form="schoolinfo" name="createschool" value="Create school"></input>
 			</div>
 		</div>
 	</div>

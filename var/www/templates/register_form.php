@@ -9,22 +9,13 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
+<link rel="stylesheet" type="text/css" href="./styles/mnavbar.css">
+<link rel="stylesheet" type="text/css" href="./styles/general.css">
+
 <style>
 
 .panel {
-	margin-left: auto;
-	margin-right: auto;
-	min-width: 250px;
-	max-width: 400px;
-}
-
-.main {
-	margin-top: 10px;
-}
-
-.panel-heading {
-	margin-left: -15px;
-	margin-right: -15px;
+	max-width: 500px;
 }
 
 #check {
@@ -88,10 +79,26 @@ function checkSubmit()
 
 </script>
 
+<script src="./scripts/general.js"></script>
+
 </head>
 
 
 <body>
+<nav class="mnavbar">
+        <div class="mnavcontainer container">
+                <ul class="mnavlist">
+                        <li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
+                        <li class="mnav-right">
+                                <form method="post" onsubmit="return checkLogout();" action="/login.php">
+                                        <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
+                                </form>
+                        </li>
+                        <li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
+                </ul>
+        </div>
+</nav>
 <div class="container-fluid main">
 	<div class="container-fluid panel panel-default">
         	<div class="panel-heading"><h4>Register</h4></div>
