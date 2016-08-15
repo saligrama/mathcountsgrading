@@ -16,11 +16,11 @@
              address=:address,
              contact_email=:email,
              first_year=:firstyear", [
-                 "teamname" => clean($_POST["teamname"]),
-                 "town" => clean($_POST["town"]),
-                 "coach" => clean($_POST["coach"]),
-                 "address" => clean($_POST["address"]),
-                 "email" => clean($_POST["email"]),
+                 "teamname" => $_POST["teamname"],
+                 "town" => $_POST["town"],
+                 "coach" => $_POST["coach"],
+                 "address" => $_POST["address"],
+                 "email" => $_POST["email"],
                  "firstyear" => (isset($_POST["firstyear"]) && $_POST["firstyear"] == "yes") ? 1 : 0
              ]
 

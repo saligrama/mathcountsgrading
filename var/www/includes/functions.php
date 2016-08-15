@@ -197,6 +197,14 @@ function getFullName($conn)
     return $fullname;
 }
 
+function getCompFullName($comprow)
+{
+	if($comprow["competition_name"] == NULL || $comprow["competition_name"] == "")
+		return $comprow["competition_date"];
+	else
+		return $comprow["competition_name"] . " (" . $comprow["competition_date"] . ")";
+}
+
 function clean($data)
 {
 	$data = trim($data);

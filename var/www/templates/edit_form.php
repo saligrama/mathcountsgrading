@@ -83,14 +83,14 @@ function checkSubmit()
         return false;
 }
 
-function checkDiff()
+/*function checkDiff()
 {
-	if(document.getElementById("teamname").value != '<?php echo $row["team_name"]; ?>' ||
-	   document.getElementById("town").value != '<?php echo $row["town"]; ?>' ||
-	   document.getElementById("address").value != '<?php echo $row["address"]; ?>' ||
-	   document.getElementById("coach").value != '<?php echo $row["coach"]; ?>' ||
-	   document.getElementById("email").value != '<?php echo $row["contact_email"]; ?>' ||
-	   (document.getElementById("firstyear").checked ? 1 : 0) != '<?php echo $row["first_year"]; ?>')
+	if(document.getElementById("teamname").value != "<?php echo clean($row['team_name']); ?>" ||
+	   document.getElementById("town").value != "<?php echo clean($row['town']); ?>" ||
+	   document.getElementById("address").value != "<?php echo clean($row['address']); ?>" ||
+	   document.getElementById("coach").value != "<?php echo clean($row['coach']); ?>" ||
+	   document.getElementById("email").value != "<?php echo clean($row['contact_email']); ?>" ||
+	   (document.getElementById("firstyear").checked ? 1 : 0) != "<?php echo clean($row['first_year']); ?>")
 	{
 		document.getElementById("finalizebtn").disabled = false;
 	}
@@ -98,11 +98,11 @@ function checkDiff()
 	{
 		document.getElementById("finalizebtn").disabled = true;
 	}
-}
+}*/
 
 function deleteSchool()
 {
-	if(confirm('Are you sure you want to delete the team/school \'' + '<?php echo $row["team_name"]; ?>' + '\'?'))
+	if(confirm("Are you sure you want to delete the team/school '" + "<?php echo clean($row['team_name']); ?>" + "'?"))
 		return true;
 
 	return false;
@@ -118,7 +118,7 @@ function deleteSchool()
         <div class="mnavcontainer container">
                 <ul class="mnavlist">
                         <li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
-                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
+                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?php echo clean($fullname); ?></strong></p></li>
                         <li class="mnav-right">
                                 <form method="post" onsubmit="return checkLogout();" action="/login.php">
                                         <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
@@ -137,31 +137,31 @@ function deleteSchool()
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="teamname">Team name</label>
-                                                                <input id="teamname" type="text" oninput="checkDiff()" class="form-control" name="teamname" placeholder="School Name" value='<?= "$row[team_name]" ?>' required>
+                                                                <input id="teamname" type="text" oninput="checkDiff()" class="form-control" name="teamname" placeholder="School Name" value="<?php echo clean($row['team_name']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="town">Town</label>
-                                                                <input id="town" type="text" oninput="checkDiff()" class="form-control" name="town" placeholder="Town" value='<?= "$row[town]" ?>' required>
+                                                                <input id="town" type="text" oninput="checkDiff()" class="form-control" name="town" placeholder="Town" value="<?php echo clean($row['town']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="address">Address</label>
-                                                                <input id="address" type="text" oninput="checkDiff()" class="form-control" name="address" placeholder="School Address" value='<?= "$row[address]" ?>' required>
+                                                                <input id="address" type="text" oninput="checkDiff()" class="form-control" name="address" placeholder="School Address" value="<?php echo clean($row['address']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="coach">Coach</label>
-                                                                <input id="coach" type="text" oninput="checkDiff()" class="form-control" name="coach" placeholder="Coach Name" value='<?= "$row[coach]" ?>' required>
+                                                                <input id="coach" type="text" oninput="checkDiff()" class="form-control" name="coach" placeholder="Coach Name" value="<?php echo clean($row['coach']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="email">Email</label>
-                                                                <input id="email" type="email" oninput="checkDiff()" class="form-control" name="email" placeholder="Contact Email" value='<?= "$row[contact_email]" ?>' required>
+                                                                <input id="email" type="email" oninput="checkDiff()" class="form-control" name="email" placeholder="Contact Email" value="<?php echo clean($row['contact_email']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
@@ -169,17 +169,17 @@ function deleteSchool()
                                                                 <label><input id="firstyear" class="check" type="checkbox" onchange="checkDiff()" name="firstyear" value="yes" <?php echo ($row['first_year'] == 1 ? "checked" : ""); ?>><p class="firsty"><strong>First Year?</strong></p></label>
                                                         </div>
                                                 </div>
-        					<input type="hidden" name="scid" value=<?= $row['SCID'] ?>>
+        					<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
                                 </div>
                         </form>
 		</div>
 		<div class="panel-footer">
                         <div class="btmrow row">
-				<button id="finalizebtn" type="submit" class="btmbtn btn btn-success col-sm-offset-0 col-sm-4 col-xs-offset-2 col-xs-8" form="schoolinfo" name="finalize" disabled>Finalize changes</button>
+				<button id="finalizebtn" type="submit" class="btmbtn btn btn-success col-sm-offset-0 col-sm-4 col-xs-offset-2 col-xs-8" form="schoolinfo" name="finalize">Finalize changes</button>
                                 <a class="btmbtn btn btn-danger col-xs-offset-1 col-xs-4 col-sm-offset-1 col-sm-2" href="/create.php">Back</a>
 				<form onsubmit="return deleteSchool();" method="post" action="">
 					<button class="btmbtn btn btn-danger col-sm-offset-1 col-xs-offset-1 col-xs-5 col-sm-4" name="delete" type="submit">Delete school</button>
-					<input type="hidden" name="scid" value=<?= $row['SCID'] ?>>
+					<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
 				</form>
 			</div>
                 </div>

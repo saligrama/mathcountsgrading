@@ -33,7 +33,7 @@
         <div class="mnavcontainer container">
                 <ul class="mnavlist">
                         <li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
-                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
+                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?php echo clean($fullname); ?></strong></p></li>
                         <li class="mnav-right">
                                 <form method="post" onsubmit="return checkLogout();" action="/login.php">
                                         <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>

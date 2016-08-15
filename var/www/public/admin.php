@@ -15,11 +15,7 @@
 	$comp = 0;
     else {
         $comp = dbQuery_new($conn, "SELECT competition_name FROM competition WHERE CID = :CID;", ["CID" => $comp[0][0]]);
-
-	if($comp[0]["competition_name"] != NULL && $comp[0]["competition_name"] != "")
-	    $comp = $comp[0]["competition_name"];
-	else
-	    $comp = $comp[0]["competition_date"];
+	$comp = getCompFullName($comp[0]);
     }
 
     render("admin_form.php", ["result" => $result, "compname" => $comp, "fullname" => getFullName($conn)]);

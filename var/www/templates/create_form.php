@@ -21,7 +21,7 @@
 	padding: 3px;
 	font-size: 12px;
 	border-radius: 4px;
-	margin-top: 11px;
+	margin-top: 10px;
 }
 
 .labelcheck {
@@ -48,26 +48,26 @@ function checkSubmit()
 		return false;
 	}
 
-	if(name == null || name == "")
-	{
-		alert("Please fill out a name for the competition");
-		return false;
-	}
-
 	var listItems = document.getElementById("schooldrop").getElementsByTagName("input");
 	var numc = 0;
 
 	for(var i = 0; i < listItems.length; i++)
-	{
 		if(listItems[i].checked)
 			numc++;
-	}
 
 	if(numc < 2)
 	{
 		alert("Please select 2 or more schools to compete");
 		return false;
 	}
+
+	if(name == null || name == "")
+        {
+                if(confirm("Are you sure you want to create a competition with an empty name on the date " + document.getElementById("compdate").value + " ?"))
+                        return true;
+
+                return false;
+        }
 
 	var mes = "Are you sure you want to create a ";
 	mes += document.getElementById("comptype").options[document.getElementById("comptype").selectedIndex].value;
@@ -93,7 +93,7 @@ function checkSubmit()
         <div class="mnavcontainer container">
                 <ul class="mnavlist">
                         <li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
-                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
+                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?php echo clean($fullname); ?></strong></p></li>
                         <li class="mnav-right">
                                 <form method="post" onsubmit="return checkLogout();" action="/login.php">
                                         <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
@@ -130,7 +130,7 @@ function checkSubmit()
 					<div class="row">
 						<div class="form-group">
 							<label for="compname">Competition Name</label>
-							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name" required>
+							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name">
 						</div>
 					</div><br>
 					<div class="row">
@@ -144,7 +144,7 @@ function checkSubmit()
 									<li>
 										<div class="row">
 											<div class="checkbox col-xs-offset-1 col-xs-7">
-												<label><input type="checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="On"><p class="labelcheck"><?= $row["team_name"] ?></p></label>
+												<label><input type="checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="On"><p class="labelcheck"><?php echo clean($row["team_name"]); ?></p></label>
            	 									</div>
 											<a class="btn btn-sm btn-primary col-xs-2" href=<?php echo "/editschool.php?SCID=" . $row["SCID"]; ?>>Edit</a><br>
         									</div>

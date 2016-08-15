@@ -60,7 +60,7 @@
 	<div class="mnavcontainer container">
 		<ul class="mnavlist">
 			<li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
-			<li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
+			<li class="mnav-left"><p class="mnav-text">Signed in as <strong><?php echo clean($fullname); ?></strong></p></li>
 			<li class="mnav-right">
 				<form method="post" onsubmit="return checkLogout();" action="/login.php">
 					<input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
@@ -86,11 +86,7 @@
         	                                        	<li>
          								<div class="row">
 		                       	                                        <div class="col-xs-offset-1 col-xs-8">
-											<?php if($row["competition_name"] != ""): ?>
-                                        	                                       		<a class="btn compch" href=<?php echo "/admin.php?setComp=" . $row["CID"]; ?>><?= $row["competition_name"] ?> (<?= $row["competition_date"] ?>)</a>
-                                                	                        	<?php else: ?>
-                                                                                		<a class="btn compch" href=<?php echo "/admin.php?setComp=" . $row["CID"]; ?>><?= $row["competition_date"] ?></a>
-                                                        	                	<?php endif; ?>
+                                                                                	<a class="btn compch" href=<?php echo "/admin.php?setComp=" . $row["CID"]; ?>><?php echo clean(getCompFullName($row)); ?></a>
 	                                                                	</div>
 										<a class="btn btn-sm btn-primary col-xs-2" href=<?php echo "/editcompetition.php?CID=" . $row["CID"]; ?>>Edit</a>
 									</div>
@@ -101,7 +97,7 @@
                                 	<a href="/create.php" class="btn btn-default addcomp" style="border-radius: 4px;-webkit-border-radius: 4px;-moz-border-radius: 4px;">Add competition</a>
                         	</div>
 			<?php else: ?>
-				<h3><?= $compname ?></h3>
+				<h3><?php echo clean($compname); ?></h3>
 			<?php endif; ?>
 		</div>
 	</div>
