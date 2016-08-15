@@ -170,8 +170,13 @@ function exprParse($expr) {
 
 }
 
-function getFullName($namerows)
+function getFullName($conn)
 {
+    if(!session_id())
+	session_start();
+
+    $namerows = dbQuery_new($conn, "SELECT first_name, last_name, email FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
+
     $fullname = "";
 
     $name = $namerows[0];
@@ -190,6 +195,14 @@ function getFullName($namerows)
     }
 
     return $fullname;
+}
+
+function clean($data)
+{
+	$data = trim($data);
+	$data = stripslashes($data);
+	$data = htmlspecialchars($data);
+	return $data;
 }
 
 ?>

@@ -10,8 +10,6 @@
     if(empty($result))
 	$result = 0;
 
-    $namerows = dbQuery_new($conn, "SELECT first_name, last_name, email FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
-
     $comp = dbQuery_new($conn, "SELECT * FROM current_competition");
     if(empty($comp))
 	$comp = 0;
@@ -24,6 +22,6 @@
 	    $comp = $comp[0]["competition_date"];
     }
 
-    render("admin_form.php", ["result" => $result, "compname" => $comp, "fullname" => getFullName($namerows)]);
+    render("admin_form.php", ["result" => $result, "compname" => $comp, "fullname" => getFullName($conn)]);
 
 ?>

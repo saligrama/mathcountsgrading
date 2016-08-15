@@ -10,14 +10,14 @@
 
 
 	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_type = :comptype AND competition_name = :compname;",
-				["compdate" => $_POST["compdate"], "comptype" => $_POST["comptype"], "compname" => $_POST["compname"]]);
+				["compdate" => clean($_POST["compdate"]), "comptype" => clean($_POST["comptype"]), "compname" => clean($_POST["compname"])]);
 	if(!empty($previous)) {
 		popupAlert("Whoops! A competition with the same name, type, and date already exists.");
 		redirectTo("/create.php");
 	}
 
         dbQuery_new($conn, "INSERT INTO competition SET competition_date = :compdate, competition_type = :comptype, competition_name = :compname;",
-			["compdate" => $_POST["compdate"], "comptype" => $_POST["comptype"], "compname" => $_POST["compname"]]);
+			["compdate" => clean($_POST["compdate"]), "comptype" => clean($_POST["comptype"]), "compname" => clean($_POST["compname"])]);
 
 	$liid = $conn->lastInsertId();
 
@@ -27,7 +27,7 @@
                 dbQuery_new($conn, "INSERT INTO competition_participants SET CID = :liid, SCID = :scid;", ["liid" => $liid, "scid" => $scid]);
 	}
 
-	redirectTo("admin.php");
+	redirectTo("/admin.php");
 
     }
 
@@ -37,9 +37,7 @@
 
         $result = dbQuery_new($conn, "SELECT SCID, team_name FROM school_info");
 
-	$namerows = dbQuery_new($conn, "SELECT first_name, last_name, email FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
-
-	render("create_form.php", ["result" => $result, "fullname" => getFullName($namerows)]);
+	render("create_form.php", ["result" => $result, "fullname" => getFullName($conn)]);
 
     }
 

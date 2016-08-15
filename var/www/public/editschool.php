@@ -19,37 +19,26 @@
                 		contact_email=:email,
                 		first_year=:firstyear
 	        		WHERE SCID=:scid", [
-					"scid" => $_POST["scid"],
-                			"team_name" => $_POST["teamname"],
-                			"town" => $_POST["town"],
-                			"coach" => $_POST["coach"],
-                			"address" => $_POST["address"],
-                			"email" => $_POST["email"],
+					"scid" => clean($_POST["scid"]),
+                			"team_name" => clean($_POST["teamname"]),
+                			"town" => clean($_POST["town"]),
+                			"coach" => clean($_POST["coach"]),
+                			"address" => clean($_POST["address"]),
+                			"email" => clean($_POST["email"]),
                 			"firstyear" => (isset($_POST["firstyear"]) && $_POST["firstyear"] == "yes") ? 1 : 0
                 		]
 
                 	);
 
-    	        	redirectTo("create.php");
+    	        	redirectTo("/create.php");
 		}
 		else if(isset($_POST["delete"]))
 		{
-			dbQuery_new(dbConnect_new(), "DELETE FROM school_info WHERE SCID = :scid", ["scid" =>$_POST["scid"]]);
+			dbQuery_new(dbConnect_new(), "DELETE FROM school_info WHERE SCID = :scid", ["scid" => clean($_POST["scid"])]);
 
 			popupAlert("Success! school deleted");
 			redirectTo("/create.php");
 		}
-		else
-		{
-			if(!isset($_GET["SCID"]))
-                        	redirectTo("admin.php");
-
-                	$conn = dbConnect_new();
-
-                	$result = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID = :scid", ["scid" => $_GET["SCID"]]);
-
-                	render("edit_form.php", ["result" => $result]);
-        	}
 	}
 
 	else {

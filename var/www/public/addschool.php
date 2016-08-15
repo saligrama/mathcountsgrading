@@ -16,11 +16,11 @@
              address=:address,
              contact_email=:email,
              first_year=:firstyear", [
-                 "teamname" => $_POST["teamname"],
-                 "town" => $_POST["town"],
-                 "coach" => $_POST["coach"],
-                 "address" => $_POST["address"],
-                 "email" => $_POST["email"],
+                 "teamname" => clean($_POST["teamname"]),
+                 "town" => clean($_POST["town"]),
+                 "coach" => clean($_POST["coach"]),
+                 "address" => clean($_POST["address"]),
+                 "email" => clean($_POST["email"]),
                  "firstyear" => (isset($_POST["firstyear"]) && $_POST["firstyear"] == "yes") ? 1 : 0
              ]
 
@@ -30,10 +30,7 @@
 	redirectTo("/create.php");
 
     }
-    else {
-	$namerows = dbQuery_new($conn, "SELECT first_name, last_name, email FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
-
-	render("add_form.php", ["fullname" => getFullName($namerows)]);
-    }
+    else
+	render("add_form.php", ["fullname" => getFullName($conn)]);
 
 ?>

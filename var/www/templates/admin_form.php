@@ -29,11 +29,14 @@
 }
 
 .dropdown-menu {
-        min-width: 300px;
+        width: 250px;
 }
 
 .dropdown-toggle {
 	margin-right: 7px;
+}
+
+.compch {
 }
 
 .compch:hover {
@@ -75,27 +78,27 @@
 				<div class="btn-group">
 					<button class="btn btn-default">Select competition </button>
 					<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
-					<ul class="dropdown-menu">
+					<ul class="dropdown-menu container">
 						<?php if ($result == 0): ?>
 							<li class="nocomp">Looks like there aren't any competitions yet.</li>
 						<?php else: ?>
 							<?php foreach($result as $row): ?>
         	                                        	<li>
-                	                                                <div class="row">
-                        	                                                <div class="col-xs-offset-1 col-xs-7">
-                                	                                        	<?php if($row["competition_name"] != ""): ?>
-                                        	                                        	<a class="btn compch" href=<?php echo "/admin.php?setComp=" . $row["CID"]; ?>><?= $row["competition_name"] ?> (<?= $row["competition_date"] ?>)</a>
+         								<div class="row">
+		                       	                                        <div class="col-xs-offset-1 col-xs-8">
+											<?php if($row["competition_name"] != ""): ?>
+                                        	                                       		<a class="btn compch" href=<?php echo "/admin.php?setComp=" . $row["CID"]; ?>><?= $row["competition_name"] ?> (<?= $row["competition_date"] ?>)</a>
                                                 	                        	<?php else: ?>
-                                                                                	<a class="btn compch" href=<?php echo "/admin.php?setComp=" . $row["CID"]; ?>><?= $row["competition_date"] ?></a>
+                                                                                		<a class="btn compch" href=<?php echo "/admin.php?setComp=" . $row["CID"]; ?>><?= $row["competition_date"] ?></a>
                                                         	                	<?php endif; ?>
-                                                                	        </div>
-	                                                                	<a class="btn btn-sm btn-primary col-xs-2" href=<?php echo "/editcompetition.php?CID=" . $row["CID"]; ?>>Edit</a>
-        	                                                	</div>
-                	                                	</li>
+	                                                                	</div>
+										<a class="btn btn-sm btn-primary col-xs-2" href=<?php echo "/editcompetition.php?CID=" . $row["CID"]; ?>>Edit</a>
+									</div>
+								</li>
                         	                	<?php endforeach; ?>
 						<?php endif; ?>
 					</ul>
-                                	<a href="/create.php" class="btn btn-default addcomp" style="border-radius: 4px;">Add competition</a>
+                                	<a href="/create.php" class="btn btn-default addcomp" style="border-radius: 4px;-webkit-border-radius: 4px;-moz-border-radius: 4px;">Add competition</a>
                         	</div>
 			<?php else: ?>
 				<h3><?= $compname ?></h3>
