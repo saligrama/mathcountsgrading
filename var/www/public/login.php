@@ -1,6 +1,6 @@
 <?php
 
-require("../includes/functions.php");
+require(dirname(__FILE__) . "/../includes/functions.php");
 
 $error = 0;
 
@@ -30,9 +30,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 	if(isset($_POST["login"])) {
 
 		$passwd = $name = "";
-        	$passwd = htmlspecialchars($_POST["passwd"]);
+        	$passwd = $_POST["passwd"];
 
-		$name = htmlspecialchars($_POST["logname"]);
+		$name = $_POST["logname"];
 
 		if(!$passwd || !$name || $passwd == "" || $name == "") {
 			$error = 1;
@@ -85,6 +85,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 }
 
-render("login_form.php", ["error" => $error]);
+render("login_form.php", ["error" => $error, "fullname" => getFullName($conn)]);
 
 ?>

@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
+<script src="./bootstrap/dist/js/bootstrap.js"></script>
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
+<link rel="stylesheet" type="text/css" href="./styles/general.css">
+<script src="./scripts/general.js"></script>
 
 <head>
 
@@ -18,19 +16,6 @@
 
 <style>
 
-.main {
-	margin-top: 10px;
-}
-
-.panel-heading {
-	margin-left: -15px;
-	margin-right: -15px;
-}
-
-.panel {
-	max-width: 400px;
-}
-
 .form-control {
 	max-width: 400px;
 }
@@ -39,14 +24,34 @@
 	margin-left: -5px;
 }
 
+.panel {
+	max-width: 380px;
+}
+
 </style>
 
 </head>
 
-<body>
 
-<div class="container-fluid main">
-	<div class="panel panel-default col-sm-offset-4 col-sm-4">
+<body>
+<?php if ($fullname !== 0): ?>
+	<nav class="mnavbar">
+        	<div class="mnavcontainer container">
+                	<ul class="mnavlist">
+                        	<li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+	                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?php echo clean($fullname); ?></strong></p></li>
+        	                <li class="mnav-right">
+                	                <form method="post" onsubmit="return checkLogout();" action="/login.php">
+                        	                <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
+                                	</form>
+	                        </li>
+        	                <li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
+                	</ul>
+        	</div>
+	</nav>
+<?php endif; ?>
+<div class="main">
+	<div class="container-fluid panel panel-default">
 		<div class="panel-heading">User Login</div>
 		<div class="panel-body">
 			<form id="input_form" action="" method="post">
@@ -54,7 +59,6 @@
 					<label for="logname">Email</label>
         				<input type="email" class="form-control" id="logname" name="logname" placeholder="email" autofocus>
 				</div>
-
 				<div class="form-group">
 					<label for="passwd">Password</label>
 					<input type="password" class="form-control" name="passwd" id="passwd" placeholder="password">

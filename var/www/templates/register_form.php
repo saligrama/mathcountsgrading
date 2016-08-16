@@ -5,17 +5,17 @@
 <title>Add new user</title>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
+<script src="./bootstrap/dist/js/bootstrap.js"></script>
 
-<link rel="stylesheet" type="text/css" href="./styles/mnavbar.css">
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
+<script src="./scripts/general.js"></script>
 
 <style>
 
 .panel {
-	max-width: 500px;
+	max-width: 400px;
 }
 
 #check {
@@ -79,26 +79,26 @@ function checkSubmit()
 
 </script>
 
-<script src="./scripts/general.js"></script>
-
 </head>
 
 
 <body>
-<nav class="mnavbar">
-        <div class="mnavcontainer container">
-                <ul class="mnavlist">
-                        <li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
-                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?= $fullname ?></strong></p></li>
-                        <li class="mnav-right">
-                                <form method="post" onsubmit="return checkLogout();" action="/login.php">
-                                        <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
-                                </form>
-                        </li>
-                        <li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
-                </ul>
-        </div>
-</nav>
+<?php if ($fullname !== 0): ?>
+	<nav class="mnavbar">
+        	<div class="mnavcontainer container">
+                	<ul class="mnavlist">
+                        	<li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+	                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?php echo clean($fullname); ?></strong></p></li>
+        	                <li class="mnav-right">
+                	                <form method="post" onsubmit="return checkLogout();" action="/login.php">
+                        	                <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
+                                	</form>
+                        	</li>
+	                        <li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
+        	        </ul>
+        	</div>
+	</nav>
+<?php endif; ?>
 <div class="container-fluid main">
 	<div class="container-fluid panel panel-default">
         	<div class="panel-heading"><h4>Register</h4></div>
@@ -106,9 +106,17 @@ function checkSubmit()
 			<form id="input_form" onsubmit="return checkSubmit();" action="" method="post">
                 		<label for="logname">Email</label>
                 		<input type="email" class="form-control" id="logname" name="logname" placeholder="email" autofocus required><br>
+
+				<label for"firstname">First name (optional)</label>
+				<input type="text" class="form-control" id="firstname" name="firstname" placeholder="first name"><br>
+
+				<label for="lastname">Last name (optional)</label>
+				<input type="text" class="form-control" id="lastname" name="lastname" placeholder="last name"><br>
+
 				<label for="passwd">Password</label>
                 		<input type="password" oninput="checkConfirm();" class="form-control" name="passwd" id="passwd" placeholder="password" required><br>
-                		<label for="confirm">Confirm Password</label>
+
+				<label for="confirm">Confirm Password</label>
                 		<div class="input-group">
 					<input type="password" oninput="checkConfirm();" class="form-control" name="confirm" id="confirm" placeholder="confirm password" aria-describedby="check" required>
 					<span class="input-group-addon" id="check">
@@ -119,7 +127,7 @@ function checkSubmit()
 				<select class="col-xs-8" id="schaf" name="schaf" class="dropdown"><br>
                                         <option value="0">None (admin)</option>
                                         <?php foreach($schoolrows as $row): ?>
-                                                <option value='<?= $row["SCID"] ?>'><?= $row["team_name"] ?></option>
+                                                <option value='<?= $row["SCID"] ?>'><?php echo clean($row["team_name"]); ?></option>
                                         <?php endforeach; ?>
                                 </select><br><br>
 			</form>

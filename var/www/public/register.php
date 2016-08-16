@@ -1,6 +1,6 @@
 <?php
 
-    require("../includes/functions.php");
+    require(dirname(__FILE__) . "/../includes/functions.php");
 
     $error = 0;
 
@@ -15,11 +15,13 @@
             $passwd = $name = $confirm = "";
 	    $schaf = 0;
 
-            $passwd = htmlspecialchars($_POST["passwd"]);
-            $confirm = htmlspecialchars($_POST["confirm"]);
-            $name = htmlspecialchars($_POST["logname"]);
+            $passwd = $_POST["passwd"];
+            $confirm = $_POST["confirm"];
+            $logname = $_POST["logname"];
+	    $firstname = $_POST["firstname"];
+	    $lastname = $_POST["lastname"];
 
-            if (!$passwd || !$name || !isset($_POST["schaf"]))
+            if (!$passwd || !$logname || !isset($_POST["schaf"]))
                 $error = 1;
             elseif (!$confirm || $confirm !== $passwd)
                 $error = 1;
@@ -27,14 +29,18 @@
 
                 $result = dbQuery_new($conn, "INSERT INTO user SET
                                       email=:name,
+				      last_name=:lastname,
+				      first_name=:firstname,
                                       password=:ph,
                                       SCID=:schaf,
                                       type=:type", [
-                                              "name" => $name,
+                                              "name" => $logname,
                                               "ph" => password_hash($passwd, PASSWORD_DEFAULT),
                                               "schaf" => $_POST["schaf"],
-                                              "type" => $_POST["schaf"] ? 'grader' : 'admin'
-                                      ]
+                                              "type" => $_POST["schaf"] ? 'grader' : 'admin',
+                                      	      "lastname" => $lastname,
+					      "firstname" => $firstname
+					]
 
                 );
 
@@ -50,7 +56,7 @@
 
     switch($error) {
 	case 0:
-	    render("register_form.php", ["schoolrows" => dbQuery_new(dbConnect_new(), "SELECT * FROM school_info;")]);
+	    render("register_form.php", ["schoolrows" => dbQuery_new($conn, "SELECT * FROM school_info;"), "fullname" => getFullName($conn)]);
 	    break;
 	case 1:
 	    popupAlert("Woopsie! Something went wrong. Please try again");

@@ -175,7 +175,16 @@ function getFullName($conn)
     if(!session_id())
 	session_start();
 
+    if(!isset($_SESSION["UID"]))
+	return 0;
+
     $namerows = dbQuery_new($conn, "SELECT first_name, last_name, email FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
+    if(empty($namerows)) {
+	popupAlert("Whoops! There was an interal error. Please press ok to log back in.");
+	endLoginSession();
+	redirectTo("/login.php");
+	return 1;
+    }
 
     $fullname = "";
 

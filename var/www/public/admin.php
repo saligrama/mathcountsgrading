@@ -10,6 +10,9 @@
     if(empty($result))
 	$result = 0;
 
+    $comp = 0;
+    if(isset($_GET["setComp"])
+	$comp = dbQuery_new($conn, "SELECT * FROM competition WHERE CID = :CID;", ["CID" => $_GET["setComp"]]);
     $comp = dbQuery_new($conn, "SELECT * FROM current_competition");
     if(empty($comp))
 	$comp = 0;
