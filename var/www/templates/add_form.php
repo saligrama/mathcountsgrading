@@ -26,6 +26,24 @@
 
 </style>
 
+<script type="text/javascript">
+
+function checkSubmit()
+{
+	var mes = "Are you sure you want to create a school with team name '";
+	mes += document.getElementById("teamname").value;
+	mes += "' from the town '";
+	mes += document.getElementById("town").value;
+	mes += "'?";
+
+	if(confirm(mes))
+		return true;
+
+	return false;
+}
+
+</script>
+
 </head>
 
 <body>
@@ -47,7 +65,7 @@
 	<div class="container-fluid panel panel-primary">
 		<div class="panel-heading"><h4>Fill out the boxes below to create a new school</h4></div>
         	<div class="panel-body">
-			<form id="schoolinfo" action="" method="post">
+			<form id="schoolinfo" onsubmit="return checkSubmit();" action="" method="post">
                 		<div class="col-xs-offset-1 col-xs-10">
 					<div class="row">
 						<div class="form-group">

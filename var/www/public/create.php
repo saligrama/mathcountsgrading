@@ -9,10 +9,10 @@
         $scids = dbQuery_new($conn, "SELECT SCID FROM school_info;");
 
 
-	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_type = :comptype AND competition_name = :compname;",
-				["compdate" => $_POST["compdate"], "comptype" => $_POST["comptype"], "compname" => $_POST["compname"]]);
+	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_name = :compname;",
+				["compdate" => $_POST["compdate"], "compname" => $_POST["compname"]]);
 	if(!empty($previous)) {
-		popupAlert("Whoops! A competition with the same name, type, and date already exists.");
+		popupAlert("Whoops! A competition with the same name and date already exists.");
 		redirectTo("/create.php");
 	}
 

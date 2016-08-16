@@ -10,6 +10,13 @@
 	{
 		if(isset($_POST["finalize"]))
 		{
+			$previous = dbQuery_new($conn, "SELECT * FROM school_info WHERE team_name = :teamname AND town = :town AND address = :address AND SCID != :scid;",
+                                ["teamname" => $_POST["teamname"], "town" => $_POST["town"], "address" => $_POST["address"], "scid" => $_POST["scid"]]);
+        		if(!empty($previous)) {
+        		        popupAlert("Whoops! A school with the same team name, town, and address already exists.");
+                		redirectTo("/editschool.php?SCID=" . $_POST["scid"]);
+        		}
+
         		dbQuery_new($conn,
         			"UPDATE school_info SET
         			team_name=:team_name,

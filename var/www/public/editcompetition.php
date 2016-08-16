@@ -8,10 +8,10 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"])) {
 
-	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_type = :comptype AND competition_name = :compname;",
-                                ["compdate" => $_POST["compdate"], "comptype" => $_POST["comptype"], "compname" => $_POST["compname"]]);
+	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_name = :compname AND CID != :cid;",
+                                ["compdate" => $_POST["compdate"], "compname" => $_POST["compname"], "cid" => $_POST["cid"]]);
         if(!empty($previous)) {
-                popupAlert("Whoops! A competition with the same name, type, and date already exists.");
+                popupAlert("Whoops! A competition with the same name and date already exists.");
                 redirectTo("/editcompetition.php?CID=" . $_POST["cid"]);
         }
 
@@ -74,7 +74,7 @@
     }
     elseif($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete"])) {
 
-	dbQuery_new($conn, "DELETE FROM competition WHERE CID = :cid", ["cid" => $_GET["CID"]]);
+	dbQuery_new($conn, "DELETE FROM competition WHERE CID = :cid", ["cid" => $_POST["cid"]]);
 
 	popupAlert("Success! The competition has been deleted");
 	redirectTo("/admin.php");

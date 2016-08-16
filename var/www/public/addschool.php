@@ -8,6 +8,13 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["createschool"])) {
 
+	$previous = dbQuery_new($conn, "SELECT * FROM school_info WHERE team_name = :teamname AND town = :town AND address = :address;",
+                                ["teamname" => $_POST["teamname"], "town" => $_POST["town"], "address" => $_POST["address"]]);
+        if(!empty($previous)) {
+                popupAlert("Whoops! A school with the same team name, town, and address already exists.");
+                redirectTo("/addschool.php");
+        }
+
         dbQuery_new($conn,
             "INSERT INTO school_info SET
              team_name=:teamname,

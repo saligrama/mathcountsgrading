@@ -137,36 +137,36 @@ function deleteSchool()
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="teamname">Team name</label>
-                                                                <input id="teamname" type="text" oninput="checkDiff()" class="form-control" name="teamname" placeholder="School Name" value="<?php echo clean($row['team_name']); ?>" required>
+                                                                <input id="teamname" type="text" class="form-control" name="teamname" placeholder="School Name" value="<?php echo clean($row['team_name']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="town">Town</label>
-                                                                <input id="town" type="text" oninput="checkDiff()" class="form-control" name="town" placeholder="Town" value="<?php echo clean($row['town']); ?>" required>
+                                                                <input id="town" type="text" class="form-control" name="town" placeholder="Town" value="<?php echo clean($row['town']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="address">Address</label>
-                                                                <input id="address" type="text" oninput="checkDiff()" class="form-control" name="address" placeholder="School Address" value="<?php echo clean($row['address']); ?>" required>
+                                                                <input id="address" type="text" class="form-control" name="address" placeholder="School Address" value="<?php echo clean($row['address']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="coach">Coach</label>
-                                                                <input id="coach" type="text" oninput="checkDiff()" class="form-control" name="coach" placeholder="Coach Name" value="<?php echo clean($row['coach']); ?>" required>
+                                                                <input id="coach" type="text" class="form-control" name="coach" placeholder="Coach Name" value="<?php echo clean($row['coach']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="email">Email</label>
-                                                                <input id="email" type="email" oninput="checkDiff()" class="form-control" name="email" placeholder="Contact Email" value="<?php echo clean($row['contact_email']); ?>" required>
+                                                                <input id="email" type="email" class="form-control" name="email" placeholder="Contact Email" value="<?php echo clean($row['contact_email']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="checkbox">
-                                                                <label><input id="firstyear" class="check" type="checkbox" onchange="checkDiff()" name="firstyear" value="yes" <?php echo ($row['first_year'] == 1 ? "checked" : ""); ?>><p class="firsty"><strong>First Year?</strong></p></label>
+                                                                <label><input id="firstyear" class="check" type="checkbox" name="firstyear" value="yes" <?php echo ($row['first_year'] == 1 ? "checked" : ""); ?>><p class="firsty"><strong>First Year?</strong></p></label>
                                                         </div>
                                                 </div>
         					<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">

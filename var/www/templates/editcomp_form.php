@@ -24,6 +24,10 @@
 	margin-top: 10px;
 }
 
+.panel {
+	min-width: 500px;
+}
+
 .labelcheck {
 	margin-top: 2px;
 	margin-left: 2px;
@@ -138,14 +142,14 @@ function deleteComp()
 					<div class="row">
 						<div class="form-group">
 							<label for="compdate">Competition Date</label>
-							<input id="compdate" type="date" class="form-control" oninput="checkDiff()" name="compdate" placeholder="Date (yyyy-mm-dd)" value="<?php echo htmlspecialchars($crow['competition_date']); ?>" required>
+							<input id="compdate" type="date" class="form-control" name="compdate" placeholder="Date (yyyy-mm-dd)" value="<?php echo htmlspecialchars($crow['competition_date']); ?>" required>
 						</div>
 					</div>
 					<div class="row">
 						<div class="form-group">
 							<label for="comptype">Competition Type</label>
 							<div class="dropdown">
-								<select name="comptype" id="comptype" class="col-xs-12" onchange="checkDiff()">
+								<select name="comptype" id="comptype" class="col-xs-12">
 									<option value="chapter" <?= $crow['competition_type'] == 'chapter' ? "selected" : "" ?>>Chapter</option>
 									<option value="state" <?= $crow['competition_type'] == 'state' ? "selected" : "" ?>>State</option>
 									<option value="national" <?= $crow['competition_type'] == 'national' ? "selected" : "" ?>>National</option>
@@ -156,7 +160,7 @@ function deleteComp()
 					<div class="row">
 						<div class="form-group">
 							<label for="compname">Competition Name</label>
-							<input type="text" class="form-control" name="compname" id="compname" oninput="checkDiff()" placeholder="competition name" value="<?php echo clean($crow['competition_name']); ?>">
+							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name" value="<?php echo clean($crow['competition_name']); ?>">
 						</div>
 					</div><br>
 					<div class="row">
@@ -170,7 +174,7 @@ function deleteComp()
 									<li>
 										<div class="row">
 											<div class="checkbox col-xs-offset-1 col-xs-7">
-												<label><input type="checkbox" oninput="checkDiff()" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>><p class="labelcheck"><?php echo clean($row["team_name"]); ?></p></label>
+												<label><input type="checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>><p class="labelcheck"><?php echo clean($row["team_name"]); ?></p></label>
 	   	 									</div>
 											<a class="btn btn-sm btn-primary col-xs-2" href=<?php echo "/editschool.php?SCID=" . $row["SCID"]; ?>>Edit</a><br>
 										</div>
@@ -189,12 +193,17 @@ function deleteComp()
 		</div>
 		<div class="panel-footer">
 			<div class="row">
-				<button id="finalizebtn" type="submit" class="btn btn-success col-sm-offset-0 col-sm-4 col-xs-offset-2 col-xs-8" form="compinfo" name="finalize">Finalize changes</button>
-                                <a class="btn btn-danger col-xs-offset-1 col-xs-4 col-sm-offset-1 col-sm-2" href="/admin.php">Back</a>
-                                <form onsubmit="return deleteComp()" method="post" action="">
-                                        <button class="btn btn-danger col-sm-offset-1 col-xs-offset-1 col-xs-5 col-sm-4" name="delete" type="submit">Delete competition</button>
+				<button id="finalizebtn" type="submit" class="btn btn-success col-xs-offset-2 col-xs-8" form="compinfo" name="finalize">Finalize changes</button>
+                        </div>
+		</div>
+		<div class="panel-footer">
+			<div class="row">
+				<a class="btn btn-danger col-xs-3" href="/admin.php">Back</a>
+				<form onsubmit="return deleteComp()" method="post" action="">
+                                        <button class="btn btn-danger col-xs-offset-1 col-xs-4" name="delete" type="submit">Delete competition</button>
                                         <input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
                                 </form>
+				<a class="btn btn-primary col-xs-offset-1 col-xs-3" href="/addschool.php">New school</a>
 			</div>
 		</div>
 	</div>
