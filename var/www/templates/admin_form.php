@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 
 
+<?php
+$avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
+                10.0*floatval($comprow['status_team']) +
+                2.0*floatval($comprow['status_target1']) +
+                2.0*floatval($comprow['status_target2']) +
+                2.0*floatval($comprow['status_target3']) +
+                2.0*floatval($comprow['status_target4'])) / 48.0));
+?>
+
 <head>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -49,8 +58,12 @@ label {
 	width: 300px;
 }
 
-.btn-group {
-	float: center;
+.panel {
+	max-width: 500px;
+}
+
+.btn-danger {
+	border-radius: 4px !important;
 }
 
 </style>
@@ -86,7 +99,7 @@ function changeComp(CID)
 	</div>
 </nav>
 <div class="main">
-	<div class="container ncont">
+	<div class="container ncont text-center">
 		<?php if($comprow == 0): ?>
 			<div class="jumbotron">
 				<h3 class="compname">Whoops! The current competition hasn't been set yet.</h3>
@@ -131,8 +144,19 @@ function changeComp(CID)
                                                         <?php endforeach; ?>
                                                 <?php endif; ?>
                                         </ul>
-					<a class="btn btn-danger" href="/admin.php?setComp=0">Unselect </a>
+					<a class="btn btn-danger" href="/admin.php?setComp=0">Unselect</a>
 				</div>
+			</div>
+			<div class="panel panel-primary container-fluid">
+				<div class="panel-heading text-center"><h4>Competition info</h4></div>
+				<div class="panel-body">
+					<div class="progress">
+						<div class="progress-bar" role="progressbar" aria-valuenow="<?= $avgprogress ?>" aria-valuemin="0" aria-valuemax="100" style="width:<?= $avgprogress ?>%">
+							<?= $avgprogress ?>%
+						</div>
+					</div>
+				</div>
+				<div class="panel-footer"></div>
 			</div>
 		<?php endif; ?>
 	</div>

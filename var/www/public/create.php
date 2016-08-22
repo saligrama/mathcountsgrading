@@ -29,6 +29,7 @@
                 dbQuery_new($conn, "INSERT INTO competition_participants SET CID = :liid, SCID = :scid;", ["liid" => $liid, "scid" => $scid]);
 	}
 
+	popupAlert("Success! Competition created");
 	redirectTo("/admin.php");
 
     }

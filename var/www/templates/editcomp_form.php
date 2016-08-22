@@ -189,7 +189,7 @@ function doCheck(scid)
 											<li class="slider-li">
 												<input type="checkbox" class="slider-checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
 												<p onclick="doCheck(<?= $row['SCID'] ?>)" class="slider-text"><?php echo clean($row["team_name"]); ?></p>
-												<button form="" role="button" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
+												<a class="btn btn-primary slider-edit" href="editschool.php?SCID=<?= $row['SCID'] ?>">Edit</a>
 												</li>
 											<li class="divider slider-divider"></li>
 										<?php endforeach; ?>

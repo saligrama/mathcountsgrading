@@ -27,6 +27,14 @@
                 $error = 1;
             else {
 
+		$previous = dbQuery_new($conn, "SELECT * FROM user WHERE email = :email;",
+                                ["email" => $logname]);
+	        if(!empty($previous)) {
+        	        popupAlert("Whoops! A user with the same email/logname already exists");
+                	redirectTo("/register.php");
+        	}
+
+
                 $result = dbQuery_new($conn, "INSERT INTO user SET
                                       email=:name,
 				      last_name=:lastname,
