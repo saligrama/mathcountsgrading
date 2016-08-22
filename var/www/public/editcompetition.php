@@ -60,7 +60,7 @@
         foreach($unset_schools as $i) {
 
             dbQuery_new($conn, "DELETE FROM competition_participants WHERE
-                                CID = :cid,
+                                CID = :cid AND
                                 SCID = :scid", [
                                     "cid" => $_POST["cid"],
                                     "scid" => $i
@@ -87,6 +87,9 @@
 
         $conn = dbConnect_new();
         $schinfo = dbQuery_new($conn, "SELECT * FROM school_info");
+	if(empty($schinfo))
+		$schinfo = 0;
+
         $compinfo = dbQuery_new($conn, "SELECT * FROM competition WHERE CID=:cid", ["cid" => $_GET["CID"]]);
         $participants = dbQuery_new($conn, "SELECT * FROM competition_participants WHERE CID=:cid", ["cid" => $_GET["CID"]]);
 

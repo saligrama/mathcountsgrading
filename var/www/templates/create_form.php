@@ -17,20 +17,13 @@
 
 <style>
 
-.btn-sm {
-	padding: 3px;
-	font-size: 12px;
-	border-radius: 4px;
-	margin-top: 10px;
+.panel {
+	min-width: 500px;
 }
 
-.labelcheck {
-	margin-top: 3px;
-	margin-left: 2px;
-}
-
-.dropdown-menu {
-	min-width: 300px;
+.noschool {
+        display: block !important;
+        padding: 3px 6px;
 }
 
 </style>
@@ -48,7 +41,7 @@ function checkSubmit()
 		return false;
 	}
 
-	var listItems = document.getElementById("schooldrop").getElementsByTagName("input");
+	var listItems = document.getElementById("scont").getElementsByTagName("input");
 	var numc = 0;
 
 	for(var i = 0; i < listItems.length; i++)
@@ -81,6 +74,11 @@ function checkSubmit()
 		return true;
 
 	return false;
+}
+
+function doCheck(scid)
+{
+	document.getElementById("check" + scid).checked = !document.getElementById("check" + scid).checked;
 }
 
 </script>
@@ -135,22 +133,23 @@ function checkSubmit()
 					</div><br>
 					<div class="row">
 						<div class="dropdown">
-							<button id="schoolmenu" class="btn btn-default dropdown-toggle col-xs-12" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								Select school(s)
-								<span class="caret"></span>
-							</button>
-							<ul class="dropdown-menu container-fluid" id="schooldrop" aria-labelledby="schoolmenu">
-        							<?php foreach($result as $row): ?>
-									<li>
-										<div class="row">
-											<div class="checkbox col-xs-offset-1 col-xs-7">
-												<label><input type="checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="On"><p class="labelcheck"><?php echo clean($row["team_name"]); ?></p></label>
-           	 									</div>
-											<a class="btn btn-sm btn-primary col-xs-2" href=<?php echo "/editschool.php?SCID=" . $row["SCID"]; ?>>Edit</a><br>
-        									</div>
-									</li>
-								<?php endforeach; ?>
-							</ul>
+							<label for="swell">Schools</label>
+                                                        <div class="well well-sm slider-well" id="swell">
+                                                                <ul class="slider-container-fixed" id="scont">
+                                                                        <?php if($schinfo == 0): ?>
+                                                                                <li class="noschool">Looks like there aren't any schools yet.</li>
+                                                                        <?php else: ?>
+										<?php foreach($schinfo as $row): ?>
+                                                                                	<li class="slider-li">
+                                                                                        	<input type="checkbox" class="slider-checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes">
+                                                                                        	<p onclick="doCheck(<?= $row['SCID'] ?>)" class="slider-text"><?php echo clean($row["team_name"]); ?></p>
+                                                                                        	<button id=<?= "edit" . $row["SCID"] ?> form="" role="button" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
+                                                                                	</li>
+                                                                                	<li class="divider slider-divider"></li>
+                                                                        	<?php endforeach; ?>
+									<?php endif; ?>
+                                                                </ul>
+                                                        </div>
 						</div>
 					</div><br>
 				</div>

@@ -21,34 +21,49 @@
 	width: 500px;
 }
 
-.btn-sm {
-        padding: 3px;
-        font-size: 12px;
-        border-radius: 4px;
-        margin-top: 5px;
-}
-
-.dropdown-menu {
-        width: 250px;
-}
-
 .dropdown-toggle {
 	margin-right: 7px;
 }
 
-.compch {
+.compname {
+	text-align: center;
+	word-wrap: break-word;
 }
 
-.compch:hover {
-	background-color: #eeeeee;
+.currentcomp {
+	font-size: 16px !important;
+	margin-bottom: 4px !imporant;
+}
+
+label {
+	text-align: center;
+	font-size: 20px;
 }
 
 .nocomp {
-	font-size: 14px;
-	padding: 5px 10px 5px 10px;
+	display: block !important;
+	padding: 5px 10px;
+}
+
+.dropdown-menu {
+	width: 300px;
+}
+
+.btn-group {
+	float: center;
 }
 
 </style>
+
+<script type="text/javascript">
+
+function changeComp(CID)
+{
+	if(!isHovered(document.getElementById("editbtn" + CID)))
+		redirectTo("/admin.php?setComp=" + CID);
+}
+
+</script>
 
 </head>
 
@@ -70,73 +85,60 @@
 		</ul>
 	</div>
 </nav>
-<div class="container-fluid main">
+<div class="main">
 	<div class="container ncont">
-		<div class="jumbotron">
-			<?php if($compname == 0): ?>
-				<h3>Whoops! The current competition hasn't been set yet.</h3>
-				<div class="btn-group">
+		<?php if($comprow == 0): ?>
+			<div class="jumbotron">
+				<h3 class="compname">Whoops! The current competition hasn't been set yet.</h3>
+				<div class="btn-group" role="group">
+					<a href="/create.php" class="btn btn-default">Add competition</a>
 					<button class="btn btn-default">Select competition </button>
 					<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
-					<ul class="dropdown-menu container">
-						<?php if ($result == 0): ?>
-							<li class="nocomp">Looks like there aren't any competitions yet.</li>
-						<?php else: ?>
-							<?php foreach($result as $row): ?>
-        	                                        	<li>
-         								<div class="row">
-		                       	                                        <div class="col-xs-offset-1 col-xs-8">
-                                                                                	<a class="btn compch" href=<?php echo "/admin.php?setComp=" . $row["CID"]; ?>><?php echo clean(getCompFullName($row)); ?></a>
-	                                                                	</div>
-										<a class="btn btn-sm btn-primary col-xs-2" href=<?php echo "/editcompetition.php?CID=" . $row["CID"]; ?>>Edit</a>
-									</div>
-								</li>
-                        	                	<?php endforeach; ?>
-						<?php endif; ?>
-					</ul>
-                                	<a href="/create.php" class="btn btn-default addcomp" style="border-radius: 4px;-webkit-border-radius: 4px;-moz-border-radius: 4px;">Add competition</a>
-                        	</div>
-			<?php else: ?>
-				<h3><?php echo clean($compname); ?></h3>
-			<?php endif; ?>
-		</div>
-	</div>
-</div>
-		       		<form id="selectcomp" class="form-group" method="post" action="add.php">
-               				<div class="dropdown col-xs-8">
-						<button id="compmenu2" class="btn btn-default dropdown-toggle col-xs-12" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        		           				Select a competition
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu container-fluid" id="compdrop" aria-labelledby="compmenu2">
-							<?php foreach($result as $row): ?>
-								<li>
-									<div class="row">
-										<div class="radio col-xs-offset-1 col-xs-7">
-											<?php if($row["competition_name"] != ""): ?>
-                        									<label><input type="radio" value=<?= $row["CID"] ?> name="comp"><?= $row["competition_name"] ?> (<?= $row["competition_date"] ?>)</label>
-                    									<?php else: ?>
-												<label><input type="radio" value=<?= $row["CID"] ?> name="comp"><?= $row["competition_date"] ?></label>
-											<?php endif; ?>
-										</div>
-										<a class="btn btn-sm btn-success col-xs-2" href=<?php echo "/editcompetition.php?CID=" . $row["CID"]; ?>>Edit</a>
-									</div>
-								</li>
-								<?php endforeach; ?>
-                				</ul>
-					</div>
-                			<a href="/info.php" type="submit" class="btn btn-primary col-xs-offset-1 col-xs-3">Go</a>
-				</form>
+					<ul class="dropdown-menu slider-container">
+                                                <?php if ($result == 0): ?>
+                                                        <li class="nocomp">Looks like there aren't any competitions yet.</li>
+                                                <?php else: ?>
+                                                        <?php foreach($result as $row): ?>
+                                                                <li class="slider-li" onclick="changeComp(<?php echo $row['CID']; ?>);">
+                                                                	<p class="slider-text"><?php echo clean(getCompFullName($row)); ?></p>
+                                                                        <button class="btn btn-primary slider-edit" onclick="redirectTo('/editcompetition.php?CID=' + '<?php echo $row['CID']; ?>');" id="editbtn<?php echo $row['CID']; ?>">Edit</button>
+                                                                </li>
+								<li class="divider slider-divider"></li>
+                                                        <?php endforeach; ?>
+                                                <?php endif; ?>
+                                        </ul>
+				</div>
 			</div>
-			<br>
-			<br>
-			<div class="row">
-               	    		<a href="/create.php" class="btn btn-primary col-xs-offset-2 col-xs-8">Create New Competition</a>
+		<?php else: ?>
+			<label>Current competition:</label>
+			<div class="jumbotron">
+				<h2 class="compname"><?php echo clean(getCompFullName($comprow)); ?></h2><br>
+				<div class="btn-group" role="group">
+					<a class="btn btn-default" href=<?php echo "/editcompetition.php?CID=" . $comprow["CID"]; ?>>Edit </a>
+					<a class="btn btn-default" href="/create.php">Add </a>
+					<button class="btn btn-default">Change</button>
+					<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
+					<ul class="dropdown-menu slider-container">
+                                                <?php if ($result == 0): ?>
+                                                        <li class="nocomp">Looks like there aren't any competitions yet.</li>
+                                                <?php else: ?>
+                                                        <?php foreach($result as $row): ?>
+                                                                <li class="slider-li" onclick="changeComp(<?php echo $row['CID']; ?>);">
+                                                                        <p class="slider-text"><?php echo clean(getCompFullName($row)); ?></p>
+                                                                        <button role="button" class="btn btn-primary slider-edit"  onclick="redirectTo('/editcompetition.php?CID=' + '<?php echo $row['CID']; ?>');" id="editbtn<?php echo $row['CID']; ?>">Edit</button>
+                                                                </li>
+                                                                <li class="divider slider-divider"></li>
+                                                        <?php endforeach; ?>
+                                                <?php endif; ?>
+                                        </ul>
+					<a class="btn btn-danger" href="/admin.php?setComp=0">Unselect </a>
+				</div>
 			</div>
-		</div>
+		<?php endif; ?>
 	</div>
 </div>
 
 </body>
+
 
 </html>

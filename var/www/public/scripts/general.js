@@ -6,6 +6,16 @@ function checkLogout()
        	        return false;
 }
 
+function isHovered(e)
+{
+        return e.parentNode.querySelector(":hover") === e;
+}
+
+function redirectTo(loc)
+{
+	window.location.replace(loc);
+}
+
 /*function malert(var message)
 {
 	var box = document.getElementById("alertbox");
