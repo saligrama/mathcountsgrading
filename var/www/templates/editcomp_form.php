@@ -152,10 +152,10 @@ function deleteComp()
 		document.getElementById("finalizebtn").disabled = true;
 }*/
 
-function doCheck(scid)
+/*function doCheck(scid)
 {
         document.getElementById("check" + scid).checked = !document.getElementById("check" + scid).checked;
-}
+}*/
 
 </script>
 

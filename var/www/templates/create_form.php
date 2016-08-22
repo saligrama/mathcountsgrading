@@ -106,10 +106,10 @@ function checkSubmit()
 	return false;
 }
 
-function doCheck(scid)
+/*function doCheck(scid)
 {
 	document.getElementById("check" + scid).checked = !document.getElementById("check" + scid).checked;
-}
+}*/
 
 </script>
 
@@ -167,8 +167,8 @@ function doCheck(scid)
                                                                         <?php else: ?>
 										<?php foreach($schinfo as $row): ?>
                                                                                 	<li class="slider-li">
-                                                                                        	<input type="checkbox" class="slider-checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes">
-                                                                                        	<p onclick="doCheck(<?= $row['SCID'] ?>)" class="slider-text"><?php echo clean($row["team_name"]); ?></p>
+                                                                                        	<input type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes">
+                                                                                        	<label for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
                                                                                         	<button id=<?= "edit" . $row["SCID"] ?> form="" role="button" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
                                                                                 	</li>
                                                                                 	<li class="divider slider-divider"></li>

@@ -6,6 +6,11 @@ require(dirname(__FILE__) . "/../lib/vendor/autoload.php");
 use MathParser\StdMathParser;
 
 
+function sempty($str)
+{
+	return (empty($str) && ($str !== "0"));
+}
+
 function render($template, $values = []) {
 
     // if template exists, render it
@@ -32,7 +37,8 @@ function popupAlert($err) {
 
 function inlineAlert($offset, $width, $err) {
 
-    echo "<div class='alert alert-danger col-sm-offset-$offset col-sm-$width' role='alert'>";
+    echo "<div class='alert alert-danger alert-dismissable col-sm-offset-$offset col-sm-$width' role='alert'>";
+    echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
     echo '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>';
     echo '<span class="sr-only">Error:</span>';
     echo $err;

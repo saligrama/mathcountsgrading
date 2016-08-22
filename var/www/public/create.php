@@ -10,6 +10,9 @@
 
         $scids = dbQuery_new($conn, "SELECT SCID FROM school_info;");
 
+        if(sempty($_POST["compdate"]) || sempty($_POST["compname"]) || !isset($_POST["comptype"]) || sempty($_POST["comptype"]))
+                redirectTo("/create.php");
+
 	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_name = :compname;",
 				["compdate" => $_POST["compdate"], "compname" => $_POST["compname"]]);
 	if(!empty($previous)) {

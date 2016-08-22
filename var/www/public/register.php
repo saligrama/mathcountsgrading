@@ -21,9 +21,9 @@
 	    $firstname = $_POST["firstname"];
 	    $lastname = $_POST["lastname"];
 
-            if (!$passwd || !$logname || !isset($_POST["schaf"]))
+            if (sempty($passwd) || sempty($logname) || !isset($_POST["schaf"]))
                 $error = 1;
-            elseif (!$confirm || $confirm !== $passwd)
+            elseif (sempty($confirm) || $confirm !== $passwd)
                 $error = 1;
             else {
 
@@ -67,11 +67,6 @@
 	    render("register_form.php", ["schoolrows" => dbQuery_new($conn, "SELECT * FROM school_info;"), "fullname" => getFullName($conn)]);
 	    break;
 	case 1:
-	    popupAlert("Woopsie! Something went wrong. Please try again");
-	    redirectTo("/register.php");
-	    break;
-	case 2:
-	    popupAlert("Whoopise! There was an internal error. Please try again");
 	    redirectTo("/register.php");
 	    break;
     }

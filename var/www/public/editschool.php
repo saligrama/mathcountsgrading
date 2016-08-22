@@ -10,6 +10,12 @@
 	{
 		if(isset($_POST["finalize"]))
 		{
+			if(!isset($_POST["scid"]))
+				redirectTo("/admin.php");
+
+			if(sempty($_POST["teamname"]) || sempty($_POST["town"]) || sempty($_POST["coach"]) || sempty($_POST["address"]) || sempty($_POST["email"]))
+	                	redirectTo("/editschool.php?CID=" . $_POST["scid"]);
+
 			$previous = dbQuery_new($conn, "SELECT * FROM school_info WHERE team_name = :teamname AND town = :town AND address = :address AND SCID != :scid;",
                                 ["teamname" => $_POST["teamname"], "town" => $_POST["town"], "address" => $_POST["address"], "scid" => $_POST["scid"]]);
         		if(!empty($previous)) {

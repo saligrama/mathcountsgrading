@@ -65,11 +65,34 @@ function checkConfirm()
 
 function checkSubmit()
 {
-	if(document.getElementById("passwd").value != document.getElementById("confirm").value)
+	var passwd = document.getElementById("passwd").value;
+	var confirmp = document.getElementById("confirm").value;
+	var email = document.getElementById("logname").value;
+
+	if(email === "")
+        {
+                alert("Please enter your email");
+                return false;
+        }
+
+	if(passwd === "")
+	{
+		alert("Please enter a password");
+		return false;
+	}
+
+	if(confirmp === "")
+	{
+		alert("Please confirm your password");
+		return false;
+	}
+
+	if(passwd !== confirmp)
 	{
 		var div = document.createElement('div');
 
-		div.innerHTML = "<div class='alert alert-danger col-sm-offset-0 col-sm-12' role='alert'>\n" +
+		div.innerHTML = "<div class='alert alert-danger alert-dismissable col-sm-offset-0 col-sm-12' role='alert'>\n" +
+					"<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>\n" +
     					"<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>\n" +
     					"<span class='sr-only'>Error:</span>\n" +
     					"Ahhh, Shucks. Those passwords don't match!\n" +
@@ -80,13 +103,13 @@ function checkSubmit()
 		return false;
 	}
 
-	$mes = "Are you sure you want to register a ";
-	$mes += (document.getElementById("schaf").value > 0) ? "grader" : "admin";
-	$mes += " account with the logname/email '";
-	$mes += document.getElementById("logname").value;
-	$mes += "'?";
+	var mes = "Are you sure you want to register ";
+	mes += (document.getElementById("schaf").value > 0) ? "a grader" : "an admin";
+	mes += " account with the logname/email '";
+	mes += document.getElementById("logname").value;
+	mes += "'?";
 
-	if(confirm($mes))
+	if(confirm(mes))
 		return true;
 
 	return false;
@@ -116,7 +139,7 @@ function checkSubmit()
 <?php endif; ?>
 <div class="container-fluid main">
 	<div class="container-fluid panel panel-default">
-        	<div class="panel-heading"><h4>Register</h4></div>
+        	<div class="panel-heading"><h4>Register new user</h4></div>
 		<div class="panel-body">
 			<form id="input_form" onsubmit="return checkSubmit();" action="" method="post">
                 		<label for="logname">Email</label>
@@ -145,13 +168,13 @@ function checkSubmit()
 					<span class="input-group-addon" id="check">
 						<span class="glyphicon glyphicon-remove" id="check-glyph" aria-hidden="true"></span>
 					</span>
-				</div><br><br>
+				</div><br>
 			</form>
                 </div>
 		<div class="panel-footer">
 			<div class="row">
 				<a class="btn btn-danger col-xs-offset-1 col-xs-4" href="/admin.php">Cancel</a>
-				<input type="submit" form="input_form" class="btn btn-primary col-xs-offset-1 col-xs-5" id="submit" name="submit" value="Register">
+				<input type="submit" form="input_form" class="btn btn-success col-xs-offset-1 col-xs-5" id="submit" name="submit" value="Register">
 			</div>
 		</div>
 	</div>

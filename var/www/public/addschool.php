@@ -8,6 +8,9 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["createschool"])) {
 
+	if(sempty($_POST["teamname"]) || sempty($_POST["town"]) || sempty($_POST["coach"]) || sempty($_POST["address"]) || sempty($_POST["email"]))
+                                redirectTo("/addschool.php");
+
 	$previous = dbQuery_new($conn, "SELECT * FROM school_info WHERE team_name = :teamname AND town = :town AND address = :address;",
                                 ["teamname" => $_POST["teamname"], "town" => $_POST["town"], "address" => $_POST["address"]]);
         if(!empty($previous)) {

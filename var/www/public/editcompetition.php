@@ -8,6 +8,12 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"])) {
 
+	if(!isset($_POST["cid"]))
+		redirectTo("/admin.php");
+
+	if(sempty($_POST["compdate"]) || sempty($_POST["compname"]) || !isset($_POST["comptype"]) || sempty($_POST["comptype"]))
+		redirectTo("/editcompetition.php?CID=" . $_POST["cid"]);
+
 	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_name = :compname AND CID != :cid;",
                                 ["compdate" => $_POST["compdate"], "compname" => $_POST["compname"], "cid" => $_POST["cid"]]);
         if(!empty($previous)) {
