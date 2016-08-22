@@ -7,8 +7,13 @@
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
 
+<link rel="stylesheet" type="text/css" href="./select2/dist/css/select2.css">
+<script src="./select2/dist/js/select2.full.js"></script>
+
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
+
+<link rel="stylesheet" type="text/css" href="./styles/custom-checkbox.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js" crossorigin="anonymous"></script>
@@ -26,7 +31,32 @@
         padding: 3px 6px;
 }
 
+.js-select {
+	width: 100% !important;
+}
+
+.slider-edit {
+        width: 18%;
+}
+
+.checkbox-custom-label {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 75%;
+}
+
 </style>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+  $(".js-select").select2({
+        minimumResultsForSearch: Infinity
+});
+});
+
+</script>
 
 <script type="text/javascript">
 
@@ -114,16 +144,12 @@ function doCheck(scid)
         					</div>
 					</div>
 					<div class="row">
-						<div class="form-group">
-							<label for="comptype">Competition Type</label>
-							<div class="dropdown">
-								<select name="comptype" id="comptype" class="col-xs-12">
-									<option value="chapter">Chapter</option>
-									<option value="state">State</option>
-									<option value="national">National</option>
-								</select>
-							</div>
-						</div>
+						<label for="comptype">Competition Type</label><br>
+                                                <select name="comptype" id="comptype" class="js-select">
+                                                        <option value="chapter">Chapter</option>
+                                                        <option value="state">State</option>
+                                                        <option value="national">National</option>
+                                                </select>
 					</div><br>
 					<div class="row">
 						<div class="form-group">

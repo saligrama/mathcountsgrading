@@ -7,8 +7,13 @@
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
 
+<link rel="stylesheet" type="text/css" href="./select2/dist/css/select2.css">
+<script src="./select2/dist/js/select2.full.js"></script>
+
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
+
+<link rel="stylesheet" type="text/css" href="./styles/custom-checkbox.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js" crossorigin="anonymous"></script>
@@ -26,7 +31,32 @@
 	padding: 3px 6px;
 }
 
+.js-select {
+	width: 100% !important;
+}
+
+.slider-edit {
+	width: 18%;
+}
+
+.checkbox-custom-label {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	width: 75%;
+}
+
 </style>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+  $(".js-select").select2({
+	minimumResultsForSearch: Infinity
+});
+});
+
+</script>
 
 <script type="text/javascript">
 
@@ -160,16 +190,12 @@ function doCheck(scid)
 						</div>
 					</div>
 					<div class="row">
-						<div class="form-group">
-							<label for="comptype">Competition Type</label>
-							<div class="dropdown">
-								<select name="comptype" id="comptype" class="col-xs-12">
-									<option value="chapter" <?= $crow['competition_type'] == 'chapter' ? "selected" : "" ?>>Chapter</option>
-									<option value="state" <?= $crow['competition_type'] == 'state' ? "selected" : "" ?>>State</option>
-									<option value="national" <?= $crow['competition_type'] == 'national' ? "selected" : "" ?>>National</option>
-								</select>
-							</div>
-						</div>
+						<label for="comptype">Competition Type</label><br>
+						<select name="comptype" id="comptype" class="js-select">
+							<option value="chapter" <?= $crow['competition_type'] == 'chapter' ? "selected" : "" ?>>Chapter</option>
+							<option value="state" <?= $crow['competition_type'] == 'state' ? "selected" : "" ?>>State</option>
+							<option value="national" <?= $crow['competition_type'] == 'national' ? "selected" : "" ?>>National</option>
+						</select>
 					</div><br>
 					<div class="row">
 						<div class="form-group">
@@ -187,10 +213,10 @@ function doCheck(scid)
 									<?php else: ?>
 										<?php foreach($schinfo as $row): ?>
 											<li class="slider-li">
-												<input type="checkbox" class="slider-checkbox" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
-												<p onclick="doCheck(<?= $row['SCID'] ?>)" class="slider-text"><?php echo clean($row["team_name"]); ?></p>
-												<a class="btn btn-primary slider-edit" href="editschool.php?SCID=<?= $row['SCID'] ?>">Edit</a>
-												</li>
+												<input type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
+												<label for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
+												<button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
+											</li>
 											<li class="divider slider-divider"></li>
 										<?php endforeach; ?>
 									<?php endif; ?>

@@ -34,8 +34,7 @@ $avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
 	margin-right: 7px;
 }
 
-.compname {
-	text-align: center;
+p, h1, h2, h3, h4, h5, h6 {
 	word-wrap: break-word;
 }
 
@@ -44,8 +43,7 @@ $avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
 	margin-bottom: 4px !imporant;
 }
 
-label {
-	text-align: center;
+.curlabel {
 	font-size: 20px;
 }
 
@@ -64,6 +62,16 @@ label {
 
 .btn-danger {
 	border-radius: 4px !important;
+}
+
+.progress {
+	height: 26px;
+}
+
+.progress-bar {
+	line-height: 26px;
+	font-size: 14px;
+	min-width: 2em;
 }
 
 </style>
@@ -95,6 +103,7 @@ function changeComp(CID)
 				</form>
 			</li>
 			<li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
+			<li class="mnav-right"><a href="/register.php">New User</a></li>
 		</ul>
 	</div>
 </nav>
@@ -102,7 +111,7 @@ function changeComp(CID)
 	<div class="container ncont text-center">
 		<?php if($comprow == 0): ?>
 			<div class="jumbotron">
-				<h3 class="compname">Whoops! The current competition hasn't been set yet.</h3>
+				<h3>Whoops! The current competition hasn't been set yet.</h3>
 				<div class="btn-group" role="group">
 					<a href="/create.php" class="btn btn-default">Add competition</a>
 					<button class="btn btn-default">Select competition </button>
@@ -123,7 +132,7 @@ function changeComp(CID)
 				</div>
 			</div>
 		<?php else: ?>
-			<label>Current competition:</label>
+			<label class="curlabel">Current competition:</label>
 			<div class="jumbotron">
 				<h2 class="compname"><?php echo clean(getCompFullName($comprow)); ?></h2><br>
 				<div class="btn-group" role="group">
@@ -148,13 +157,39 @@ function changeComp(CID)
 				</div>
 			</div>
 			<div class="panel panel-primary container-fluid">
-				<div class="panel-heading text-center"><h4>Competition info</h4></div>
+				<div class="panel-heading text-center"><h4>Competition Progress</h4></div>
 				<div class="panel-body">
+					<br><label style="font-size:16px;">Total grading progress:</label>
 					<div class="progress">
-						<div class="progress-bar" role="progressbar" aria-valuenow="<?= $avgprogress ?>" aria-valuemin="0" aria-valuemax="100" style="width:<?= $avgprogress ?>%">
+						<div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="<?= $avgprogress ?>"
+												     aria-valuemin="0" aria-valuemax="100" style="width:<?= $avgprogress ?>%">
 							<?= $avgprogress ?>%
 						</div>
-					</div>
+					</div><br><br>
+					<label>Sprint round grading progress:</label>
+                                        <div class="progress">
+                                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?= $comprow['status_sprint'] ?>"
+                                                                                                     aria-valuemin="0" aria-valuemax="100" style="width:<?= $comprow['status_sprint'] ?>%">
+                                                        <?= $comprow['status_sprint'] ?>%
+                                                </div>
+                                        </div>
+					<?php for($i = 1; $i < 5; $i++): ?>
+						<?php $progress = $comprow["status_target" . $i]; ?>
+						<label>Target round <?= $i ?> grading progress:</label>
+	                                        <div class="progress">
+        	                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?= $progress ?>"
+                	                                                                                     aria-valuemin="0" aria-valuemax="100" style="width:<?= $progress ?>%">
+                        	                                <?= $progress ?>%
+                                	                </div>
+                                        	</div>
+					<?php endfor; ?>
+					<label>Team round grading progress:</label>
+                                        <div class="progress">
+                                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?= $comprow['status_team'] ?>"
+                                                                                                     aria-valuemin="0" aria-valuemax="100" style="width:<?= $comprow['status_team'] ?>%">
+                                                        <?= $comprow['status_team'] ?>%
+                                                </div>
+                                        </div>
 				</div>
 				<div class="panel-footer"></div>
 			</div>
