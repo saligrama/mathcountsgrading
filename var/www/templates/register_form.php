@@ -33,6 +33,12 @@
         width: 100%;
 }
 
+.select2-results__option {
+	text-overflow: ellipsis;
+        overflow-x: hidden;
+        white-space: nowrap;
+}
+
 </style>
 
 <script type="text/javascript">

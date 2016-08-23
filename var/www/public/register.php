@@ -12,6 +12,11 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
+	    if(!isset($_POST["passwd"]) || !isset($_POST["confirm"]) || !isset($_POST["logname"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["schaf"])) {
+		popupAlert("Whoopsie! There where was an internal error. Please try again");
+		redirectTo("/register.php");
+	    }
+
             $passwd = $name = $confirm = "";
 	    $schaf = 0;
 
@@ -21,7 +26,7 @@
 	    $firstname = $_POST["firstname"];
 	    $lastname = $_POST["lastname"];
 
-            if (sempty($passwd) || sempty($logname) || !isset($_POST["schaf"]))
+            if (sempty($passwd) || sempty($logname))
                 $error = 1;
             elseif (sempty($confirm) || $confirm !== $passwd)
                 $error = 1;
@@ -67,6 +72,7 @@
 	    render("register_form.php", ["schoolrows" => dbQuery_new($conn, "SELECT * FROM school_info;"), "fullname" => getFullName($conn)]);
 	    break;
 	case 1:
+	    popupAlert("Whoopsie! There was an interal error. Please try again");
 	    redirectTo("/register.php");
 	    break;
     }

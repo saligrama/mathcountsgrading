@@ -60,12 +60,22 @@ $(document).ready(function() {
 
 <script type="text/javascript">
 
+/*function expandEllipsis(SCID)
+{
+	var e = document.getElementById("label" + SCID);
+
+	if(e.offsetWidth < e.scrollWidth)
+	{
+		e.style.display = "absolute";
+	}
+}*/
+
 function checkSubmit()
 {
 	var date = document.getElementById("compdate").value;
 	var name = document.getElementById("compname").value;
 
-	if(date == null || date == "")
+	if(date === "")
 	{
 		alert("Please fill out a date for the competition");
 		return false;
@@ -86,7 +96,7 @@ function checkSubmit()
 		return false;
 	}
 
-	if(name == null || name == "")
+	if(name === "")
         {
                 if(confirm("Are you sure you want to leave the competition name empty and finalize your changes?"))
                         return true;
@@ -182,7 +192,7 @@ function deleteComp()
 		<div class="panel-heading"><h4>Edit competition</h4></div>
 		<div class="panel-body">
 			<form id="compinfo" onsubmit="return checkSubmit();" action="/editcompetition.php" method="post">
-        			<div class="col-xs-offset-2 col-xs-8">
+        			<div class="col-xs-offset-1 col-xs-10">
 					<div class="row">
 						<div class="form-group">
 							<label for="compdate">Competition Date</label>
@@ -199,13 +209,13 @@ function deleteComp()
 					</div><br>
 					<div class="row">
 						<div class="form-group">
-							<label for="compname">Competition Name</label>
+							<label for="compname">Competition Name (optional)</label>
 							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name" value="<?php echo clean($crow['competition_name']); ?>">
 						</div>
 					</div><br>
 					<div class="row">
 						<div class="dropdown">
-							<label for="swell">Schools</label>
+							<label for="swell">Participating Schools</label>
 							<div class="well well-sm slider-well" id="swell">
 								<ul class="slider-container-fixed" id="scont">
 									<?php if($schinfo == 0): ?>
@@ -214,7 +224,7 @@ function deleteComp()
 										<?php foreach($schinfo as $row): ?>
 											<li class="slider-li">
 												<input type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
-												<label for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
+												<label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
 												<button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
 											</li>
 											<li class="divider slider-divider"></li>
@@ -224,6 +234,27 @@ function deleteComp()
 							</div>
 						</div>
 					</div><br>
+					<div class="row">
+                                                <div class="dropdown">
+                                                        <label for="swell">Participating Students</label>
+                                                        <div class="well well-sm slider-well" id="swell">
+                                                                <ul class="slider-container-fixed" id="scont">
+                                                                        <?php if($schinfo == 0): ?>
+                                                                                <li class="noschool">Looks like there aren't any schools yet.</li>
+                                                                        <?php else: ?>
+                                                                                <?php foreach($schinfo as $row): ?>
+                                                                                        <li class="slider-li">
+                                                                                                <input type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
+                                                                                                <label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
+                                                                                                <button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
+                                                                                        </li>
+                                                                                        <li class="divider slider-divider"></li>
+                                                                                <?php endforeach; ?>
+                                                                        <?php endif; ?>
+                                                                </ul>
+                                                        </div>
+                                                </div>
+                                        </div><br>
 				</div><br>
 				<div class="row">
 					<div class="form-group">

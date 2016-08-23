@@ -65,7 +65,7 @@ function checkSubmit()
 	var date = document.getElementById("compdate").value;
 	var name = document.getElementById("compname").value;
 
-	if(date == null || date == "")
+	if(date === "")
 	{
 		alert("Please fill out a date for the competition");
 		return false;
@@ -84,7 +84,7 @@ function checkSubmit()
 		return false;
 	}
 
-	if(name == null || name == "")
+	if(name === "")
         {
                 if(confirm("Are you sure you want to create a competition with an empty name on the date " + document.getElementById("compdate").value + " ?"))
                         return true;
@@ -136,7 +136,7 @@ function checkSubmit()
 		<div class="panel-heading"><h4>Create new competition</h4></div>
 		<div class="panel-body">
 			<form id="schools" onsubmit="return checkSubmit();" action="create.php" method="post">
-        			<div class="col-xs-offset-2 col-xs-8">
+        			<div class="col-xs-offset-1 col-xs-10">
 					<div class="row">
 						<div class="form-group">
 							<label for="compdate">Competition Date</label>
@@ -153,13 +153,13 @@ function checkSubmit()
 					</div><br>
 					<div class="row">
 						<div class="form-group">
-							<label for="compname">Competition Name</label>
+							<label for="compname">Competition Name (optional)</label>
 							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name">
 						</div>
 					</div><br>
 					<div class="row">
 						<div class="dropdown">
-							<label for="swell">Schools</label>
+							<label for="swell">Participating Schools</label>
                                                         <div class="well well-sm slider-well" id="swell">
                                                                 <ul class="slider-container-fixed" id="scont">
                                                                         <?php if($schinfo == 0): ?>

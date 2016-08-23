@@ -16,7 +16,7 @@
 <style>
 
 .panel {
-	max-width: 540px;
+	max-width: 500px;
 }
 
 .firsty {
@@ -30,6 +30,42 @@
 
 function checkSubmit()
 {
+	var name = document.getElementById("teamname").value;
+        var town = document.getElementById("town").value;
+        var address = document.getElementById("address").value;
+        var coach = document.getElementById("coach").value;
+        var email = document.getElementById("email").value;
+
+        if(name === "")
+        {
+                malert("Please fill out the school name");
+                return false;
+        }
+
+        if(town === "")
+        {
+                malert("Please fill out the school town");
+                return false;
+        }
+
+        if(address === "")
+        {
+                malert("Please fill out the school address");
+                return false;
+        }
+
+        if(coach === "")
+        {
+                malert("Please fill out the school coach");
+                return false;
+        }
+
+        if(email === "")
+        {
+                malert("Please fill out the school email");
+                return false;
+        }
+
 	var mes = "Are you sure you want to create a school with team name '";
 	mes += document.getElementById("teamname").value;
 	mes += "' from the town '";
@@ -96,12 +132,7 @@ function checkSubmit()
 							<label for="email">Email</label>
 							<input id="email" type="email" class="form-control" name="email" placeholder="Contact Email">
                 				</div>
-					</div>
-					<div class="row">
-						<div class="checkbox">
-							<label><input type="checkbox" name="firstyear" value="yes"><p class="firsty"><strong>First Year?</strong></p></input></label>
-						</div>
-					</div>
+					</div><br>
 				</div>
 			</form>
 		</div>

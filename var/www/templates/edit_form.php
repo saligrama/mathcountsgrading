@@ -17,7 +17,7 @@
 <style>
 
 .panel {
-	max-width: 540px;
+	max-width: 500px;
 }
 
 .firsty {
@@ -47,37 +47,37 @@ function checkSubmit()
         var coach = document.getElementById("coach").value;
         var email = document.getElementById("email").value;
 
-        if(name == null || name == "")
+        if(name === "")
         {
                 malert("Please fill out the school name");
                 return false;
         }
 
-        if(town == null || town == "")
+        if(town === "")
         {
                 malert("Please fill out the school town");
                 return false;
         }
 
-        if(address == null || address == "")
+        if(address === "")
         {
                 malert("Please fill out the school address");
                 return false;
         }
 
-        if(coach == null || coach == "")
+        if(coach === "")
         {
                 malert("Please fill out the school coach");
                 return false;
         }
 
-        if(email == null || email == "")
+        if(email === "")
         {
                 malert("Please fill out the school email");
                 return false;
         }
 
-        if(confirm("Are you sure you want to finalize the changes?"))
+        if(confirm("Are you sure you want to finalize your changes?"))
                 return true;
 
         return false;
@@ -163,12 +163,7 @@ function deleteSchool()
                                                                 <label for="email">Email</label>
                                                                 <input id="email" type="email" class="form-control" name="email" placeholder="Contact Email" value="<?php echo clean($row['contact_email']); ?>" required>
                                                         </div>
-                                                </div>
-                                                <div class="row">
-                                                        <div class="checkbox">
-                                                                <label><input id="firstyear" class="check" type="checkbox" name="firstyear" value="yes" <?php echo ($row['first_year'] == 1 ? "checked" : ""); ?>><p class="firsty"><strong>First Year?</strong></p></label>
-                                                        </div>
-                                                </div>
+                                                </div><br>
         					<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
                                 </div>
                         </form>

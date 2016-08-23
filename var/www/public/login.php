@@ -29,21 +29,21 @@ if(empty(dbQuery_new($conn, "SELECT * FROM user;")))
 if($_SERVER["REQUEST_METHOD"] == "POST") {
 	if(isset($_POST["login"])) {
 
-		$passwd = $name = "";
-        	$passwd = $_POST["passwd"];
-
-		$name = $_POST["logname"];
-
-		if(sempty($passwd) || sempty($name)) {
-			$error = 1;
+		if(!isset($_POST["passwd"]) || !isset($_POST["logname"])) {
+			popupAlert("Whoopsie! There was an internal error. Please try again");
+			redirectTo("/login.php");
 		}
-
+		elseif(sempty($_POST["passwd"]) || sempty($_POST["logname"]))
+			$error = 1;
 		else {
+			$name = $_POST["logname"];
+			$passwd = $_POST["passwd"];
+
 			$result = dbQuery_new($conn, "SELECT UID, password, type FROM user WHERE email = :name", ["name" => $name]);
 
 			if(empty($result)) {
 				$error = 2;
-				render("login_form.php", ["error" => $error]);
+				render("login_form.php", ["error" => $error, "fullname" => 0]);
 				exit;
 			}
 

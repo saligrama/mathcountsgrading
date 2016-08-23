@@ -8,8 +8,11 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["createschool"])) {
 
-	if(sempty($_POST["teamname"]) || sempty($_POST["town"]) || sempty($_POST["coach"]) || sempty($_POST["address"]) || sempty($_POST["email"]))
-                                redirectTo("/addschool.php");
+	if(!isset($_POST["teamname"]) || !isset($_POST["town"]) || !isset($_POST["coach"]) || !isset($_POST["address"]) || !isset($_POST["email"]) ||
+           sempty($_POST["teamname"]) || sempty($_POST["town"]) || sempty($_POST["coach"]) || sempty($_POST["address"]) || sempty($_POST["email"])) {
+        	popupAlert("Whoopsie! There was an interal error. Please try again");
+                redirectTo(isset($_POST["scid"]) ? "/editschool.php?SCID=" . $_POST["scid"] : "/admin.php");
+        }
 
 	$previous = dbQuery_new($conn, "SELECT * FROM school_info WHERE team_name = :teamname AND town = :town AND address = :address;",
                                 ["teamname" => $_POST["teamname"], "town" => $_POST["town"], "address" => $_POST["address"]]);
@@ -24,14 +27,12 @@
              town=:town,
              coach=:coach,
              address=:address,
-             contact_email=:email,
-             first_year=:firstyear", [
+             contact_email=:email", [
                  "teamname" => $_POST["teamname"],
                  "town" => $_POST["town"],
                  "coach" => $_POST["coach"],
                  "address" => $_POST["address"],
                  "email" => $_POST["email"],
-                 "firstyear" => (isset($_POST["firstyear"]) && $_POST["firstyear"] == "yes") ? 1 : 0
              ]
 
         );

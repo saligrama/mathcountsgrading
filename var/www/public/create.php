@@ -8,10 +8,13 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["go"])) {
 
-        $scids = dbQuery_new($conn, "SELECT SCID FROM school_info;");
-
-        if(sempty($_POST["compdate"]) || sempty($_POST["compname"]) || !isset($_POST["comptype"]) || sempty($_POST["comptype"]))
+	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) ||
+           sempty($_POST["compdate"]) || sempty($_POST["comptype"])) {
+                popupAlert("Whoopsie! There was an interal error. Please try again");
                 redirectTo("/create.php");
+        }
+
+        $scids = dbQuery_new($conn, "SELECT SCID FROM school_info;");
 
 	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_name = :compname;",
 				["compdate" => $_POST["compdate"], "compname" => $_POST["compname"]]);
@@ -28,8 +31,12 @@
 
         foreach($scids as $i) {
 	    $scid = $i['SCID'];
+
+	    $firstyear = dbQuery_new($conn, "SELECT * FROM competition_participants WHERE SCID = :scid;", ["scid" => $scid]);
+	    $firstyear = (int)(empty($firstyear));
+
 	    if(isset($_POST["$scid"]) && $_POST["$scid"] == "yes")
-                dbQuery_new($conn, "INSERT INTO competition_participants SET CID = :liid, SCID = :scid;", ["liid" => $liid, "scid" => $scid]);
+                dbQuery_new($conn, "INSERT INTO competition_participants SET CID = :liid, SCID = :scid, firstyear = :firstyear;", ["liid" => $liid, "scid" => $scid, "firstyear" => $firstyear]);
 	}
 
 	popupAlert("Success! Competition created");
