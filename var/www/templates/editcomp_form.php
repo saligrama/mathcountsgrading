@@ -194,6 +194,22 @@ $(document).ready(function() {
 	}
 }*/
 
+function studentSelect()
+{
+	var select = document.getElementById("stuschselect");
+	var scid = select.options[select.selectedIndex].value;
+
+	var ul = document.getElementById("stcont");
+	var checks = ul.getElementsByTagName("INPUT");
+	for(var i = 0; i < checks.length; i++)
+	{
+		if(parseInt(checks[i].id) != scid)
+			checks[i].style.display = "none";
+		else
+			checks[i].style.display = "initial";
+	}
+}
+
 function checkSubmit()
 {
 	var date = document.getElementById("compdate").value;
@@ -380,7 +396,7 @@ function deleteComp()
 							<?php $stdrop = 0; ?>
 						<?php else: ?>
 							<div class="form-group">
-								<select id="stuschselect" class="js-select form-control">
+								<select onchange="studentSelect();" id="stuschselect" class="js-select form-control">
 									<?php $nums = 0; ?>
 									<?php foreach($schinfo as $row): ?>
 										<?php if(in_array($row["SCID"], $participants_row)): ?>
