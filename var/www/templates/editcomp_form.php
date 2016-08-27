@@ -22,8 +22,22 @@
 
 <style>
 
+html {
+	overflow: hidden;
+	height: 100%;
+}
+
+body {
+	height: 100%;
+	overflow: auto;
+}
+
 .panel {
-	min-width: 500px;
+	max-width: 900px;
+}
+
+.panel-body {
+	margin-bottom: -246px;
 }
 
 .noschool {
@@ -31,7 +45,13 @@
 	padding: 3px 6px;
 }
 
-.js-select {
+.select2-results__option {
+        text-overflow: ellipsis;
+        overflow-x: hidden;
+        white-space: nowrap;
+}
+
+.select2-container {
 	width: 100% !important;
 }
 
@@ -46,14 +66,118 @@
 	width: 75%;
 }
 
+.checkbox-custom-label-stu {
+	width: 34%;
+	font-weight: normal;
+}
+
+.slider-li h5 {
+	font-size: 16px;
+	word-wrap: break-word;
+}
+
+#stcont {
+	min-height: 482px;
+	max-height: 482px;
+}
+
+#scont {
+	min-height: 250px;
+	max-height: 250px;
+}
+
+.slider-well {
+	margin: 0;
+}
+
+.colobj {
+	width: 40.9%;
+	display: inline-block;
+	padding-left: 15px;
+	padding-right: 15px;
+	margin-left: 5%;
+	margin-right: 4%;
+}
+
+.colobj:last-child {
+	margin-left: 4%;
+}
+
+.panel-footer a,
+.panel-footer button {
+	margin: 0 7px 0 7px;
+}
+
+.col-divider {
+	display: inline-block;
+	position: relative;
+	width: 1px;
+	height: 530px;
+	bottom: 290px;
+	vertical-align: middle;
+	background-color: #d5d5d5;
+	margin: 0;
+	padding: 0;
+}
+
+@media (max-width: 1000px) {
+	.colobj {
+		display: block;
+		width: 82.66%;
+		margin: 0 8.66% 0 8.66% !important;
+	}
+
+	.col-divider {
+		display: block;
+		height: 1px;
+		width: 350px;
+		bottom: 0;
+		position: relative;
+		margin: 5px 10% 30px 10%;
+		width: 80%;
+	}
+
+	.panel {
+		max-width: 500px;
+	}
+
+	.panel-body {
+		margin: 0;
+	}
+
+	.slider-container-fixed {
+		min-height: 0 !important;
+		max-height: 250px !important;
+	}
+
+	.panel-footer .col-xs-1 {
+		width: 25%;
+		margin-bottom: 10px;
+	}
+
+	.panel-footer .col-xs-2 {
+		width: 40%;
+	}
+
+	.panel-footer .col-xs-2:last-child {
+		float: right;
+	}
+
+	.panel-footer .col-xs-3 {
+		width: 33%;
+		float: right;
+		margin-bottom: 10px;
+	}
+}
+
 </style>
 
 <script type="text/javascript">
 
 $(document).ready(function() {
   $(".js-select").select2({
-	minimumResultsForSearch: Infinity
-});
+	minimumResultsForSearch: 6
+  });
 });
 
 </script>
@@ -189,23 +313,25 @@ function deleteComp()
 </nav>
 <div class="main">
 	<div class="container-fluid panel panel-primary">
-		<div class="panel-heading"><h4>Edit competition</h4></div>
+		<div class="panel-heading"><h4 class="text-center">Edit competition</h4></div>
 		<div class="panel-body">
 			<form id="compinfo" onsubmit="return checkSubmit();" action="/editcompetition.php" method="post">
-        			<div class="col-xs-offset-1 col-xs-10">
+        			<div class="colobj">
 					<div class="row">
 						<div class="form-group">
 							<label for="compdate">Competition Date</label>
 							<input id="compdate" data-provide="datepicker" class="form-control input-group date datepicker" data-date-format="yyyy-mm-dd" name="compdate" placeholder="Date (yyyy-mm-dd)" value="<?php echo htmlspecialchars($crow['competition_date']); ?>" required>
 						</div>
-					</div>
+					</div><br>
 					<div class="row">
-						<label for="comptype">Competition Type</label><br>
-						<select name="comptype" id="comptype" class="js-select">
-							<option value="chapter" <?= $crow['competition_type'] == 'chapter' ? "selected" : "" ?>>Chapter</option>
-							<option value="state" <?= $crow['competition_type'] == 'state' ? "selected" : "" ?>>State</option>
-							<option value="national" <?= $crow['competition_type'] == 'national' ? "selected" : "" ?>>National</option>
-						</select>
+						<div class="form-group">
+							<label for="comptype">Competition Type</label><br>
+							<select name="comptype" id="comptype" class="js-select form-control">
+								<option value="chapter" <?= $crow['competition_type'] == 'chapter' ? "selected" : "" ?>>Chapter</option>
+								<option value="state" <?= $crow['competition_type'] == 'state' ? "selected" : "" ?>>State</option>
+								<option value="national" <?= $crow['competition_type'] == 'national' ? "selected" : "" ?>>National</option>
+							</select>
+						</div>
 					</div><br>
 					<div class="row">
 						<div class="form-group">
@@ -223,7 +349,7 @@ function deleteComp()
 									<?php else: ?>
 										<?php foreach($schinfo as $row): ?>
 											<li class="slider-li">
-												<input type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
+												<input type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
 												<label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
 												<button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
 											</li>
@@ -232,52 +358,87 @@ function deleteComp()
 									<?php endif; ?>
 								</ul>
 							</div>
-						</div>
+							</div>
 					</div><br>
 					<div class="row">
-                                                <div class="dropdown">
-                                                        <label for="swell">Participating Students</label>
-                                                        <div class="well well-sm slider-well" id="swell">
-                                                                <ul class="slider-container-fixed" id="scont">
-                                                                        <?php if($schinfo == 0): ?>
-                                                                                <li class="noschool">Looks like there aren't any schools yet.</li>
-                                                                        <?php else: ?>
-                                                                                <?php foreach($schinfo as $row): ?>
-                                                                                        <li class="slider-li">
-                                                                                                <input type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name=<?= $row["SCID"] ?> value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
-                                                                                                <label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
-                                                                                                <button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
-                                                                                        </li>
-                                                                                        <li class="divider slider-divider"></li>
-                                                                                <?php endforeach; ?>
-                                                                        <?php endif; ?>
-                                                                </ul>
-                                                        </div>
-                                                </div>
-                                        </div><br>
-				</div><br>
-				<div class="row">
-					<div class="form-group">
-						<input type="hidden" id="cid" name="cid" value="<?php echo clean($_GET['CID']); ?>">
+						<div class="form-group">
+							<input type="hidden" id="cid" name="cid" value="<?php echo clean($_GET['CID']); ?>">
+						</div>
 					</div>
+				</div>
+				<div class="col-divider"></div>
+				<div class="colobj">
+					<?php $stdrop = 1; ?>
+					<div class="row">
+						<label>Participating students from school:</label>
+						<?php if($schinfo == 0): ?>
+							<div class="well well-sm slider-well">
+                       	              		                 <ul class="slider-container-fixed">
+									<li class="noschool">Looks like there aren't any schools yet.</li>
+								</ul>
+							</div>
+							<?php $stdrop = 0; ?>
+						<?php else: ?>
+							<div class="form-group">
+								<select id="stuschselect" class="js-select form-control">
+									<?php $nums = 0; ?>
+									<?php foreach($schinfo as $row): ?>
+										<?php if(in_array($row["SCID"], $participants_row)): ?>
+											<option value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"]); ?></option>
+										<?php $nums++; ?>
+										<?php endif; ?>
+									<?php endforeach; ?>
+									<?php if($nums === 0): ?>
+										<option value="0">Looks like no schools have been selected yet</option>
+										<?php $stdrop = 0; ?>
+									<?php endif; ?>
+								</select>
+							</div>
+						<?php endif; ?>
+					</div>
+					<?php if($stdrop): ?>
+						<div class="row">
+              	 		                	<div class="dropdown">
+               	       		        	        	<div class="well well-sm slider-well" id="stwell">
+                 		        	 	      	        <ul class="slider-container-fixed" id="stcont">
+                       		               	      	        		<?php if($studentinfo == 0): ?>
+                       		                               	        	        <li class="noschool">Looks like there aren't any students yet.</li>
+                       		                       	        	        <?php else: ?>
+                       		                               	        	        <?php foreach($studentinfo as $row): ?>
+                       		                                      	        	        <li class="slider-li">
+													<h5 class="text-center"><?php echo clean($row["first_name"] . " " . $row["last_name"]); ?></h5>
+
+													<input form="compinfo" type="checkbox" class="checkbox-custom" id=<?= $row["SCID"] . "rcheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'reg' . $row['SID'] ?>" value="yes" <?php echo (in_array($row["SID"], $student_participants_row) ? "checked" : "") ?>>
+       	                                                                       	                 	<label id="<?= $row['SCID'] . 'rlabel' . $row['SID'] ?>" for=<?= $row["SCID"] . "rcheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Regular</label>
+
+													<button class="btn btn-primary slider-edit" onclick="redirectTo('editstudent.php?SID=<?= $row['SID'] ?>');">Edit</button>
+
+													<input form="compinfo" type="checkbox" class="checkbox-custom" id=<?= $row["SCID"] . "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes" <?php echo (in_array($row["SID"], $student_participants_row) ? "checked" : "") ?>>
+ 	      	                                                                		        <label id="<?= $row['SCID'] . 'alabel' . $row['SID'] ?>" for=<?= $row["SCID"] . "acheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Alternate</label
+												</li>
+                                	        	                                	<li class="divider slider-divider"></li>
+                                        	        		               	<?php endforeach; ?>
+                                                	       			<?php endif; ?>
+                                	               	 		</ul>
+            	                        			</div>
+                            				</div>
+                	       			</div><br>
+					<?php endif; ?>
 				</div>
 			</form>
 		</div>
 		<div class="panel-footer">
-			<div class="row">
-				<button id="finalizebtn" type="submit" class="btn btn-success col-xs-offset-2 col-xs-8" form="compinfo" name="finalize">Finalize changes</button>
-                        </div>
-		</div>
-		<div class="panel-footer">
-			<div class="row">
-				<a class="btn btn-danger col-xs-3" href="/admin.php">Back</a>
-				<form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
-                                        <button class="btn btn-danger col-xs-offset-1 col-xs-4" name="delete" type="submit">Delete competition</button>
+               		<div class="row">
+                                <a class="btn btn-danger col-xs-1" href="/admin.php">Back</a>
+                                <form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
+                                        <button class="btn btn-danger col-xs-3" name="delete" type="submit">Delete competition</button>
                                         <input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
                                 </form>
-				<a class="btn btn-primary col-xs-offset-1 col-xs-3" href="/addschool.php">New school</a>
-			</div>
-		</div>
+				<button id="finalizebtn" type="submit" class="btn btn-success col-xs-3" form="compinfo" name="finalize">Finalize changes</button>
+				<a class="btn btn-primary col-xs-2" href="/addschool.php">New school</a>
+                                <a class="btn btn-primary col-xs-2" href="/addstudent.php">New student</a>
+                        </div>
+                </div>
 	</div>
 </div>
 </body>

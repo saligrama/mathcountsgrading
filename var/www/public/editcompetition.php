@@ -104,24 +104,31 @@
 	if(empty($schinfo))
 		$schinfo = 0;
 
-	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info;");
+	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info");
+	if(empty($studentinfo))
+		$studentinfo = 0;
 
         $compinfo = dbQuery_new($conn, "SELECT * FROM competition WHERE CID=:cid", ["cid" => $_GET["CID"]]);
         if(empty($compinfo))
 		redirectTo("/admin.php");
 
 	$participants = dbQuery_new($conn, "SELECT * FROM competition_participants WHERE CID=:cid", ["cid" => $_GET["CID"]]);
+	$stparticipants = dbQuery_new($conn, "SELECT * FROM student_participants WHERE CID=:cid", ["cid" => $_GET["CID"]]);
 
-        $participants_row = [];
+        $participants_row = $student_participants_row = [];
 
         foreach($participants as $participant)
             array_push($participants_row, $participant["SCID"]);
+
+	foreach($stparticipants as $participant)
+	    array_push($student_participants_row, $participant["SID"]);
 
         render("editcomp_form.php", [
                "schinfo" => $schinfo,
 	       "studentinfo" => $studentinfo,
                "crow" => $compinfo[0],
                "participants_row" => $participants_row,
+	       "student_participants_row" => $student_participants_row,
                "fullname" => getFullName($conn)
 	     ]
         );
