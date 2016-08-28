@@ -41,7 +41,7 @@ body {
 }
 
 .noschool {
-	display: block !important;
+	display: block;
 	padding: 3px 6px;
 }
 
@@ -200,13 +200,45 @@ function studentSelect()
 	var scid = select.options[select.selectedIndex].value;
 
 	var ul = document.getElementById("stcont");
-	var checks = ul.getElementsByTagName("INPUT");
-	for(var i = 0; i < checks.length; i++)
+	var lis = ul.getElementsByClassName("slider-li");
+
+	var hidden = 0;
+	var lastVis = 0;
+	for(var i = 0; i < lis.length; i++)
 	{
-		if(parseInt(checks[i].id) != scid)
-			checks[i].style.display = "none";
-		else
-			checks[i].style.display = "initial";
+		if(parseInt(lis[i].id) != scid) {
+			lis[i].style.display = "none";
+			lis[i].nextSibling.style.display = "none";
+			hidden++;
+		}
+		else {
+			lis[i].style.display = "block";
+			lis[i].nextSibling.style.display = "block";
+			lastVis = i;
+		}
+	}
+
+	lis[lastVis].nextSibling.style.display = "none";
+
+	if(hidden == lis.length)
+		document.getElementById("nostusch").style.display = "block";
+	else
+		document.getElementById("nostusch").style.display = "none";
+}
+
+window.onload = function() {
+	studentSelect();
+}
+
+function schoolSelect(scid)
+{
+	if(document.getElementById("check" + scid).checked)
+	{
+		var op = document.createElement("OPTION");
+		op.innerHTML = "<?= clean($row['team_name']) ?>";
+		value = "<?= $row['SCID'] ?>";
+
+		document.getElementById("stuschselect").appendChild(op);
 	}
 }
 
@@ -365,7 +397,7 @@ function deleteComp()
 									<?php else: ?>
 										<?php foreach($schinfo as $row): ?>
 											<li class="slider-li">
-												<input type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
+												<input onchange="schoolSelect(<?= $row['SCID'] ?>);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
 												<label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
 												<button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
 											</li>
@@ -420,8 +452,9 @@ function deleteComp()
                        		               	      	        		<?php if($studentinfo == 0): ?>
                        		                               	        	        <li class="noschool">Looks like there aren't any students yet.</li>
                        		                       	        	        <?php else: ?>
+											<li class="noschool" id="nostusch" style="display:none;">Looks like there aren't any students from this school yet.</li>
                        		                               	        	        <?php foreach($studentinfo as $row): ?>
-                       		                                      	        	        <li class="slider-li">
+                       		                                      	        	        <li class="slider-li" id="<?= $row['SCID'] ?>student">
 													<h5 class="text-center"><?php echo clean($row["first_name"] . " " . $row["last_name"]); ?></h5>
 
 													<input form="compinfo" type="checkbox" class="checkbox-custom" id=<?= $row["SCID"] . "rcheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'reg' . $row['SID'] ?>" value="yes" <?php echo (in_array($row["SID"], $student_participants_row) ? "checked" : "") ?>>
