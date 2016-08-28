@@ -204,26 +204,57 @@ function studentSelect()
 
 	var hidden = 0;
 	var lastVis = 0;
-	for(var i = 0; i < lis.length; i++)
+
+	if(scid == "all")
 	{
-		if(parseInt(lis[i].id) != scid) {
+		for(var i = 0; i < lis.length; i++)
+		{
 			lis[i].style.display = "none";
 			lis[i].nextSibling.style.display = "none";
 			hidden++;
+
+			for(var j = 0; j < select.options.length; j++)
+			{
+				if(parseInt(lis[i].id) == select.options[j].value) {
+					lis[i].style.display = "block";
+					lis[i].nextSibling.style.display = "block";
+					lastVis = i;
+					hidden--;
+					break;
+				}
+			}
 		}
-		else {
-			lis[i].style.display = "block";
-			lis[i].nextSibling.style.display = "block";
-			lastVis = i;
+	}
+	else
+	{
+		for(var i = 0; i < lis.length; i++)
+		{
+			if(parseInt(lis[i].id) != scid) {
+				lis[i].style.display = "none";
+				lis[i].nextSibling.style.display = "none";
+				hidden++;
+			}
+			else {
+				lis[i].style.display = "block";
+				lis[i].nextSibling.style.display = "block";
+				lastVis = i;
+			}
 		}
 	}
 
-	lis[lastVis].nextSibling.style.display = "none";
+	if(lis.length)
+		lis[lastVis].nextSibling.style.display = "none";
 
-	if(hidden == lis.length)
-		document.getElementById("nostusch").style.display = "block";
-	else
-		document.getElementById("nostusch").style.display = "none";
+	<?php if(!empty($studentinfo) && !empty($schinfo)): ?>
+		if(hidden == lis.length) {
+			document.getElementById("nostusch").style.display = "block";
+			document.getElementById("partdrop").innerHTML = "Participating students from school:";
+		}
+		else {
+			document.getElementById("nostusch").style.display = "none";
+			document.getElementById("partdrop").innerHTML = "Participating students from school (" + (lis.length - hidden) + " students):";
+		}
+	<?php endif; ?>
 }
 
 window.onload = function() {
@@ -232,13 +263,50 @@ window.onload = function() {
 
 function schoolSelect(scid)
 {
-	if(document.getElementById("check" + scid).checked)
+	var schoolinfo = [];
+
+	<?php if(!empty($schinfo)): ?>
+		<?php foreach($schinfo as $row): ?>
+			schoolinfo[<?= $row["SCID"] ?>] = "<?php echo clean($row['team_name']); ?>";
+		<?php endforeach; ?>
+	<?php endif; ?>
+
+	var options = document.getElementById("stuschselect").options;
+
+	var exists = 0;
+        for(var i = 0; i < options.length; i++)
+        	if(options[i].value == scid)
+                	exists = 1;
+
+	if(document.getElementById("check" + scid).checked && !exists)
 	{
 		var op = document.createElement("OPTION");
-		op.innerHTML = "<?= clean($row['team_name']) ?>";
-		value = "<?= $row['SCID'] ?>";
-
 		document.getElementById("stuschselect").appendChild(op);
+
+		op.outerHTML = "<option value='" + scid + "'>" + schoolinfo[scid] + "</option>";
+	}
+	else if(!document.getElementById("check" + scid).checked && exists)
+	{
+		for(var i = 0; i < options.length; i++)
+			if(options[i].value == scid)
+				options[i].parentNode.removeChild(options[i]);
+	}
+
+	studentSelect();
+}
+
+function studentCheck(type, sid)
+{
+	var acheck = document.getElementById("acheck" + sid);
+	var rcheck = document.getElementById("rcheck" + sid);
+
+	if(type) {
+		if(acheck.checked)
+			document.getElementById("acheck" + sid).checked = false;
+	}
+	else {
+		if(rcheck.checked)
+			document.getElementById("rcheck" + sid).checked = false;
 	}
 }
 
@@ -393,7 +461,7 @@ function deleteComp()
 							<div class="well well-sm slider-well" id="swell">
 								<ul class="slider-container-fixed" id="scont">
 									<?php if($schinfo == 0): ?>
-										<li class="noschool">Looks like there aren't any schools yet.</li>
+										<li class="noschool" style="display:block;">Looks like there aren't any schools yet.</li>
 									<?php else: ?>
 										<?php foreach($schinfo as $row): ?>
 											<li class="slider-li">
@@ -416,63 +484,52 @@ function deleteComp()
 				</div>
 				<div class="col-divider"></div>
 				<div class="colobj">
-					<?php $stdrop = 1; ?>
 					<div class="row">
-						<label>Participating students from school:</label>
-						<?php if($schinfo == 0): ?>
-							<div class="well well-sm slider-well">
-                       	              		                 <ul class="slider-container-fixed">
-									<li class="noschool">Looks like there aren't any schools yet.</li>
-								</ul>
-							</div>
-							<?php $stdrop = 0; ?>
-						<?php else: ?>
-							<div class="form-group">
-								<select onchange="studentSelect();" id="stuschselect" class="js-select form-control">
-									<?php $nums = 0; ?>
-									<?php foreach($schinfo as $row): ?>
-										<?php if(in_array($row["SCID"], $participants_row)): ?>
-											<option value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"]); ?></option>
-										<?php $nums++; ?>
-										<?php endif; ?>
-									<?php endforeach; ?>
-									<?php if($nums === 0): ?>
-										<option value="0">Looks like no schools have been selected yet</option>
-										<?php $stdrop = 0; ?>
+						<label id="partdrop">Participating students from school:</label>
+						<div class="form-group">
+							<select onchange="studentSelect();" id="stuschselect" class="js-select form-control">
+								<option value="all">All selected schools</option>
+								<?php foreach($schinfo as $row): ?>
+									<?php if(in_array($row["SCID"], $participants_row)): ?>
+										<option value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"]); ?></option>
 									<?php endif; ?>
-								</select>
-							</div>
-						<?php endif; ?>
+								<?php endforeach; ?>
+							</select>
+						</div>
 					</div>
-					<?php if($stdrop): ?>
-						<div class="row">
-              	 		                	<div class="dropdown">
-               	       		        	        	<div class="well well-sm slider-well" id="stwell">
-                 		        	 	      	        <ul class="slider-container-fixed" id="stcont">
-                       		               	      	        		<?php if($studentinfo == 0): ?>
-                       		                               	        	        <li class="noschool">Looks like there aren't any students yet.</li>
-                       		                       	        	        <?php else: ?>
-											<li class="noschool" id="nostusch" style="display:none;">Looks like there aren't any students from this school yet.</li>
-                       		                               	        	        <?php foreach($studentinfo as $row): ?>
-                       		                                      	        	        <li class="slider-li" id="<?= $row['SCID'] ?>student">
-													<h5 class="text-center"><?php echo clean($row["first_name"] . " " . $row["last_name"]); ?></h5>
+					<div class="row">
+              	 		               	<div class="dropdown">
+               	       		                	<div class="well well-sm slider-well" id="stwell">
+                 		        		        <ul class="slider-container-fixed" id="stcont">
+                       		               	      	       		<?php if($studentinfo == 0): ?>
+										<?php if($schinfo == 0): ?>
+											<li class="noschool" style="display:block;">Looks like there aren't any schools or students yet.</li>
+										<?php else: ?>
+											<li class="noschool" style="display:block;">Looks like there aren't any students at all yet.</li>
+										<?php endif; ?>
+									<?php elseif($schinfo == 0): ?>
+										<li class="noschool" style="display:block">Looks like there aren't any schools yet.</li>
+									<?php else: ?>
+										<li class="noschool" id="nostusch" style="display:none;">Looks like there aren't any students in your selection.</li>
+                       		                               	        	<?php foreach($studentinfo as $row): ?>
+                      		                                      	        	<li class="slider-li" id="<?= $row['SCID'] ?>student">
+												<h5 class="text-center"><?php echo clean($row["first_name"] . " " . $row["last_name"]); ?></h5>
 
-													<input form="compinfo" type="checkbox" class="checkbox-custom" id=<?= $row["SCID"] . "rcheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'reg' . $row['SID'] ?>" value="yes" <?php echo (in_array($row["SID"], $student_participants_row) ? "checked" : "") ?>>
-       	                                                                       	                 	<label id="<?= $row['SCID'] . 'rlabel' . $row['SID'] ?>" for=<?= $row["SCID"] . "rcheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Regular</label>
+												<input onchange="studentCheck(1, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "rcheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'reg' . $row['SID'] ?>" value="yes" <?php echo (in_array($row["SID"], $student_participants_row) ? "checked" : "") ?>>
+      	                                                              	                 	<label id="<?= $row['SCID'] . 'rlabel' . $row['SID'] ?>" for=<?= "rcheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Regular</label>
 
-													<button class="btn btn-primary slider-edit" onclick="redirectTo('editstudent.php?SID=<?= $row['SID'] ?>');">Edit</button>
+												<button class="btn btn-primary slider-edit" onclick="redirectTo('editstudent.php?SID=<?= $row['SID'] ?>');">Edit</button>
 
-													<input form="compinfo" type="checkbox" class="checkbox-custom" id=<?= $row["SCID"] . "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes" <?php echo (in_array($row["SID"], $student_participants_row) ? "checked" : "") ?>>
- 	      	                                                                		        <label id="<?= $row['SCID'] . 'alabel' . $row['SID'] ?>" for=<?= $row["SCID"] . "acheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Alternate</label
-												</li>
-                                	        	                                	<li class="divider slider-divider"></li>
-                                        	        		               	<?php endforeach; ?>
-                                                	       			<?php endif; ?>
-                                	               	 		</ul>
-            	                        			</div>
-                            				</div>
-                	       			</div><br>
-					<?php endif; ?>
+												<input onchange="studentCheck(0, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes" <?php echo (in_array($row["SID"], $student_participants_row) ? "checked" : "") ?>>
+ 	                                                                      		        <label id="<?= $row['SCID'] . 'alabel' . $row['SID'] ?>" for=<?= "acheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Alternate</label
+											</li>
+                               	        	                                	<li class="divider slider-divider"></li>
+                                       	        		               	<?php endforeach; ?>
+                                               	       			<?php endif; ?>
+                               	               	 		</ul>
+            	                       			</div>
+                            			</div>
+                	       		</div><br>
 				</div>
 			</form>
 		</div>
