@@ -1,11 +1,5 @@
 <?php
 
-require(dirname(__FILE__) . "/constants.php");
-require(dirname(__FILE__) . "/../lib/vendor/autoload.php");
-
-use MathParser\StdMathParser;
-
-
 function render($template, $values = []) {
 
     // if template exists, render it
@@ -129,35 +123,6 @@ function dbQuery_new($conn, $query, $values = NULL) {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     }
-
-}
-
-function exprParse($expr) {
-
-    function parseArray(&$tokenizedArray) {
-
-        $result = [];
-
-        while (($ch = array_shift($tokenizedArray)) !== null) {
-
-            if ($ch === ')')
-                break;
-
-            $result[] = $ch === '(' ? parseArray($tokenizedArray) : $ch;
-
-        }
-        if (count($result) < 2)
-            return reset($result);
-
-        $result[] = array_splice($result, -2, 1)[0];
-        return $result;
-
-    }
-
-    $parser = new StdMathParser();
-
-    $tokenizedArray = preg_split("/([()])/", $parser->parse($expr), 0, PREG_SPLIT_DELIM_CAPTURE + PREG_SPLIT_NO_EMPTY);
-    return parseArray($tokenizedArray);
 
 }
 
