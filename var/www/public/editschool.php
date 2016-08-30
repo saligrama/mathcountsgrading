@@ -64,7 +64,11 @@
 		if(empty($result))
 			redirectTo("/admin.php");
 
-		render("edit_form.php", ["result" => $result, "fullname" => getFullName($conn)]);
+		$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info WHERE SCID = :scid", ["scid" => $_GET["SCID"]]);
+		if(empty($studentinfo))
+			$studentinfo = 0;
+
+		render("edit_form.php", ["result" => $result, "studentinfo" => $studentinfo, "fullname" => getFullName($conn)]);
 
 	}
 

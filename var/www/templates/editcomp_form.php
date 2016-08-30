@@ -7,8 +7,8 @@
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
 
-<link rel="stylesheet" type="text/css" href="./select2/dist/css/select2.css">
-<script src="./select2/dist/js/select2.full.js"></script>
+<link rel="stylesheet" type="text/css" href="./styles/select2.css">
+<script src="./scripts/select2.full.js"></script>
 
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
@@ -21,16 +21,6 @@
 <title>Edit competition</title>
 
 <style>
-
-html {
-	overflow: hidden;
-	height: 100%;
-}
-
-body {
-	height: 100%;
-	overflow: auto;
-}
 
 .panel {
 	max-width: 900px;
@@ -46,17 +36,11 @@ body {
 }
 
 .select2-results__option {
-        text-overflow: ellipsis;
-        overflow-x: hidden;
-        white-space: nowrap;
+        word-wrap: break-word;
 }
 
 .select2-container {
 	width: 100% !important;
-}
-
-.slider-edit {
-	width: 18%;
 }
 
 .checkbox-custom-label {
@@ -66,8 +50,15 @@ body {
 	width: 75%;
 }
 
+#stcont .slider-edit {
+	width: 16%;
+	float: none;
+	margin-left: 5% !important;
+}
+
 .checkbox-custom-label-stu {
-	width: 34%;
+	width: 30%;
+	margin-left: 5%;
 	font-weight: normal;
 }
 
@@ -77,8 +68,8 @@ body {
 }
 
 #stcont {
-	min-height: 482px;
-	max-height: 482px;
+	min-height: 483px;
+	max-height: 483px;
 }
 
 #scont {
@@ -88,6 +79,11 @@ body {
 
 .slider-well {
 	margin: 0;
+	position: relative;
+}
+
+.checkbox-custom {
+	display: none;
 }
 
 .colobj {
@@ -120,6 +116,11 @@ body {
 	padding: 0;
 }
 
+.searchbar {
+	width: 100%;
+	margin-bottom: 8px;
+}
+
 @media (max-width: 1000px) {
 	.colobj {
 		display: block;
@@ -150,6 +151,10 @@ body {
 		max-height: 250px !important;
 	}
 
+	#stcont {
+		max-height: 350px !important;
+	}
+
 	.panel-footer .col-xs-1 {
 		width: 25%;
 		margin-bottom: 10px;
@@ -174,15 +179,16 @@ body {
 
 <script type="text/javascript">
 
+function reloadSelect2()
+{
+	$(".js-select").select2({
+		minimumResultsForSearch: 6
+	});
+}
+
 $(document).ready(function() {
-  $(".js-select").select2({
-	minimumResultsForSearch: 6
-  });
+  reloadSelect2();
 });
-
-</script>
-
-<script type="text/javascript">
 
 /*function expandEllipsis(SCID)
 {
@@ -194,6 +200,31 @@ $(document).ready(function() {
 	}
 }*/
 
+function nextSibling(e)
+{
+	while(e && (e = e.nextSibling))
+		if(e.nodeType == 1)
+			return e;
+}
+
+function searchCompare(searchText, optionText)
+{
+	if(searchText === "")
+		return true;
+
+	return (optionText.toLowerCase().search(searchText.toLowerCase()) !== -1);
+}
+
+var schoolinfo = [];
+
+schoolinfo["all"] = "All selected schools";
+<?php if(!empty($schinfo)): ?>
+	<?php foreach($schinfo as $row): ?>
+		schoolinfo[<?= $row["SCID"] ?>] = "<?php echo clean($row['team_name']); ?>";
+	<?php endforeach; ?>
+<?php endif; ?>
+
+
 function studentSelect()
 {
 	var select = document.getElementById("stuschselect");
@@ -201,6 +232,8 @@ function studentSelect()
 
 	var ul = document.getElementById("stcont");
 	var lis = ul.getElementsByClassName("slider-li");
+
+	var searchText = document.getElementById("stusearch").value;
 
 	var hidden = 0;
 	var lastVis = 0;
@@ -210,14 +243,16 @@ function studentSelect()
 		for(var i = 0; i < lis.length; i++)
 		{
 			lis[i].style.display = "none";
-			lis[i].nextSibling.style.display = "none";
+			nextSibling(lis[i]).style.display = "none";
 			hidden++;
+
+			var studentName = lis[i].getElementsByTagName("H5")[0].innerHTML;
 
 			for(var j = 0; j < select.options.length; j++)
 			{
-				if(parseInt(lis[i].id) == select.options[j].value) {
+				if(parseInt(lis[i].id) == select.options[j].value && searchCompare(searchText, studentName)) {
 					lis[i].style.display = "block";
-					lis[i].nextSibling.style.display = "block";
+					nextSibling(lis[i]).style.display = "block";
 					lastVis = i;
 					hidden--;
 					break;
@@ -229,30 +264,54 @@ function studentSelect()
 	{
 		for(var i = 0; i < lis.length; i++)
 		{
-			if(parseInt(lis[i].id) != scid) {
-				lis[i].style.display = "none";
-				lis[i].nextSibling.style.display = "none";
-				hidden++;
+			var studentName = lis[i].getElementsByTagName("H5")[0].innerHTML;
+
+			if(parseInt(lis[i].id) == scid && searchCompare(searchText, studentName)) {
+				lis[i].style.display = "block";
+				nextSibling(lis[i]).style.display = "block";
+				lastVis = i;
 			}
 			else {
-				lis[i].style.display = "block";
-				lis[i].nextSibling.style.display = "block";
-				lastVis = i;
+				lis[i].style.display = "none";
+                                nextSibling(lis[i]).style.display = "none";
+                                hidden++;
 			}
 		}
 	}
 
+
+	var curschool = select.options[select.selectedIndex];
+	curschool.innerHTML = schoolinfo[curschool.value];
+
+	if((lis.length - hidden) > 1)
+		curschool.innerHTML += " (" + (lis.length - hidden) + " students)";
+	else if((lis.length - hidden) == 1)
+		curschool.innerHTML += " (1 student)";
+
+	for(var i = 0; i < select.options.length; i++)
+		if(select.options[i].id !== curschool.id)
+			select.options[i].innerHTML = schoolinfo[select.options[i].value];
+
+	reloadSelect2();
+
+
 	if(lis.length)
-		lis[lastVis].nextSibling.style.display = "none";
+		nextSibling(lis[lastVis]).style.display = "none";
 
 	<?php if(!empty($studentinfo) && !empty($schinfo)): ?>
 		if(hidden == lis.length) {
-			document.getElementById("nostusch").style.display = "block";
-			document.getElementById("partdrop").innerHTML = "Participating students from school:";
+			if(searchText === "") {
+				document.getElementById("nostusch").style.display = "block";
+				document.getElementById("nostusearchres").style.display = "none";
+			}
+			else {
+				document.getElementById("nostusearchres").style.display = "block";
+				document.getElementById("nostusch").style.display = "none";
+			}
 		}
 		else {
 			document.getElementById("nostusch").style.display = "none";
-			document.getElementById("partdrop").innerHTML = "Participating students from school (" + (lis.length - hidden) + " students):";
+			document.getElementById("nostusearchres").style.display = "none";
 		}
 	<?php endif; ?>
 }
@@ -263,14 +322,6 @@ window.onload = function() {
 
 function schoolSelect(scid)
 {
-	var schoolinfo = [];
-
-	<?php if(!empty($schinfo)): ?>
-		<?php foreach($schinfo as $row): ?>
-			schoolinfo[<?= $row["SCID"] ?>] = "<?php echo clean($row['team_name']); ?>";
-		<?php endforeach; ?>
-	<?php endif; ?>
-
 	var options = document.getElementById("stuschselect").options;
 
 	var exists = 0;
@@ -283,7 +334,7 @@ function schoolSelect(scid)
 		var op = document.createElement("OPTION");
 		document.getElementById("stuschselect").appendChild(op);
 
-		op.outerHTML = "<option value='" + scid + "'>" + schoolinfo[scid] + "</option>";
+		op.outerHTML = "<option id='" + scid + "schoption' value='" + scid + "'>" + schoolinfo[scid] + "</option>";
 	}
 	else if(!document.getElementById("check" + scid).checked && exists)
 	{
@@ -308,6 +359,43 @@ function studentCheck(type, sid)
 		if(rcheck.checked)
 			document.getElementById("rcheck" + sid).checked = false;
 	}
+}
+
+function schoolSearch()
+{
+	var ul = document.getElementById("scont");
+	var lis = ul.getElementsByClassName("slider-li");
+
+	var searchText = document.getElementById("schsearch").value;
+
+	var lastVis = 0;
+	var hidden = 0;
+
+	for(var i = 0; i < lis.length; i++)
+	{
+		var schoolName = lis[i].getElementsByTagName("LABEL")[0].innerHTML;
+
+		if(searchCompare(searchText, schoolName)) {
+			lis[i].style.display = "block";
+			nextSibling(lis[i]).style.display = "block";
+			lastVis = i;
+		}
+		else {
+			lis[i].style.display = "none";
+			nextSibling(lis[i]).style.display = "none";
+			hidden++;
+		}
+	}
+
+	<?php if(!empty($schinfo)): ?>
+		if(lis.length)
+			nextSibling(lis[lastVis]).style.display = "none";
+
+		if(hidden == lis.length)
+			document.getElementById("noschsearchres").style.display = "block";
+		else
+			document.getElementById("noschsearchres").style.display = "none";
+	<?php endif; ?>
 }
 
 function checkSubmit()
@@ -459,10 +547,14 @@ function deleteComp()
 						<div class="dropdown">
 							<label for="swell">Participating Schools</label>
 							<div class="well well-sm slider-well" id="swell">
+								<div class="input-group searchbar">
+                                                                        <input id="schsearch" type="text" class="form-control" placeholder="Search" oninput="schoolSearch();">
+                                                                </div>
 								<ul class="slider-container-fixed" id="scont">
 									<?php if($schinfo == 0): ?>
 										<li class="noschool" style="display:block;">Looks like there aren't any schools yet.</li>
 									<?php else: ?>
+										<li id="noschsearchres" class="noschool" style="display:none;">No results found</li>
 										<?php foreach($schinfo as $row): ?>
 											<li class="slider-li">
 												<input onchange="schoolSelect(<?= $row['SCID'] ?>);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
@@ -491,7 +583,7 @@ function deleteComp()
 								<option value="all">All selected schools</option>
 								<?php foreach($schinfo as $row): ?>
 									<?php if(in_array($row["SCID"], $participants_row)): ?>
-										<option value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"]); ?></option>
+										<option id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"]); ?></option>
 									<?php endif; ?>
 								<?php endforeach; ?>
 							</select>
@@ -500,6 +592,9 @@ function deleteComp()
 					<div class="row">
               	 		               	<div class="dropdown">
                	       		                	<div class="well well-sm slider-well" id="stwell">
+								<div class="input-group searchbar">
+                                	                                <input id="stusearch" type="text" class="form-control" placeholder="Search" oninput="studentSelect();">
+                                                                </div>
                  		        		        <ul class="slider-container-fixed" id="stcont">
                        		               	      	       		<?php if($studentinfo == 0): ?>
 										<?php if($schinfo == 0): ?>
@@ -511,17 +606,18 @@ function deleteComp()
 										<li class="noschool" style="display:block">Looks like there aren't any schools yet.</li>
 									<?php else: ?>
 										<li class="noschool" id="nostusch" style="display:none;">Looks like there aren't any students in your selection.</li>
-                       		                               	        	<?php foreach($studentinfo as $row): ?>
-                      		                                      	        	<li class="slider-li" id="<?= $row['SCID'] ?>student">
-												<h5 class="text-center"><?php echo clean($row["first_name"] . " " . $row["last_name"]); ?></h5>
+                       		                               	        	<li class="noschool" id="nostusearchres" style="display:none;">No results found</li>
+										<?php foreach($studentinfo as $row): ?>
+                      		                                      	        	<li class="slider-li" id="<?= $row['SCID'] ?>student<?= $row['SID'] ?>">
+												<h5 class="text-center"><?php echo clean(getStudentFullName($row)); ?></h5>
 
-												<input onchange="studentCheck(1, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "rcheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'reg' . $row['SID'] ?>" value="yes" <?php echo (in_array($row["SID"], $student_participants_row) ? "checked" : "") ?>>
+												<input onchange="studentCheck(1, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "rcheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'reg' . $row['SID'] ?>" value="yes" <?php if(in_array($row["SID"], $regulars_row)) echo "checked"; ?>>
       	                                                              	                 	<label id="<?= $row['SCID'] . 'rlabel' . $row['SID'] ?>" for=<?= "rcheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Regular</label>
 
-												<button class="btn btn-primary slider-edit" onclick="redirectTo('editstudent.php?SID=<?= $row['SID'] ?>');">Edit</button>
+												<input onchange="studentCheck(0, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes" <?php if(in_array($row["SID"], $alternates_row)) echo "checked"; ?>>
+ 	                                                                      		        <label id="<?= $row['SCID'] . 'alabel' . $row['SID'] ?>" for=<?= "acheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Alternate</label>
 
-												<input onchange="studentCheck(0, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes" <?php echo (in_array($row["SID"], $student_participants_row) ? "checked" : "") ?>>
- 	                                                                      		        <label id="<?= $row['SCID'] . 'alabel' . $row['SID'] ?>" for=<?= "acheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Alternate</label
+												<button form="" class="btn btn-primary slider-edit">Edit</button>
 											</li>
                                	        	                                	<li class="divider slider-divider"></li>
                                        	        		               	<?php endforeach; ?>

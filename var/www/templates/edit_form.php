@@ -17,7 +17,7 @@
 <style>
 
 .panel {
-	max-width: 500px;
+	max-width: 1000px;
 }
 
 .firsty {
@@ -35,9 +35,75 @@
 	margin-top: -5px;
 }
 
+.searchbar {
+        width: 100%;
+        margin-bottom: 8px;
+}
+
+.nostudent {
+        display: block;
+        padding: 3px 6px;
+}
+
+.main {
+	max-width: 1200px;
+}
+
 </style>
 
 <script type="text/javascript">
+
+function nextSibling(e)
+{
+        while(e && (e = e.nextSibling))
+                if(e.nodeType == 1)
+                        return e;
+}
+
+function searchCompare(searchText, optionText)
+{
+        if(searchText === "")
+                return true;
+
+        return (optionText.toLowerCase().search(searchText.toLowerCase()) !== -1);
+}
+
+function studentSearch()
+{
+        var ul = document.getElementById("stcont");
+        var lis = ul.getElementsByClassName("slider-li");
+
+        var searchText = document.getElementById("stusearch").value;
+
+        var lastVis = 0;
+        var hidden = 0;
+
+        for(var i = 0; i < lis.length; i++)
+        {
+                var studentName = lis[i].getElementsByTagName("P")[0].innerHTML;
+
+                if(searchCompare(searchText, studentName)) {
+                        lis[i].style.display = "block";
+                        nextSibling(lis[i]).style.display = "block";
+                        lastVis = i;
+                }
+                else {
+                        lis[i].style.display = "none";
+                        nextSibling(lis[i]).style.display = "none";
+                        hidden++;
+                }
+        }
+
+        <?php if(!empty($studentinfo)): ?>
+                if(lis.length)
+                        nextSibling(lis[lastVis]).style.display = "none";
+
+                if(hidden == lis.length)
+                        document.getElementById("nostusearchres").style.display = "block";
+                else
+                        document.getElementById("nostusearchres").style.display = "none";
+        <?php endif; ?>
+}
 
 function checkSubmit()
 {
@@ -128,12 +194,13 @@ function deleteSchool()
                 </ul>
         </div>
 </nav>
-<div class="main">
-        <div class="container-fluid panel panel-primary">
-                <div class="panel-heading"><h4>Make any necessary changes to the boxes below</h4></div>
-                <div class="panel-body">
-                        <form id="schoolinfo" onsubmit="return checkSubmit();" action="" method="post">
-                                <div class="col-xs-offset-1 col-xs-10">
+<div class="container-fluid main">
+	<div class="col-md-7 col-xs-12">
+        	<div class="container-fluid panel panel-primary">
+                	<div class="panel-heading"><h4>Edit school</h4></div>
+                	<div class="panel-body">
+                        	<form id="schoolinfo" onsubmit="return checkSubmit();" action="" method="post">
+                                	<div class="col-xs-offset-1 col-xs-10">
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="teamname">Team name</label>
@@ -164,21 +231,54 @@ function deleteSchool()
                                                                 <input id="email" type="email" class="form-control" name="email" placeholder="Contact Email" value="<?php echo clean($row['contact_email']); ?>" required>
                                                         </div>
                                                 </div><br>
+						<div class="row">
+                                                	<div class="dropdown">
+                                                        	<label for="stwell">Students</label>
+                                                        	<div class="well well-sm slider-well" id="stwell">
+                                                                	<div class="input-group searchbar">
+                                                                        	<input id="stusearch" type="text" class="form-control" placeholder="Search" oninput="studentSearch();">
+                                                                	</div>
+                                                                	<ul class="slider-container-fixed" id="stcont">
+                                                                        	<?php if($studentinfo == 0): ?>
+                                                                                	<li class="nostudent" style="display:block;">Looks like there aren't any students in this school yet.</li>
+                                                                        	<?php else: ?>
+                                                                                	<li id="nostusearchres" class="nostudent" style="display:none;">No results found</li>
+                                                                                	<?php foreach($studentinfo as $row): ?>
+                                                                                	        <li class="slider-li">
+                                                                        	                        <p class="slider-text"><?php echo clean(getStudentFullName($row)); ?></p>
+                                                                	                                <button form="" class="btn btn-primary slider-edit">Edit</button>
+                                                	                                        </li>
+                                                                                        	<li class="divider slider-divider"></li>
+                                                                                	<?php endforeach; ?>
+                                                                        	<?php endif; ?>
+                                                                	</ul>
+                                                        	</div>
+                                                        </div>
+                                        	</div><br>
         					<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
-                                </div>
-                        </form>
-		</div>
-		<div class="panel-footer">
-                        <div class="btmrow row">
-				<button id="finalizebtn" type="submit" class="btmbtn btn btn-success col-sm-offset-0 col-sm-4 col-xs-offset-2 col-xs-8" form="schoolinfo" name="finalize">Finalize changes</button>
-                                <a class="btmbtn btn btn-danger col-xs-offset-1 col-xs-4 col-sm-offset-1 col-sm-2" href="/create.php">Back</a>
-				<form onsubmit="return deleteSchool();" method="post" action="">
-					<button class="btmbtn btn btn-danger col-sm-offset-1 col-xs-offset-1 col-xs-5 col-sm-4" name="delete" type="submit">Delete school</button>
-					<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
-				</form>
+                                	</div>
+                        	</form>
 			</div>
-                </div>
-        </div>
+			<div class="panel-footer">
+                        	<div class="btmrow row">
+					<button id="finalizebtn" type="submit" class="btmbtn btn btn-success col-sm-offset-0 col-sm-4 col-xs-offset-2 col-xs-8" form="schoolinfo" name="finalize">Finalize changes</button>
+                                	<a class="btmbtn btn btn-danger col-xs-offset-1 col-xs-4 col-sm-offset-1 col-sm-2" href="/create.php">Back</a>
+					<form onsubmit="return deleteSchool();" method="post" action="">
+						<button class="btmbtn btn btn-danger col-sm-offset-1 col-xs-offset-1 col-xs-5 col-sm-4" name="delete" type="submit">Delete school</button>
+						<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
+					</form>
+				</div>
+        	        </div>
+        	</div>
+	</div>
+	<div class="col-md-5 col-xs-12">
+		<div class="container-fluid panel panel-primary">
+			<div class="panel-heading">Edit student</div>
+			<div class="panel-body">
+				<div class="choose-edit">Choose a student to the left to edit</div>
+			</div>
+		</div>
+	</div>
 </div>
 </body>
 

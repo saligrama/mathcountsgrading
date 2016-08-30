@@ -65,14 +65,7 @@ function endLoginSession() {
     if(!session_id())
 	session_start();
 
-    if(isset($_SESSION['type']))
-    	unset($_SESSION['type']);
-
-    if(isset($_SESSION['starttime']))
-        unset($_SESSION['starttime']);
-
-    if(isset($_SESSION['UID']))
-    	unset($_SESSION['UID']);
+    $_SESSION = array();
 
     if (ini_get("session.use_cookies")) {
         $params = session_get_cookie_params();
@@ -196,14 +189,14 @@ function getFullName($conn)
 
     $name = $namerows[0];
 
-    if($name["first_name"] == NULL || $name["first_name"] == "") {
-        if($name["last_name"] == NULL || $name["last_name"] == "")
+    if(sempty($name["first_name"])) {
+        if(sempty($name["last_name"]))
             $fullname = $name["email"];
         else
             $fullname = $name["last_name"];
     }
     else {
-        if($name["last_name"] == NULL || $name["last_name"] == "")
+        if(sempty($name["last_name"]))
             $fullname = $name["first_name"];
         else
             $fullname = $name["first_name"] . " " . $name["last_name"];
@@ -214,10 +207,26 @@ function getFullName($conn)
 
 function getCompFullName($comprow)
 {
-	if($comprow["competition_name"] == NULL || $comprow["competition_name"] == "")
+	if(sempty($comprow["competition_name"]))
 		return $comprow["competition_date"];
 	else
 		return $comprow["competition_name"] . " (" . $comprow["competition_date"] . ")";
+}
+
+function getStudentFullName($row)
+{
+	if(sempty($row["first_name"])) {
+		if(sempty($row["last_name"]))
+			return "No name";
+		else
+			return $row["last_name"];
+	}
+	else {
+		if(sempty($row["last_name"]))
+			return $row["first_name"];
+		else
+			return $row["first_name"] . " " . $row["last_name"];
+	}
 }
 
 function clean($data)
