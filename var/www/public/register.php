@@ -2,8 +2,6 @@
 
     require(dirname(__FILE__) . "/../includes/functions.php");
 
-    $error = 0;
-
     $conn = dbConnect_new();
 
     if(!empty(dbQuery_new($conn, "SELECT * FROM user;")))
@@ -12,10 +10,8 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
-	    if(!isset($_POST["passwd"]) || !isset($_POST["confirm"]) || !isset($_POST["logname"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["schaf"])) {
-		popupAlert("Whoopsie! There where was an internal error. Please try again");
-		redirectTo("/register.php");
-	    }
+	    if(!isset($_POST["passwd"]) || !isset($_POST["confirm"]) || !isset($_POST["logname"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["schaf"]))
+		internalErrorRedirect("/register.php");
 
             $passwd = $name = $confirm = "";
 	    $schaf = 0;
@@ -26,10 +22,8 @@
 	    $firstname = $_POST["firstname"];
 	    $lastname = $_POST["lastname"];
 
-            if (sempty($passwd) || sempty($logname))
-                $error = 1;
-            elseif (sempty($confirm) || $confirm !== $passwd)
-                $error = 1;
+            if (sempty($passwd) || sempty($logname) || sempty($confirm) || $confirm !== $passwd)
+                internalErrorRedirect("/register.php");
             else {
 
 		$previous = dbQuery_new($conn, "SELECT * FROM user WHERE email = :email;",
@@ -37,7 +31,7 @@
 	        if(!empty($previous)) {
         	        popupAlert("Whoops! A user with the same email/logname already exists");
                 	redirectTo("/register.php");
-        	}
+ 		}
 
 
                 $result = dbQuery_new($conn, "INSERT INTO user SET
@@ -63,17 +57,6 @@
 	    }
 
     }
-    else {
-	$error = 0;
-    }
 
-    switch($error) {
-	case 0:
-	    render("register_form.php", ["schoolrows" => dbQuery_new($conn, "SELECT * FROM school_info;"), "fullname" => getFullName($conn)]);
-	    break;
-	case 1:
-	    popupAlert("Whoopsie! There was an interal error. Please try again");
-	    redirectTo("/register.php");
-	    break;
-    }
+    render("register_form.php", ["schoolrows" => dbQuery_new($conn, "SELECT * FROM school_info;"), "fullname" => getFullName($conn)]);
 ?>

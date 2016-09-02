@@ -60,6 +60,12 @@ function redirectTo($url) {
 
 }
 
+function internalErrorRedirect($url)
+{
+	popupAlert("Whoopsie! There was an internal error. Please try again");
+	redirectTo($url);
+}
+
 function endLoginSession() {
 
     if(!session_id())

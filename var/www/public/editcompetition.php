@@ -9,9 +9,9 @@
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"])) {
 
 	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) || !isset($_POST["cid"]) ||
-	   sempty($_POST["compdate"]) || sempty($_POST["comptype"])) {
-		popupAlert("Whoopsie! There was an interal error. Please try again");
-		redirectTo(isset($_POST["cid"]) ? "/editcompetition.php?CID=" . $_POST["cid"] : "/admin.php");
+	   sempty($_POST["compdate"]) || sempty($_POST["comptype"]))
+	{
+		internalErrorRedirect(isset($_POST["cid"]) ? "/editcompetition.php?CID=" . $_POST["cid"] : "/admin.php");
 	}
 
 	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_name = :compname AND CID != :cid;",

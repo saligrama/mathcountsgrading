@@ -34,10 +34,6 @@ $avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
 	margin-right: 7px;
 }
 
-p, h1, h2, h3, h4, h5, h6 {
-	word-wrap: break-word;
-}
-
 .currentcomp {
 	font-size: 16px !important;
 	margin-bottom: 4px !imporant;
@@ -101,7 +97,6 @@ function changeComp(CID)
 
 <body>
 
-<div class="jumbotron malert"></div>
 <nav class="mnavbar">
 	<div class="mnavcontainer container">
 		<ul class="mnavlist">

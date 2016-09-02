@@ -18,6 +18,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js" crossorigin="anonymous"></script>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Edit competition</title>
 
 <style>
@@ -33,14 +35,6 @@
 .noschool {
 	display: block;
 	padding: 3px 6px;
-}
-
-.select2-results__option {
-        word-wrap: break-word;
-}
-
-.select2-container {
-	width: 100% !important;
 }
 
 .checkbox-custom-label {
@@ -200,20 +194,6 @@ $(document).ready(function() {
 	}
 }*/
 
-function nextSibling(e)
-{
-	while(e && (e = e.nextSibling))
-		if(e.nodeType == 1)
-			return e;
-}
-
-function searchCompare(searchText, optionText)
-{
-	if(searchText === "")
-		return true;
-
-	return (optionText.toLowerCase().search(searchText.toLowerCase()) !== -1);
-}
 
 var schoolinfo = [];
 

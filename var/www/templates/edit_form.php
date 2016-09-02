@@ -14,25 +14,13 @@
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 
 .panel {
-	max-width: 1000px;
-}
-
-.firsty {
-        margin-left: 2px;
-        margin-top: 3px;
-}
-
-.btmbtn {
-	margin-bottom: 5px;
-	margin-top: 5px;
-}
-
-.btmrow {
-	margin-bottom: -5px;
-	margin-top: -5px;
+	max-width: none;
+	min-width: 340px;
 }
 
 .searchbar {
@@ -45,28 +33,16 @@
         padding: 3px 6px;
 }
 
-.main {
-	max-width: 1200px;
+@media (max-width: 992px) {
+
+	.panel {
+		max-width: 480px;
+	}
 }
 
 </style>
 
 <script type="text/javascript">
-
-function nextSibling(e)
-{
-        while(e && (e = e.nextSibling))
-                if(e.nodeType == 1)
-                        return e;
-}
-
-function searchCompare(searchText, optionText)
-{
-        if(searchText === "")
-                return true;
-
-        return (optionText.toLowerCase().search(searchText.toLowerCase()) !== -1);
-}
 
 function studentSearch()
 {
@@ -195,11 +171,11 @@ function deleteSchool()
         </div>
 </nav>
 <div class="container-fluid main">
-	<div class="col-md-7 col-xs-12">
+	<div class="col-md-7">
         	<div class="container-fluid panel panel-primary">
                 	<div class="panel-heading"><h4>Edit school</h4></div>
                 	<div class="panel-body">
-                        	<form id="schoolinfo" onsubmit="return checkSubmit();" action="" method="post">
+                        	<form id="schoolinfo" onsubmit="return checkSubmit();" action="/editschool.php" method="post">
                                 	<div class="col-xs-offset-1 col-xs-10">
                                                 <div class="row">
                                                         <div class="form-group">
@@ -226,7 +202,7 @@ function deleteSchool()
                                                         </div>
                                                 </div>
                                                 <div class="row">
-                                                        <div class="form-group">
+                                                        <div class="form-group">to
                                                                 <label for="email">Email</label>
                                                                 <input id="email" type="email" class="form-control" name="email" placeholder="Contact Email" value="<?php echo clean($row['contact_email']); ?>" required>
                                                         </div>
@@ -260,23 +236,78 @@ function deleteSchool()
                         	</form>
 			</div>
 			<div class="panel-footer">
-                        	<div class="btmrow row">
-					<button id="finalizebtn" type="submit" class="btmbtn btn btn-success col-sm-offset-0 col-sm-4 col-xs-offset-2 col-xs-8" form="schoolinfo" name="finalize">Finalize changes</button>
-                                	<a class="btmbtn btn btn-danger col-xs-offset-1 col-xs-4 col-sm-offset-1 col-sm-2" href="/create.php">Back</a>
+                        	<div class="row">
+					<button id="finalizebtn" type="submit" class="btn btn-success col-xs-4" form="schoolinfo" name="finalize">Finalize chtoanges</button>
+                                	<a class="btn btn-danger col-xs-offset-1 col-xs-2" href="/create.php">Back</a>
 					<form onsubmit="return deleteSchool();" method="post" action="">
-						<button class="btmbtn btn btn-danger col-sm-offset-1 col-xs-offset-1 col-xs-5 col-sm-4" name="delete" type="submit">Delete school</button>
+						<button class="btn btn-danger col-xs-offset-1 col-xs-4" name="delete" type="submit">Delete school</button>
 						<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
 					</form>
 				</div>
         	        </div>
         	</div>
 	</div>
-	<div class="col-md-5 col-xs-12">
+	<div class="col-md-5">
+		<div class="container-fluid panel panel-primary">
+			<div class="panel-heading">Add student</div>
+			<div class="panel-body">
+				<form id="addstudent" method="post" action="/editschool.php" onsubmit="return checkSubmitCreateStudent();">
+					<div class="col-xs-offset-1 col-xs-10">
+						<div class="row">
+                                                        <div class="form-group">
+                                                                <label for="firstname">First name</label>
+                                                                <input id="firstname" type="text" class="form-control" name="firstname" placeholder="First Name">
+                                                        </div>
+                                                </div>
+                                                <div class="row">
+                                                        <div class="form-group">
+                                                                <label for="lastname">Last name</label>
+                                                                <input id="lastname" type="text" class="form-control" name="lastname" placeholder="Last Name">
+                                                        </div>
+                                                </div>
+						<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
+					</div>
+				</form>
+			</div>
+			<div class="panel-footer">
+				<div class="row">
+					<button class="btn btn-danger col-xs-offset-1 col-xs-3" onclick="clearAddStudent();">Clear</button>
+					<button class="btn btn-success col-xs-offset-2 col-xs-5" type="submit" form="addstudent">Add student</button>
+				</div>
+			</div>
+		</div>
 		<div class="container-fluid panel panel-primary">
 			<div class="panel-heading">Edit student</div>
 			<div class="panel-body">
-				<div class="choose-edit">Choose a student to the left to edit</div>
+				<div class="col-xs-offset-1 col-xs-10">
+					<div class="choose-edit">
+						<p>Choose a student to edit on the left</p>
+					</div>
+					<form id="editstudent" method="post" action="/editschool.php" onsubmit="return checkSubmitEditSchool();">
+						<div id="editschoolinfo">
+							<div class="row">
+                                                        	<div class="form-group">
+                                                                	<label for="firstname">First name</label>
+                                                                	<input id="firstname" type="text" class="form-control" name="firstname" placeholder="First Name">
+                                                        	</div>
+                                                	</div>
+                                                	<div class="row">
+                                                        	<div class="form-group">
+                                                                	<label for="lastname">Last name</label>
+                                                                	<input id="lastname" type="text" class="form-control" name="lastname" placeholder="Last Name">
+                                                        	</div>
+                                                	</div>
+                                                	<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
+						</div>
+					</form>
+				</div>
 			</div>
+			<div class="panel-footer">
+                                <div class="row">
+                                        <button class="btn btn-danger col-xs-offset-1 col-xs-3" onclick="clearEditStudent();">Cancel</button>
+                                        <button class="btn btn-success col-xs-offset-2 col-xs-5" type="submit" form="addstudent">Finalize changes</button>
+                                </div>
+                        </div>
 		</div>
 	</div>
 </div>
