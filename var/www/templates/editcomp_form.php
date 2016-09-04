@@ -95,7 +95,8 @@
 
 .panel-footer a,
 .panel-footer button {
-	margin: 0 7px 0 7px;
+	margin-top: 7px;
+	margin-bottom: 7px;
 }
 
 .col-divider {
@@ -414,18 +415,12 @@ function checkSubmit()
 
 	var mes = "Are you sure you want to finalize your changes?";
 
-	if(confirm(mes))
-		return true;
-
-	return false;
+	return confirm(mes);
 }
 
 function deleteComp()
 {
-	if(confirm("Are you sure you want to delete the competition?"))
-		return true;
-
-	return false;
+	return confirm("Are you sure you want to delete the competition?");
 }
 
 /*function showSchools()
@@ -611,14 +606,13 @@ function deleteComp()
 		</div>
 		<div class="panel-footer">
                		<div class="row">
-                                <a class="btn btn-danger col-xs-1" href="/admin.php">Back</a>
-                                <form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
+                                <a class="btn btn-danger col-xs-offset-1 col-xs-1" href="/admin.php">Back</a>
+                                <button id="finalizebtn" type="submit" class="btn btn-success col-xs-3" form="compinfo" name="finalize">Finalize changes</button>
+				<form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
                                         <button class="btn btn-danger col-xs-3" name="delete" type="submit">Delete competition</button>
                                         <input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
                                 </form>
-				<button id="finalizebtn" type="submit" class="btn btn-success col-xs-3" form="compinfo" name="finalize">Finalize changes</button>
 				<a class="btn btn-primary col-xs-2" href="/addschool.php">New school</a>
-                                <a class="btn btn-primary col-xs-2" href="/addstudent.php">New student</a>
                         </div>
                 </div>
 	</div>

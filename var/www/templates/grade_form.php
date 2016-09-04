@@ -98,16 +98,10 @@ function checkSubmit()
 		else
 			smes = "The following questions were left blank:\n";
 
-                if(!confirm(smes + mes.slice(0, -2) + "\n\n" + "Would you like to proceed?"))
-                        return false;
-
-		return true;
+                return confirm(smes + mes.slice(0, -2) + "\n\n" + "Would you like to proceed?");
         }
 
-	if(!confirm("Are you sure you want to submit?"))
-		return false;
-
-	return true;
+	return confirm("Are you sure you want to submit?");
 }
 
 </script>

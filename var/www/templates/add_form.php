@@ -74,10 +74,7 @@ function checkSubmit()
 	mes += document.getElementById("town").value;
 	mes += "'?";
 
-	if(confirm(mes))
-		return true;
-
-	return false;
+	return confirm(mes);
 }
 
 </script>

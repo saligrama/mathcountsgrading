@@ -46,19 +46,73 @@
 		else if(isset($_POST["delete"]))
 		{
 			if(!isset($_POST["scid"]))
-				redirectTo("/admin.php");
+				internalErrorRedirect("/admin.php");
 
 			dbQuery_new($conn, "DELETE FROM school_info WHERE SCID = :scid", ["scid" => $_POST["scid"]]);
 
 			popupAlert("Success! school deleted");
 			redirectTo("/create.php");
 		}
+		else if(isset($_POST["addstudent"]))
+		{
+			if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["nickname"]) ||
+			   !isset($_POST["gender"]) || (sempty($_POST["firstname"]) && sempty($_POST["lastname"])))
+                        {
+			        internalErrorRedirect(isset($_POST["scid"]) ? "/editschool.php?SCID=" . $_POST["scid"] : "/admin.php");
+			}
+
+			dbQuery_new($conn,
+				"INSERT INTO mathlete_info SET
+				SCID=:scid,
+				first_name=:firstname,
+				last_name=:lastname,
+				nickname=:nickname,
+				gender=:gender", [
+					"scid" => $_POST["scid"],
+					"firstname" => $_POST["firstname"],
+					"lastname" => $_POST["lastname"],
+					"nickname" => $_POST["nickname"],
+					"gender" => $_POST["gender"]
+				]
+			);
+
+			popupAlert("Success! Student created.");
+			redirectTo("/editschool.php?SCID=" . $_POST["scid"]);
+		}
+		else if(isset($_POST["editstudent"]))
+                {
+                        if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["nickname"]) ||
+                           !isset($_POST["gender"]) || !isset($_POST["sid"]) || (sempty($_POST["firstname"]) && sempty($_POST["lastname"])))
+                        {
+                                internalErrorRedirect(isset($_POST["scid"]) ? "/editschool.php?SCID=" . $_POST["scid"] : "/admin.php");
+                        }
+
+                        dbQuery_new($conn,
+                                "UPDATE mathlete_info SET
+                                first_name=:firstname,
+                                last_name=:lastname,
+                                nickname=:nickname,
+                                gender=:gender
+				WHERE SID=:sid", [
+                                        "sid" => $_POST["sid"],
+                                        "firstname" => $_POST["firstname"],
+                                        "lastname" => $_POST["lastname"],
+                                        "nickname" => $_POST["nickname"],
+                                        "gender" => $_POST["gender"]
+                                ]
+                        );
+
+                        redirectTo("/editschool.php?SCID=" . $_POST["scid"]);
+                }
+
+		else
+			internalErrorRedirect("/admin.php");
 	}
 
 	else {
 
 		if(!isset($_GET["SCID"]))
-			redirectTo("admin.php");
+			redirectTo("/admin.php");
 
 		$result = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID = :scid", ["scid" => $_GET["SCID"]]);
 		if(empty($result))

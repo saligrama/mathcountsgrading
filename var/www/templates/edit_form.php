@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<?php $row = $result[0] ?>
+<?php $schoolrow = $result[0]; ?>
 
 <head>
 
@@ -10,6 +10,9 @@
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
+
+<link rel="stylesheet" type="text/css" href="./styles/select2.css">
+<script src="./scripts/select2.full.js"></script>
 
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
@@ -23,6 +26,10 @@
 	min-width: 340px;
 }
 
+.panel-heading {
+	font-size: 16px;
+}
+
 .searchbar {
         width: 100%;
         margin-bottom: 8px;
@@ -33,7 +40,13 @@
         padding: 3px 6px;
 }
 
-@media (max-width: 992px) {
+#editstudent-label {
+	font-size: 16px;
+	font-weight: 500;
+	padding: 7px 3px 5px 3px;
+}
+
+@media (max-width: 991px) {
 
 	.panel {
 		max-width: 480px;
@@ -43,6 +56,17 @@
 </style>
 
 <script type="text/javascript">
+
+function reloadSelect2()
+{
+        $(".js-select").select2({
+                minimumResultsForSearch: Infinity
+        });
+}
+
+$(document).ready(function() {
+       reloadSelect2();
+});
 
 function studentSearch()
 {
@@ -119,10 +143,109 @@ function checkSubmit()
                 return false;
         }
 
-        if(confirm("Are you sure you want to finalize your changes?"))
-                return true;
+        return confirm("Are you sure you want to finalize your changes?");
+}
 
-        return false;
+function checkSubmitAddStudent()
+{
+	var firstname = document.getElementById("firstname-add").value;
+	var lastname = document.getElementById("lastname-add").value;
+
+	if(firstname === "" && lastname === "")
+	{
+		alert("Please enter a either a first name or a last name, or both");
+		return false;
+	}
+
+	var fullname = firstname === "" ? "" : firstname;
+	fullname += lastname === "" ? "" : " " + lastname;
+
+	return confirm("Are you sure you want to create a student with the name '" + fullname + "'?");
+}
+
+function checkSubmitEditStudent()
+{
+	var firstname = document.getElementById("firstname-edit").value;
+        var lastname = document.getElementById("lastname-edit").value;
+
+        if(firstname === "" && lastname === "")
+        {
+                alert("Please enter a either a first name or a last name, or both");
+                return false;
+        }
+
+        return confirm("Are you sure you want to finalize your changes?");
+}
+
+function clearAddStudent()
+{
+	document.getElementById("firstname-add").value = "";
+	document.getElementById("lastname-add").value = "";
+
+	document.getElementById("nickname-add").value = "";
+	document.getElementById("gender-add").selectedIndex = "0";
+
+	reloadSelect2();
+}
+
+function cancelEditStudent()
+{
+	document.getElementById("choosestudent").style.display = "block";
+
+	document.getElementById("editstudent").style.display = "none";
+	document.getElementById("editstudentfooter").style.display = "none";
+
+	document.getElementById("editstudentheading").innerHTML = "Edit student";
+}
+
+var studentinfo = [];
+<?php if($studentinfo): ?>
+	<?php foreach($studentinfo as $row): ?>
+		studentinfo[<?= $row["SID"] ?>] = [];
+		studentinfo[<?= $row["SID"] ?>]["first_name"] = "<?php echo clean($row['first_name']); ?>";
+		studentinfo[<?= $row["SID"] ?>]["last_name"] = "<?php echo clean($row['last_name']); ?>";
+		studentinfo[<?= $row["SID"] ?>]["nickname"] = "<?php echo clean($row['nickname']); ?>";
+		studentinfo[<?= $row["SID"] ?>]["gender"] = "<?php echo clean($row['gender']); ?>";
+	<?php endforeach; ?>
+<?php endif; ?>
+
+function setEditStudentHeading()
+{
+	var firstname = document.getElementById("firstname-edit").value;
+	var lastname = document.getElementById("lastname-edit").value
+
+	var heading = document.getElementById("editstudentheading");
+	heading.innerHTML = "Editing student '";
+
+	if(firstname === "")
+		heading.innerHTML += lastname;
+	else {
+		if(lastname === "")
+			heading.innerHTML += firstname;
+		else
+			heading.innerHTML += firstname + " " + lastname;
+	}
+
+	heading.innerHTML += "':";
+}
+
+function chooseStudentEdit(sid)
+{
+	document.getElementById("choosestudent").style.display = "none";
+
+	document.getElementById("editstudent").style.display = "block";
+	document.getElementById("editstudentfooter").style.display = "block";
+
+	document.getElementById("sideditstudent").value = sid;
+
+	document.getElementById("firstname-edit").value = studentinfo[sid]["first_name"];
+	document.getElementById("lastname-edit").value = studentinfo[sid]["last_name"];
+	document.getElementById("nickname-edit").value = studentinfo[sid]["nickname"];
+	document.getElementById("gender-edit").value = studentinfo[sid]["gender"];
+
+	setEditStudentHeading();
+
+	reloadSelect2();
 }
 
 /*function checkDiff()
@@ -144,10 +267,7 @@ function checkSubmit()
 
 function deleteSchool()
 {
-	if(confirm("Are you sure you want to delete the team/school '" + "<?php echo clean($row['team_name']); ?>" + "'?"))
-		return true;
-
-	return false;
+	return confirm("Are you sure you want to delete the team/school '" + "<?php echo clean($schoolrow['team_name']); ?>" + "'?");
 }
 
 </script>
@@ -156,6 +276,7 @@ function deleteSchool()
 
 
 <body>
+
 <nav class="mnavbar">
         <div class="mnavcontainer container">
                 <ul class="mnavlist">
@@ -180,31 +301,31 @@ function deleteSchool()
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="teamname">Team name</label>
-                                                                <input id="teamname" type="text" class="form-control" name="teamname" placeholder="School Name" value="<?php echo clean($row['team_name']); ?>" required>
+                                                                <input id="teamname" type="text" class="form-control" name="teamname" placeholder="School Name" value="<?php echo clean($schoolrow['team_name']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="town">Town</label>
-                                                                <input id="town" type="text" class="form-control" name="town" placeholder="Town" value="<?php echo clean($row['town']); ?>" required>
+                                                                <input id="town" type="text" class="form-control" name="town" placeholder="Town" value="<?php echo clean($schoolrow['town']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="address">Address</label>
-                                                                <input id="address" type="text" class="form-control" name="address" placeholder="School Address" value="<?php echo clean($row['address']); ?>" required>
+                                                                <input id="address" type="text" class="form-control" name="address" placeholder="School Address" value="<?php echo clean($schoolrow['address']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
                                                                 <label for="coach">Coach</label>
-                                                                <input id="coach" type="text" class="form-control" name="coach" placeholder="Coach Name" value="<?php echo clean($row['coach']); ?>" required>
+                                                                <input id="coach" type="text" class="form-control" name="coach" placeholder="Coach Name" value="<?php echo clean($schoolrow['coach']); ?>" required>
                                                         </div>
                                                 </div>
                                                 <div class="row">
-                                                        <div class="form-group">to
+                                                        <div class="form-group">
                                                                 <label for="email">Email</label>
-                                                                <input id="email" type="email" class="form-control" name="email" placeholder="Contact Email" value="<?php echo clean($row['contact_email']); ?>" required>
+                                                                <input id="email" type="email" class="form-control" name="email" placeholder="Contact Email" value="<?php echo clean($schoolrow['contact_email']); ?>" required>
                                                         </div>
                                                 </div><br>
 						<div class="row">
@@ -222,7 +343,7 @@ function deleteSchool()
                                                                                 	<?php foreach($studentinfo as $row): ?>
                                                                                 	        <li class="slider-li">
                                                                         	                        <p class="slider-text"><?php echo clean(getStudentFullName($row)); ?></p>
-                                                                	                                <button form="" class="btn btn-primary slider-edit">Edit</button>
+                                                                	                                <button form="" onclick="chooseStudentEdit(<?= $row['SID'] ?>);" class="btn btn-primary slider-edit">Edit</button>
                                                 	                                        </li>
                                                                                         	<li class="divider slider-divider"></li>
                                                                                 	<?php endforeach; ?>
@@ -237,7 +358,7 @@ function deleteSchool()
 			</div>
 			<div class="panel-footer">
                         	<div class="row">
-					<button id="finalizebtn" type="submit" class="btn btn-success col-xs-4" form="schoolinfo" name="finalize">Finalize chtoanges</button>
+					<button id="finalizebtn" type="submit" class="btn btn-success col-xs-4" form="schoolinfo" name="finalize">Finalize changes</button>
                                 	<a class="btn btn-danger col-xs-offset-1 col-xs-2" href="/create.php">Back</a>
 					<form onsubmit="return deleteSchool();" method="post" action="">
 						<button class="btn btn-danger col-xs-offset-1 col-xs-4" name="delete" type="submit">Delete school</button>
@@ -251,20 +372,36 @@ function deleteSchool()
 		<div class="container-fluid panel panel-primary">
 			<div class="panel-heading">Add student</div>
 			<div class="panel-body">
-				<form id="addstudent" method="post" action="/editschool.php" onsubmit="return checkSubmitCreateStudent();">
+				<form id="addstudent" method="post" action="/editschool.php" onsubmit="return checkSubmitAddStudent();">
 					<div class="col-xs-offset-1 col-xs-10">
 						<div class="row">
                                                         <div class="form-group">
-                                                                <label for="firstname">First name</label>
-                                                                <input id="firstname" type="text" class="form-control" name="firstname" placeholder="First Name">
+                                                                <label for="firstname-add">First name</label>
+                                                                <input id="firstname-add" type="text" class="form-control" name="firstname" placeholder="First Name">
                                                         </div>
                                                 </div>
                                                 <div class="row">
                                                         <div class="form-group">
-                                                                <label for="lastname">Last name</label>
-                                                                <input id="lastname" type="text" class="form-control" name="lastname" placeholder="Last Name">
+                                                                <label for="lastname-add">Last name</label>
+                                                                <input id="lastname-add" type="text" class="form-control" name="lastname" placeholder="Last Name">
                                                         </div>
                                                 </div>
+						<div class="row">
+                                                        <div class="form-group">
+                                                                <label for="nickname-add">Nickname (optional)</label>
+                                                                <input id="nickname-add" type="text" class="form-control" name="nickname" placeholder="Nickname">
+                                                        </div>
+                                                </div>
+						<div class="row">
+							<div class="form-group">
+								<label for="gender-add">Gender</label>
+								<select id="gender-add" name="gender" class="js-select form-control">
+									<option value='Male'>Male</option>
+									<option value='Female'>Female</option>
+									<option value='Other'>Other</option>
+								</select>
+							</div>
+						</div>
 						<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
 					</div>
 				</form>
@@ -272,45 +409,63 @@ function deleteSchool()
 			<div class="panel-footer">
 				<div class="row">
 					<button class="btn btn-danger col-xs-offset-1 col-xs-3" onclick="clearAddStudent();">Clear</button>
-					<button class="btn btn-success col-xs-offset-2 col-xs-5" type="submit" form="addstudent">Add student</button>
+					<button class="btn btn-success col-xs-offset-2 col-xs-5" type="submit" name="addstudent" form="addstudent">Add student</button>
 				</div>
 			</div>
 		</div>
 		<div class="container-fluid panel panel-primary">
-			<div class="panel-heading">Edit student</div>
+			<div id="editstudentheading" class="panel-heading">Edit student</div>
 			<div class="panel-body">
-				<div class="col-xs-offset-1 col-xs-10">
-					<div class="choose-edit">
-						<p>Choose a student to edit on the left</p>
+				<div id="choosestudent" class="row">
+       	                                <div class="text-center">
+        	                                <p id="editstudent-label">Choose a student to edit in the main panel</p>
+                	                </div>
+                                </div>
+				<form id="editstudent" method="post" action="/editschool.php" onsubmit="return checkSubmitEditStudent();" style="display:none;">
+					<div class="col-xs-offset-1 col-xs-10">
+						<div class="row">
+                                                       	<div class="form-group">
+                                                               	<label for="firstname-edit">First name</label>
+                                                               	<input oninput="setEditStudentHeading();" id="firstname-edit" type="text" class="form-control" name="firstname" placeholder="First Name">
+                                                       	</div>
+                                               	</div>
+                                               	<div class="row">
+                                                       	<div class="form-group">
+                                                               	<label for="lastname-edit">Last name</label>
+                                                               	<input oninput="setEditStudentHeading();" id="lastname-edit" type="text" class="form-control" name="lastname" placeholder="Last Name">
+                                                       	</div>
+                                               	</div>
+						<div class="row">
+                                                       <div class="form-group">
+                                                               <label for="nickname-edit">Nickname (optional)</label>
+                                                               <input id="nickname-edit" type="text" class="form-control" name="nickname" placeholder="Nickname">
+                                                       </div>
+                                               </div>
+                                               <div class="row">
+                                                        <div class="form-group">
+                                                                <label for="gender-edit">Gender</label>
+                                                                <select id="gender-edit" name="gender" class="js-select form-control">
+                                                                        <option value='Male'>Male</option>
+                                                                        <option value='Female'>Female</option>
+                                                                        <option value='Other'>Other</option>
+                                                                </select>
+                                                        </div>
+                                                </div>
+						<input id="sideditstudent" type="hidden" name="sid" value="0">
+                                                <input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
 					</div>
-					<form id="editstudent" method="post" action="/editschool.php" onsubmit="return checkSubmitEditSchool();">
-						<div id="editschoolinfo">
-							<div class="row">
-                                                        	<div class="form-group">
-                                                                	<label for="firstname">First name</label>
-                                                                	<input id="firstname" type="text" class="form-control" name="firstname" placeholder="First Name">
-                                                        	</div>
-                                                	</div>
-                                                	<div class="row">
-                                                        	<div class="form-group">
-                                                                	<label for="lastname">Last name</label>
-                                                                	<input id="lastname" type="text" class="form-control" name="lastname" placeholder="Last Name">
-                                                        	</div>
-                                                	</div>
-                                                	<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
-						</div>
-					</form>
-				</div>
+				</form>
 			</div>
-			<div class="panel-footer">
+			<div id="editstudentfooter" class="panel-footer" style="display:none">
                                 <div class="row">
-                                        <button class="btn btn-danger col-xs-offset-1 col-xs-3" onclick="clearEditStudent();">Cancel</button>
-                                        <button class="btn btn-success col-xs-offset-2 col-xs-5" type="submit" form="addstudent">Finalize changes</button>
+                                        <button class="btn btn-danger col-xs-offset-1 col-xs-3" onclick="cancelEditStudent();">Cancel</button>
+                                        <button class="btn btn-success col-xs-offset-2 col-xs-5" type="submit" name="editstudent" form="editstudent">Finalize changes</button>
                                 </div>
                         </div>
 		</div>
 	</div>
 </div>
+
 </body>
 
 

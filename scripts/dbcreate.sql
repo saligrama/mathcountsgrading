@@ -91,7 +91,7 @@ CREATE TABLE `competition_participants` (
 
 LOCK TABLES `competition_participants` WRITE;
 /*!40000 ALTER TABLE `competition_participants` DISABLE KEYS */;
-INSERT INTO `competition_participants` VALUES (1,1),(1,2),(1,3),(25,7),(25,8),(27,8),(27,9),(29,7),(29,8),(30,8),(27,10),(32,9),(32,10),(32,11),(33,8),(33,9),(34,7),(34,8),(29,9),(35,8),(35,9),(36,7),(36,8),(36,9),(37,9),(37,10),(37,11),(38,7),(38,11),(38,12),(28,7),(28,12),(28,14),(30,10),(30,14),(30,9),(30,11),(30,12),(30,7),(28,8),(28,9),(28,10);
+INSERT INTO `competition_participants` VALUES (1,1),(1,2),(1,3),(25,7),(25,8),(27,8),(27,9),(29,7),(29,8),(30,8),(27,10),(32,9),(32,10),(32,11),(33,8),(33,9),(34,7),(34,8),(29,9),(35,8),(35,9),(36,7),(36,8),(36,9),(37,9),(37,10),(37,11),(38,7),(38,11),(38,12),(28,7),(28,12),(28,14),(30,10),(30,14),(30,9),(30,11),(30,12),(30,7);
 /*!40000 ALTER TABLE `competition_participants` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,7 +113,7 @@ CREATE TABLE `current_competition` (
 
 LOCK TABLES `current_competition` WRITE;
 /*!40000 ALTER TABLE `current_competition` DISABLE KEYS */;
-INSERT INTO `current_competition` VALUES (28);
+INSERT INTO `current_competition` VALUES (30);
 /*!40000 ALTER TABLE `current_competition` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -130,9 +130,9 @@ CREATE TABLE `mathlete_info` (
   `last_name` varchar(100) NOT NULL,
   `first_name` varchar(100) NOT NULL,
   `nickname` varchar(100) DEFAULT NULL,
-  `gender` enum('Male','Female','Other') NOT NULL,
+  `gender` enum('Male','Female','Other') DEFAULT NULL,
   PRIMARY KEY (`SID`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -141,7 +141,7 @@ CREATE TABLE `mathlete_info` (
 
 LOCK TABLES `mathlete_info` WRITE;
 /*!40000 ALTER TABLE `mathlete_info` DISABLE KEYS */;
-INSERT INTO `mathlete_info` VALUES (31,7,'Saligrama','Aditya','','Male'),(32,7,'Kaxiras','Vassilios','','Male'),(33,7,'Granger','Hermione','','Female'),(34,7,'Potter','Harry','','Male'),(35,7,'Weasley','Ronald','Ron','Male'),(36,7,'Longbottom','Neville','','Male'),(37,7,'Greengrass','Daphne','','Female'),(38,7,'Hyun-ah','Cho','Heather','Female'),(39,7,'Sharp','Nola','','Female'),(40,7,'Behan','Jammie','','Female'),(41,8,'Kearl','Beulah','','Female'),(42,8,'Arterburn','Phoebe','','Female'),(43,8,'Witt','Shawnee','','Female'),(44,8,'Cambre','Tatum','','Female'),(45,8,'Tallmadge','Marguerite','','Female'),(46,8,'Horsman','Humberto','','Male'),(47,8,'Faucher','Gillian','','Female'),(48,8,'Costales','Hyman','','Male'),(49,8,'Cron','Lavona','','Female'),(50,8,'Courtois','Lila','','Female'),(51,9,'Vasko','Grady','','Male'),(52,9,'Rademacher','Fidelia','','Female'),(53,9,'Leiva','Mitzie','','Female'),(54,9,'Cofer','Keneth','','Male'),(55,9,'Furlough','Trent','','Male'),(56,9,'Cruikshank','Takako','','Female'),(57,9,'Shinn','Rhea','','Female'),(58,9,'Blanchard','Jacquetta','','Female'),(59,9,'Graham','Marcie','','Female'),(60,9,'Varnum','Olin','','Male');
+INSERT INTO `mathlete_info` VALUES (31,7,'Saligrama','Aditya','','Male'),(32,7,'Kaxiras','Vassilios','','Male'),(33,7,'Granger','Hermione','','Female'),(34,7,'Potter','Harry','','Male'),(35,7,'Weasley','Ronald','Ron','Male'),(36,7,'Longbottom','Neville','','Male'),(37,7,'Greengrass','Daphne','','Female'),(38,7,'Hyun-ah','Cho','Heather','Female'),(39,7,'Sharp','Nola','','Female'),(40,7,'Behan','Jammie','','Female'),(41,8,'Kearl','Beulah','','Female'),(42,8,'Arterburn','Phoebe','','Female'),(43,8,'Witt','Shawnee','','Female'),(44,8,'Cambre','Tatum','','Female'),(45,8,'Tallmadge','Marguerite','','Female'),(46,8,'Horsman','Humberto','','Male'),(47,8,'Faucher','Gillian','','Female'),(48,8,'Costales','Hyman','','Male'),(49,8,'Cron','Lavona','','Female'),(50,8,'Courtois','Lila','','Female'),(51,9,'Vasko','Grady','','Male'),(52,9,'Rademacher','Fidelia','','Female'),(53,9,'Leiva','Mitzie','','Female'),(54,9,'Cofer','Keneth','','Male'),(55,9,'Furlough','Trent','','Male'),(56,9,'Cruikshank','Takako','','Female'),(57,9,'Shinn','Rhea','','Female'),(58,9,'Blanchard','Jacquetta','','Female'),(59,9,'Graham','Marcie','','Female'),(60,9,'Varnum','Olin','','Male'),(61,7,'Cod','Bob','','Male'),(62,7,'Other','Other','','Other'),(63,7,'Bobby','Frankus','Bob the Cod player 70','Male');
 /*!40000 ALTER TABLE `mathlete_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -189,10 +189,8 @@ CREATE TABLE `school_info` (
   `coach` varchar(100) NOT NULL,
   `address` varchar(100) NOT NULL,
   `contact_email` varchar(100) NOT NULL,
-  `ly_rank` int(11) NOT NULL,
-  `ly_score` float(10,2) NOT NULL,
   PRIMARY KEY (`SCID`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -201,7 +199,7 @@ CREATE TABLE `school_info` (
 
 LOCK TABLES `school_info` WRITE;
 /*!40000 ALTER TABLE `school_info` DISABLE KEYS */;
-INSERT INTO `school_info` VALUES (7,'Rampaging Rams','Belmont','Bill Belichick','25 Washington Street','rampaging.rams@gmail.com',1,63.25),(8,'Precise Penguins','Watertown','Bill Brotch','76 Jacob Road','precise.penguins@yahoo.com',10,80.25),(9,'Yellow Yaks','Worchester','Matt Damon','23 Hillside Terrace','yellow.yaks@outlook.com',8,60.00),(10,'12093102381-83712938711231','123123','13123123123123','123123123123','123123123123@1232',0,0.00),(11,'123','123','123','123','123@123',0,0.00),(12,'213123','1312313','13123123','1321313','123132@123',0,0.00),(14,'s;kjdfhskadjfhaskdfjhsklfjhsdakjfhsadklfhsdklfjhsdklfjhsklfjhsaklfhskadjlf','hello','hello','hello','h@h',0,0.00);
+INSERT INTO `school_info` VALUES (7,'Rampaging Rams','Belmont','Bill Belichick','25 Washington Street','rampaging.rams@gmail.com'),(8,'Precise Penguins','Watertown','Bill Brotch','76 Jacob Road','precise.penguins@yahoo.com'),(9,'Yellow Yaks','Worchester','Matt Damon','23 Hillside Terrace','yellow.yaks@outlook.com'),(10,'12093102381-83712938711231','123123','13123123123123','123123123123','123123123123@1232'),(11,'123','123','123','123','123@123'),(12,'213123','1312313','13123123','1321313','123132@123'),(14,'s;kjdfhskadjfhaskdfjhsklfjhsdakjfhsadklfhsdklfjhsdklfjhsklfjhsaklfhskadjlf','hello','hello','hello','h@h');
 /*!40000 ALTER TABLE `school_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -371,4 +369,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-30 15:00:25
+-- Dump completed on 2016-09-04 11:16:33
