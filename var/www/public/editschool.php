@@ -4,11 +4,24 @@
 
 	checkSession('admin');
 
+	$conn = dbConnect_new();
+
 	if ($_SERVER["REQUEST_METHOD"] == "POST")
 	{
 		if(isset($_POST["finalize"]))
 		{
-			$conn = dbConnect_new();
+			if(!isset($_POST["teamname"]) || !isset($_POST["town"]) || !isset($_POST["coach"]) || !isset($_POST["address"]) || !isset($_POST["email"]) || !isset($_POST["scid"]) ||
+			   sempty($_POST["teamname"]) || sempty($_POST["town"]) || sempty($_POST["coach"]) || sempty($_POST["address"]) || sempty($_POST["email"])) {
+	                	popupAlert("Whoopsie! There was an interal error. Please try again");
+				redirectTo(isset($_POST["scid"]) ? "/editschool.php?SCID=" . $_POST["scid"] : "/admin.php");
+			}
+
+			$previous = dbQuery_new($conn, "SELECT * FROM school_info WHERE team_name = :teamname AND town = :town AND address = :address AND SCID != :scid;",
+                                ["teamname" => $_POST["teamname"], "town" => $_POST["town"], "address" => $_POST["address"], "scid" => $_POST["scid"]]);
+        		if(!empty($previous)) {
+        		        popupAlert("Whoops! A school with the same team name, town, and address already exists.");
+                		redirectTo("/editschool.php?SCID=" . $_POST["scid"]);
+        		}
 
         		dbQuery_new($conn,
         			"UPDATE school_info SET
@@ -16,40 +29,30 @@
     	        		town=:town,
     	        		coach=:coach,
                 		address=:address,
-                		contact_email=:email,
-                		first_year=:firstyear
+                		contact_email=:email
 	        		WHERE SCID=:scid", [
 					"scid" => $_POST["scid"],
                 			"team_name" => $_POST["teamname"],
                 			"town" => $_POST["town"],
                 			"coach" => $_POST["coach"],
                 			"address" => $_POST["address"],
-                			"email" => $_POST["email"],
-                			"firstyear" => (isset($_POST["firstyear"]) && $_POST["firstyear"] == "yes") ? 1 : 0
+                			"email" => $_POST["email"]
                 		]
 
                 	);
 
-    	        	redirectTo("create.php");
+    	        	redirectTo("/create.php");
 		}
 		else if(isset($_POST["delete"]))
 		{
-			dbQuery_new(dbConnect_new(), "DELETE FROM school_info WHERE SCID = :scid", ["scid" =>$_POST["scid"]]);
+			if(!isset($_POST["scid"]))
+				redirectTo("/admin.php");
+
+			dbQuery_new($conn, "DELETE FROM school_info WHERE SCID = :scid", ["scid" => $_POST["scid"]]);
 
 			popupAlert("Success! school deleted");
 			redirectTo("/create.php");
 		}
-		else
-		{
-			if(!isset($_GET["SCID"]))
-                        	redirectTo("admin.php");
-
-                	$conn = dbConnect_new();
-
-                	$result = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID = :scid", ["scid" => $_GET["SCID"]]);
-
-                	render("edit_form.php", ["result" => $result]);
-        	}
 	}
 
 	else {
@@ -57,11 +60,11 @@
 		if(!isset($_GET["SCID"]))
 			redirectTo("admin.php");
 
-		$conn = dbConnect_new();
-
 		$result = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID = :scid", ["scid" => $_GET["SCID"]]);
+		if(empty($result))
+			redirectTo("/admin.php");
 
-		render("edit_form.php", ["result" => $result]);
+		render("edit_form.php", ["result" => $result, "fullname" => getFullName($conn)]);
 
 	}
 

@@ -3,39 +3,105 @@
 
 <head>
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
+<script src="./bootstrap/dist/js/bootstrap.js"></script>
+
+<link rel="stylesheet" type="text/css" href="./styles/general.css">
+<script src="./scripts/general.js"></script>
+
+<title>Add school</title>
 
 <style>
 
-.main {
-	margin-top: 10px;
+.panel {
+	max-width: 500px;
 }
 
-.panel-heading {
-	margin-left: -15px;
-	margin-right: -15px;
-}
-
-.btn {
-	margin-bottom: 10px;
-}
-
-.row {
-	margin-top: -5px;
+.firsty {
+	margin-left: 2px;
+	margin-top: 3px;
 }
 
 </style>
 
+<script type="text/javascript">
+
+function checkSubmit()
+{
+	var name = document.getElementById("teamname").value;
+        var town = document.getElementById("town").value;
+        var address = document.getElementById("address").value;
+        var coach = document.getElementById("coach").value;
+        var email = document.getElementById("email").value;
+
+        if(name === "")
+        {
+                malert("Please fill out the school name");
+                return false;
+        }
+
+        if(town === "")
+        {
+                malert("Please fill out the school town");
+                return false;
+        }
+
+        if(address === "")
+        {
+                malert("Please fill out the school address");
+                return false;
+        }
+
+        if(coach === "")
+        {
+                malert("Please fill out the school coach");
+                return false;
+        }
+
+        if(email === "")
+        {
+                malert("Please fill out the school email");
+                return false;
+        }
+
+	var mes = "Are you sure you want to create a school with team name '";
+	mes += document.getElementById("teamname").value;
+	mes += "' from the town '";
+	mes += document.getElementById("town").value;
+	mes += "'?";
+
+	if(confirm(mes))
+		return true;
+
+	return false;
+}
+
+</script>
+
 </head>
 
 <body>
-<div class="container-fluid main">
-	<div class="panel panel-primary col-sm-offset-3 col-sm-6 col-xs-offset-1 col-xs-10">
+<nav class="mnavbar">
+        <div class="mnavcontainer container">
+                <ul class="mnavlist">
+                        <li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?php echo clean($fullname); ?></strong></p></li>
+                        <li class="mnav-right">
+                                <form method="post" onsubmit="return checkLogout();" action="/login.php">
+                                        <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
+                                </form>
+                        </li>
+                        <li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
+                </ul>
+        </div>
+</nav>
+<div class="main">
+	<div class="container-fluid panel panel-primary">
 		<div class="panel-heading"><h4>Fill out the boxes below to create a new school</h4></div>
         	<div class="panel-body">
-			<form id="schoolinfo" action="" method="post">
+			<form id="schoolinfo" onsubmit="return checkSubmit();" action="" method="post">
                 		<div class="col-xs-offset-1 col-xs-10">
 					<div class="row">
 						<div class="form-group">
@@ -66,20 +132,14 @@
 							<label for="email">Email</label>
 							<input id="email" type="email" class="form-control" name="email" placeholder="Contact Email">
                 				</div>
-					</div>
-					<div class="row">
-						<div class="checkbox">
-							<label><input type="checkbox" name="firstyear" value="yes"><strong>First Year?</strong></label>
-						</div>
-					</div>
-					<br>
+					</div><br>
 				</div>
 			</form>
 		</div>
 		<div class="panel-footer">
 			<div class="row">
-				<a class="btn btn-danger col-xs-3 col-sm-offset-1 col-sm-3" href="/create.php">Back</a>
-                		<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-8 col-sm-offset-1 col-sm-6" form="schoolinfo" name="createschool">Create school</button>
+				<a class="btn btn-danger col-xs-offset-1 col-xs-3" href="/create.php">Back</a>
+                		<input type="submit" class="btn btn-success col-xs-offset-1 col-xs-6" form="schoolinfo" name="createschool" value="Create school"></input>
 			</div>
 		</div>
 	</div>

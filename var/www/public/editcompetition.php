@@ -2,11 +2,26 @@
 
     require(dirname(__FILE__) . "/../includes/functions.php");
 
+    checkSession('admin');
+
+    $conn = dbConnect_new();
+
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"])) {
 
-        $set_schools = $unset_schools = $cur_participants = [];
+	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) || !isset($_POST["cid"]) ||
+	   sempty($_POST["compdate"]) || sempty($_POST["comptype"])) {
+		popupAlert("Whoopsie! There was an interal error. Please try again");
+		redirectTo(isset($_POST["cid"]) ? "/editcompetition.php?CID=" . $_POST["cid"] : "/admin.php");
+	}
 
-        $conn = dbConnect_new();
+	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_name = :compname AND CID != :cid;",
+                                ["compdate" => $_POST["compdate"], "compname" => $_POST["compname"], "cid" => $_POST["cid"]]);
+        if(!empty($previous)) {
+                popupAlert("Whoops! A competition with the same name and date already exists.");
+                redirectTo("/editcompetition.php?CID=" . $_POST["cid"]);
+        }
+
+        $set_schools = $unset_schools = $cur_participants = [];
 
         $scids_list = dbQuery_new($conn, "SELECT SCID FROM school_info");
         $cur_participants_list = dbQuery_new($conn, "SELECT SCID FROM competition_participants WHERE CID=:cid", ["cid" => $_POST["cid"]]);
@@ -38,11 +53,16 @@
 
         foreach($set_schools as $i) {
 
+	    $firstyear = dbQuery_new($conn, "SELECT * FROM competition_participants WHERE SCID = :scid;", ["scid" => $i]);
+            $firstyear = (int)(empty($firstyear));
+
             dbQuery_new($conn, "INSERT INTO competition_participants SET
                                 CID = :cid,
-                                SCID = :scid", [
+                                SCID = :scid,
+				firstyear = :fyear", [
                                     "cid" => $_POST["cid"],
-                                    "scid" => $i
+                                    "scid" => $i,
+				    "fyear" => $firstyear
                                 ]
            );
 
@@ -51,7 +71,7 @@
         foreach($unset_schools as $i) {
 
             dbQuery_new($conn, "DELETE FROM competition_participants WHERE
-                                CID = :cid,
+                                CID = :cid AND
                                 SCID = :scid", [
                                     "cid" => $_POST["cid"],
                                     "scid" => $i
@@ -60,12 +80,15 @@
 
         }
 
-	    redirectTo("admin.php");
+	redirectTo("/admin.php");
 
     }
     elseif($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete"])) {
 
-	dbQuery_new(dbConnect_new(), "DELETE FROM competition WHERE CID = :cid", ["cid" => $_GET["CID"]]);
+	if(!isset($_POST["cid"]))
+		redirectTo("/admin.php");
+
+	dbQuery_new($conn, "DELETE FROM competition WHERE CID = :cid", ["cid" => $_POST["cid"]]);
 
 	popupAlert("Success! The competition has been deleted");
 	redirectTo("/admin.php");
@@ -73,15 +96,21 @@
     }
     else {
 
-        checkSession('admin');
-
 	if(!isset($_GET["CID"]))
 		redirectTo("/admin.php");
 
         $conn = dbConnect_new();
         $schinfo = dbQuery_new($conn, "SELECT * FROM school_info");
+	if(empty($schinfo))
+		$schinfo = 0;
+
+	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info;");
+
         $compinfo = dbQuery_new($conn, "SELECT * FROM competition WHERE CID=:cid", ["cid" => $_GET["CID"]]);
-        $participants = dbQuery_new($conn, "SELECT * FROM competition_participants WHERE CID=:cid", ["cid" => $_GET["CID"]]);
+        if(empty($compinfo))
+		redirectTo("/admin.php");
+
+	$participants = dbQuery_new($conn, "SELECT * FROM competition_participants WHERE CID=:cid", ["cid" => $_GET["CID"]]);
 
         $participants_row = [];
 
@@ -89,11 +118,12 @@
             array_push($participants_row, $participant["SCID"]);
 
         render("editcomp_form.php", [
-               "title" => "Edit competition",
                "schinfo" => $schinfo,
-               "compinfo" => $compinfo,
-               "participants_row" => $participants_row
-              ]
+	       "studentinfo" => $studentinfo,
+               "crow" => $compinfo[0],
+               "participants_row" => $participants_row,
+               "fullname" => getFullName($conn)
+	     ]
         );
 
     }

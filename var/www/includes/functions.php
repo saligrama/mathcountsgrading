@@ -1,5 +1,12 @@
 <?php
 
+require(dirname(__FILE__) . "/constants.php");
+
+function sempty($str)
+{
+	return (empty($str) && ($str !== "0"));
+}
+
 function render($template, $values = []) {
 
     // if template exists, render it
@@ -26,7 +33,8 @@ function popupAlert($err) {
 
 function inlineAlert($offset, $width, $err) {
 
-    echo "<div class='alert alert-danger col-sm-offset-$offset col-sm-$width' role='alert'>";
+    echo "<div class='alert alert-danger alert-dismissable col-sm-offset-$offset col-sm-$width' role='alert'>";
+    echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
     echo '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>';
     echo '<span class="sr-only">Error:</span>';
     echo $err;
@@ -48,20 +56,27 @@ function redirectTo($url) {
 
 }
 
+function internalErrorRedirect($url)
+{
+	popupAlert("Whoopsie! There was an internal error. Please try again");
+	redirectTo($url);
+}
+
 function endLoginSession() {
 
-    if(isset($_SESSION['type']))
-    	unset($_SESSION['type']);
+    if(!session_id())
+	session_start();
 
-    if(isset($_SESSION['starttime']))
-        unset($_SESSION['starttime']);
+    $_SESSION = array();
 
-    if(isset($_SESSION['UID']))
-    	unset($_SESSION['UID']);
-
-    if(session_id())
-        session_destroy();
-
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+    session_destroy();
 }
 
 function checkSession($type) {
@@ -107,9 +122,10 @@ function dbConnect_new() {
     return $conn;
 
 }
-function dbQuery_new($conn, $query, $values = NULL) {
 
-    if (isset($opts)) {
+function dbQuery_new($conn, $query, $values = array()) {
+
+    if (isset($values)) {
 
         $stmt = $conn->prepare($query);
         $stmt->execute($values);
@@ -124,6 +140,83 @@ function dbQuery_new($conn, $query, $values = NULL) {
 
     }
 
+}
+
+function exprCompare($expr1, $expr2) {
+
+    $e1 = tokenize($expr1);
+    $e2 = tokenize($expr2);
+
+    return compare(shunting_yard($e1[0], $e1[1]), shunting_yard($e1[0], $e1[1]));
+
+}
+
+function getFullName($conn)
+{
+    if(!session_id())
+	session_start();
+
+    if(!isset($_SESSION["UID"]))
+	return 0;
+
+    $namerows = dbQuery_new($conn, "SELECT first_name, last_name, email FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
+    if(empty($namerows)) {
+	popupAlert("Whoops! There was an interal error. Please press ok to log back in.");
+	endLoginSession();
+	redirectTo("/login.php");
+	return 1;
+    }
+
+    $fullname = "";
+
+    $name = $namerows[0];
+
+    if(sempty($name["first_name"])) {
+        if(sempty($name["last_name"]))
+            $fullname = $name["email"];
+        else
+            $fullname = $name["last_name"];
+    }
+    else {
+        if(sempty($name["last_name"]))
+            $fullname = $name["first_name"];
+        else
+            $fullname = $name["first_name"] . " " . $name["last_name"];
+    }
+
+    return $fullname;
+}
+
+function getCompFullName($comprow)
+{
+	if(sempty($comprow["competition_name"]))
+		return $comprow["competition_date"];
+	else
+		return $comprow["competition_name"] . " (" . $comprow["competition_date"] . ")";
+}
+
+function getStudentFullName($row)
+{
+	if(sempty($row["first_name"])) {
+		if(sempty($row["last_name"]))
+			return "No name";
+		else
+			return $row["last_name"];
+	}
+	else {
+		if(sempty($row["last_name"]))
+			return $row["first_name"];
+		else
+			return $row["first_name"] . " " . $row["last_name"];
+	}
+}
+
+function clean($data)
+{
+	$data = trim($data);
+	$data = stripslashes($data);
+	$data = htmlspecialchars($data);
+	return $data;
 }
 
 ?>

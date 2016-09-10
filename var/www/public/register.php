@@ -1,38 +1,59 @@
 <?php
 
-    require("../includes/functions.php");
-
-    checkSession('admin');
+    require(dirname(__FILE__) . "/../includes/functions.php");
 
     $error = 0;
 
+    $conn = dbConnect_new();
+
+    if(!empty(dbQuery_new($conn, "SELECT * FROM user;")))
+        checkSession('admin');
+
+
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
+
+	    if(!isset($_POST["passwd"]) || !isset($_POST["confirm"]) || !isset($_POST["logname"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["schaf"])) {
+		popupAlert("Whoopsie! There where was an internal error. Please try again");
+		redirectTo("/register.php");
+	    }
 
             $passwd = $name = $confirm = "";
 	    $schaf = 0;
 
-            $passwd = htmlspecialchars($_POST["passwd"]);
-            $confirm = htmlspecialchars($_POST["confirm"]);
-            $name = htmlspecialchars($_POST["logname"]);
+            $passwd = $_POST["passwd"];
+            $confirm = $_POST["confirm"];
+            $logname = $_POST["logname"];
+	    $firstname = $_POST["firstname"];
+	    $lastname = $_POST["lastname"];
 
-            if (!$passwd || !$name || !isset($_POST["schaf"]))
+            if (sempty($passwd) || sempty($logname))
                 $error = 1;
-            elseif (!$confirm || $confirm !== $passwd)
+            elseif (sempty($confirm) || $confirm !== $passwd)
                 $error = 1;
             else {
 
-                $conn = dbConnect_new();
+		$previous = dbQuery_new($conn, "SELECT * FROM user WHERE email = :email;",
+                                ["email" => $logname]);
+	        if(!empty($previous)) {
+        	        popupAlert("Whoops! A user with the same email/logname already exists");
+                	redirectTo("/register.php");
+        	}
+
 
                 $result = dbQuery_new($conn, "INSERT INTO user SET
                                       email=:name,
+				      last_name=:lastname,
+				      first_name=:firstname,
                                       password=:ph,
                                       SCID=:schaf,
                                       type=:type", [
-                                              "name" => $name,
+                                              "name" => $logname,
                                               "ph" => password_hash($passwd, PASSWORD_DEFAULT),
                                               "schaf" => $_POST["schaf"],
-                                              "type" => $_POST["schaf"] ? 'grader' : 'admin'
-                                      ]
+                                              "type" => $_POST["schaf"] ? 'grader' : 'admin',
+                                      	      "lastname" => $lastname,
+					      "firstname" => $firstname
+					]
 
                 );
 
@@ -48,14 +69,10 @@
 
     switch($error) {
 	case 0:
-	    render("register_form.php", ["schoolrows" => dbQuery_new(dbConnect_new(), "SELECT * FROM school_info;")]);
+	    render("register_form.php", ["schoolrows" => dbQuery_new($conn, "SELECT * FROM school_info;"), "fullname" => getFullName($conn)]);
 	    break;
 	case 1:
-	    popupAlert("Woopsie! Something went wrong. Please try again");
-	    redirectTo("/register.php");
-	    break;
-	case 2:
-	    popupAlert("Whoopise! There was an internal error. Please try again");
+	    popupAlert("Whoopsie! There was an interal error. Please try again");
 	    redirectTo("/register.php");
 	    break;
     }
