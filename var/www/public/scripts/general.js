@@ -6,15 +6,35 @@ function checkLogout()
        	        return false;
 }
 
+
 function isHovered(e)
 {
         return e.parentNode.querySelector(":hover") === e;
 }
 
+
 function redirectTo(loc)
 {
 	window.location.replace(loc);
 }
+
+
+function nextSibling(e)
+{
+        while(e && (e = e.nextSibling))
+                if(e.nodeType == 1)
+                        return e;
+}
+
+
+function searchCompare(searchText, optionText)
+{
+        if(searchText === "")
+                return true;
+
+        return (optionText.toLowerCase().search(searchText.toLowerCase()) !== -1);
+}
+
 
 /*function malert(var message)
 {

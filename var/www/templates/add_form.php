@@ -11,6 +11,8 @@
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Add school</title>
 
 <style>
@@ -72,10 +74,7 @@ function checkSubmit()
 	mes += document.getElementById("town").value;
 	mes += "'?";
 
-	if(confirm(mes))
-		return true;
-
-	return false;
+	return confirm(mes);
 }
 
 </script>

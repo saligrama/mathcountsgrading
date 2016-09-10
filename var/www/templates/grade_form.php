@@ -1,28 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
 
 <head>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
+<script src="./bootstrap/dist/js/bootstrap.js"></script>
+
+<link rel="stylesheet" type="text/css" href="./styles/select2.css">
+<script src="./scripts/select2.full.js"></script>
+
+<link rel="stylesheet" type="text/css" href="./styles/general.css">
+<script src="./scripts/general.js"></script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Grading school</title>
 
 <style>
 
+.panel {
+	max-width: none;
+	min-width: 0;
+}
+
 .panel-heading {
-	margin-left: -15px;
-	margin-right: -15px;
+	margin: 0;
 }
 
 .main {
-	margin: 10px;
+	max-width: 1100px;
+}
+
+@media (max-width: 991px) {
+
+	.panel {
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 400px;
+	}
+
+	.form-group {
+		margin: 0;
+	}
 }
 
 </style>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+        $(".js-select").select2({
+                minimumResultsForSearch: 6,
+		allowClear: true,
+		placeholder: {
+			id: "0",
+			text: "Select a student"
+		}
+        });
+});
+
+</script>
 
 <script type="text/javascript">
 
@@ -43,9 +81,11 @@ function checkSubmit()
 	var numb = 0;
         for(i = 0; i < length-1; i++)
         {
-                if(document.getElementById("answers").elements[i].value == null || document.getElementById("answers").elements[i].value == "")
+		var e = document.getElementById("answers").elements[i];
+
+                if(e.value === "")
                 {
-                        mes += document.getElementById("answers").elements[i].getAttribute("name") + ", ";
+                        mes += parseInt(e.getAttribute("name")) + ", ";
                 	numb++;
 		}
         }
@@ -58,21 +98,13 @@ function checkSubmit()
 		else
 			smes = "The following questions were left blank:\n";
 
-                if(!confirm(smes + mes.slice(0, -2) + "\n\n" + "Would you like to proceed?"))
-                        return false;
-
-		return true;
+                return confirm(smes + mes.slice(0, -2) + "\n\n" + "Would you like to proceed?");
         }
 
-	if(!confirm("Are you sure you want to submit?"))
-		return false;
-
-	return true;
+	return confirm("Are you sure you want to submit?");
 }
 
 </script>
-
-</style>
 
 </head>
 
@@ -97,73 +129,100 @@ default:
 
 <body>
 
-<div class="container-fluid main">
-	<div class="panel panel-primary col-sm-4">
-		<div class="panel-heading"><h4>Choose a student</h4></div>
-		<div class="panel-body">
-			<div class="form-group row">
-				<select class="form-control col-sm-12" id="studentlist">
-					<option disabled selected value="0">-- select a student --</option>
-					<?php foreach($studentrows as $row): ?>
-						<option value=<?= $row['SID']?>> <?=$row['first_name'] . " " . $row['last_name'] ?> </option>
-					<?php endforeach; ?>
-				</select>
-			</div>
-		</div>
-	</div>
-
-	<?php if($sheet_type == 'sprint'): ?>
-
-	<div class="panel panel-primary col-sm-offset-1 col-sm-7">
-                <div class="panel-heading"><h4>Fill out answers</h4></div>
-                <div class="panel-body col-sm-12">
-                        <div class="row">
-                                <label class="text-center col-sm-12" for="answers"><h5><?php echo $type_name; ?></h5></label>
-                        </div>
-                        <form id="answers" method="post" onsubmit="return checkSubmit();" action="">
-                                <?php for($j = 0; $j < 3; $j++): ?>
-                                        <div class="form-group col-sm-4">
-						<?php for($i = 1; $i <= 10; $i++): ?>
-							<div class="input-group">
-                                                		<span class="input-group-addon"><?php echo (10*$j + $i); ?> </span>
-                                                		<input type="text" form="answers" class="form-control col-sm-12" name=<?= (10*$j + $i) ?>></input>
-                                        		</div><br>
-						<?php endfor; ?>
-					</div>
-                                <?php endfor; ?>
-                        </form>
-                </div>
-                <div class="panel-footer row">
-                        <button type="submit" id="submitbtn" class="btn btn-primary col-sm-offset-3 col-sm-6" form="answers">Submit</button>
-                </div>
+<nav class="mnavbar">
+        <div class="mnavcontainer container">
+                <ul class="mnavlist">
+                        <li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+                        <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?php echo clean($fullname); ?></strong></p></li>
+                        <li class="mnav-right">
+                                <form method="post" onsubmit="return checkLogout();" action="/login.php">
+                                        <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
+                                </form>
+                        </li>
+                        <li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
+                </ul>
         </div>
-
-	<?php else: ?>
-
-	<div class="panel panel-primary col-sm-offset-1 col-sm-4">
-		<div class="panel-heading"><h4>Fill out answers</h4></div>
-		<div class="panel-body col-sm-12">
-			<div class="row">
-				<label class="text-center col-sm-12" for="answers"><h5><?php echo $type_name; ?></h5></label>
+</nav>
+<div class="container-fluid main">
+	<div class="row text-center">
+		<?php if($sheet_type === 'sprint'): ?>
+                <div class="col-md-4">
+                <?php else: ?>
+                <div class="col-md-offset-2 col-md-4">
+                <?php endif; ?>
+			<div class="panel panel-primary">
+				<div class="panel-heading"><h4>Choose a student</h4></div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="form-group col-xs-12">
+							<select class="form-control js-select" id="studentlist">
+								<option value="0"></option>
+								<?php foreach($studentrows as $row): ?>
+									<option value=<?= $row['SID']?>> <?php echo clean(getStudentFullName($row)); ?></option>
+								<?php endforeach; ?>
+							</select>
+						</div>
+					</div>
+				</div>
 			</div>
-			<form id="answers" method="post" onsubmit="return checkSubmit();" action="">
-				<?php for($i = 1; $i <= $numq; $i++): ?>
-					<div class='input-group'>
-						<span class='input-group-addon'><?php echo $i; ?> </span>
-						<input type='text' class='form-control col-sm-10' name=<?= $i ?>></input>
-					</div><br>
-				<?php endfor; ?>
-			</form>
 		</div>
-		<div class="panel-footer row">
-			<button type="submit" class="btn btn-primary col-sm-12" form="answers">Submit</button>
+		<?php if($sheet_type === 'sprint'): ?>
+		<div class="col-md-8">
+		<?php else: ?>
+		<div class="col-md-4">
+		<?php endif; ?>
+			<div class="panel panel-primary">
+               			<div class="panel-heading"><h4>Fill out answers</h4></div>
+                		<div class="panel-body">
+					<div class="row">
+						<div class="col-xs-12">
+                        				<label for="answers"><?php echo $type_name; ?></label>
+                        			</div>
+					</div><br>
+					<form id="answers" method="post" onsubmit="return checkSubmit();" action="">
+						<div class="row">
+							<?php if($sheet_type === 'sprint'): ?>
+
+	                                			<?php for($j = 0; $j < 3; $j++): ?>
+        	                                			<div class="col-md-4 col-md-offset-0 col-xs-offset-1 col-xs-10">
+										<div class="form-group">
+											<?php for($i = 1; $i <= 10; $i++): ?>
+												<div class="input-group">
+                                	                						<span class="input-group-addon"><?php echo (10*$j + $i); ?> </span>
+                                        	        						<input type="text" form="answers" class="form-control col-sm-12" name=<?= (10*$j + $i)  . "question"?>></input>
+                                        							</div><br>
+											<?php endfor; ?>
+										</div>
+        	                        				</div>
+								<?php endfor; ?>
+
+							<?php else: ?>
+
+								<div class="col-md-12 col-md-offset-0 col-xs-offset-1 col-xs-10">
+									<?php for($i = 1; $i <= $numq; $i++): ?>
+										<div class='input-group'>
+											<span class='input-group-addon'><?php echo $i; ?> </span>
+											<input type='text' class='form-control col-sm-10' name=<?= $i . "question" ?>></input>
+										</div><br>
+									<?php endfor; ?>
+								</div>
+
+							<?php endif; ?>
+						</div>
+						<input type="hidden" name="numquestions" value="<?= $numq ?>">
+					</form>
+				</div>
+				<div class="panel-footer">
+					<div class="row">
+						<button type="submit" class="btn btn-primary col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4" name="gradesubmit" form="answers">Submit</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
-
-	<?php endif; ?>
 </div>
 
 </body>
 
 </html>
-'
+

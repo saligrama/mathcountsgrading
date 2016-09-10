@@ -9,9 +9,9 @@
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["go"])) {
 
 	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) ||
-           sempty($_POST["compdate"]) || sempty($_POST["comptype"])) {
-                popupAlert("Whoopsie! There was an interal error. Please try again");
-                redirectTo("/create.php");
+           sempty($_POST["compdate"]) || sempty($_POST["comptype"]))
+	{
+                internalErrorRedirect("/create.php");
         }
 
         $scids = dbQuery_new($conn, "SELECT SCID FROM school_info;");

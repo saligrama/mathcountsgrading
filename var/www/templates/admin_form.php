@@ -20,10 +20,6 @@ $avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
 
-<link type="text/css" href="./jScrollPane/style/jquery.jscrollpane.css" rel="stylesheet" media="all">
-<script type="text/javascript" src="./jScrollPane/script/jquery.mousewheel.js"></script>
-<script type="text/javascript" src="./jScrollPane/script/jquery.jscrollpane.min.js"></script>
-
 <title>Welcome</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36,10 +32,6 @@ $avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
 
 .dropdown-toggle {
 	margin-right: 7px;
-}
-
-p, h1, h2, h3, h4, h5, h6 {
-	word-wrap: break-word;
 }
 
 .currentcomp {
@@ -105,7 +97,6 @@ function changeComp(CID)
 
 <body>
 
-<div class="jumbotron malert"></div>
 <nav class="mnavbar">
 	<div class="mnavcontainer container">
 		<ul class="mnavlist">

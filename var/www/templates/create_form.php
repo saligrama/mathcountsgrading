@@ -7,8 +7,8 @@
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
 
-<link rel="stylesheet" type="text/css" href="./select2/dist/css/select2.css">
-<script src="./select2/dist/js/select2.full.js"></script>
+<link rel="stylesheet" type="text/css" href="./styles/select2.css">
+<script src="./scripts/select2.full.js"></script>
 
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
@@ -17,6 +17,8 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js" crossorigin="anonymous"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Create new competition</title>
 
@@ -100,10 +102,7 @@ function checkSubmit()
 	mes += document.getElementById("compname").value;
 	mes += "'?";
 
-	if(confirm(mes))
-		return true;
-
-	return false;
+	return confirm(mes);
 }
 
 /*function doCheck(scid)
