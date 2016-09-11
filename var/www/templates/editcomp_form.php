@@ -95,8 +95,8 @@
 
 .panel-footer a,
 .panel-footer button {
-	margin-top: 7px;
-	margin-bottom: 7px;
+	margin: 7px 0;
+	width: 100%;
 }
 
 .col-divider {
@@ -606,14 +606,22 @@ function deleteComp()
 		</div>
 		<div class="panel-footer">
                		<div class="row">
-                                <a class="btn btn-danger col-xs-offset-1 col-xs-1" href="/admin.php">Back</a>
-                                <button id="finalizebtn" type="submit" class="btn btn-success col-xs-3" form="compinfo" name="finalize">Finalize changes</button>
-				<form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
-                                        <button class="btn btn-danger col-xs-3" name="delete" type="submit">Delete competition</button>
-                                        <input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
-                                </form>
-				<a class="btn btn-primary col-xs-2" href="/addschool.php">New school</a>
-                        </div>
+				<div class="col-xs-offset-1 col-xs-2">
+                                	<a class="btn btn-danger" href="/admin.php">Back</a>
+                                </div>
+				<div class="col-xs-3">
+					<button id="finalizebtn" type="submit" class="btn btn-success" form="compinfo" name="finalize">Finalize changes</button>
+				</div>
+				<div class="col-xs-3">
+					<form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
+                                        	<button class="btn btn-danger" name="delete" type="submit">Delete competition</button>
+                                        	<input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
+                                	</form>
+				</div>
+				<div class="col-xs-2">
+					<a class="btn btn-primary col-xs-2" href="/addschool.php">New school</a>
+                        	</div>
+			</div>
                 </div>
 	</div>
 </div>
