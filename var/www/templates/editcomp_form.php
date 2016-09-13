@@ -24,6 +24,10 @@
 
 <style>
 
+.select2-container--default .select2-results__option[aria-disabled=true] {
+    display: none;
+}
+
 .panel {
 	max-width: 900px;
 }
@@ -34,7 +38,7 @@
 
 .noschool {
 	display: block;
-	padding: 3px 6px;
+	padding: 3px 6px 2px 10px;
 }
 
 .checkbox-custom-label {
@@ -59,6 +63,10 @@
 .slider-li h5 {
 	font-size: 16px;
 	word-wrap: break-word;
+}
+
+#stcont .slider-li:nth-child(3) {
+	padding-top: 4px !important;
 }
 
 #stcont {
@@ -174,16 +182,61 @@
 
 <script type="text/javascript">
 
-function reloadSelect2()
+function alphabeticalSort(a, b)
 {
-	$(".js-select").select2({
-		minimumResultsForSearch: 6
-	});
+        var aa = a.stringToSort.toLowerCase();
+        var bb = b.stringToSort.toLowerCase();
+
+        if(aa > bb)
+                return 1;
+        else if(aa < bb)
+                return -1;
+        else
+                return 0;
 }
 
-$(document).ready(function() {
-  reloadSelect2();
-});
+function reloadSelect2()
+{
+	var selects = document.getElementsByClassName("js-select");
+
+	var i = 0;
+	for(i in selects)
+	{
+		var tag = selects[i].tagName;
+		if(typeof(tag) != 'undefined' && tag.toLowerCase() == "select")
+		{
+			var options = selects[i].options;
+			var sortArray = [];
+			var index = 0;
+
+			var j = 0;
+			for(j in selects[i].childNodes)
+			{
+    				var tagName = selects[i].childNodes[j].tagName;
+				if(typeof(tagName) != 'undefined' && tagName.toLowerCase() == "option")
+				{
+					//sortArray[j] = {};
+
+					//sortArray[j].node = options[j];
+					//sortArray[j].stringToSort = options[j].innerHTML;
+
+					options[index].parentNode.removeChild(options[index]);
+					index++;
+				}
+			}
+
+			//if(sortArray.length > 1)
+			//	sortArray.sort(alphabeticalSort);
+
+			//for(var h in sortArray)
+			//	selects[i].appendChild(sortArray[h].node);
+		}
+	}
+
+	$(".js-select").select2({
+                minimumResultsForSearch: 6
+        });
+}
 
 /*function expandEllipsis(SCID)
 {
@@ -196,15 +249,34 @@ $(document).ready(function() {
 }*/
 
 
-var schoolinfo = [];
+/*var schoolinfo = [];
 
-schoolinfo["all"] = "All selected schools";
 <?php if(!empty($schinfo)): ?>
 	<?php foreach($schinfo as $row): ?>
-		schoolinfo[<?= $row["SCID"] ?>] = "<?php echo clean($row['team_name']); ?>";
+		schoolinfo[<?= $row["SCID"] ?>] = [];
+		schoolinfo[<?= $row["SCID"] ?>]["team_name"] = "<?php echo clean($row['team_name']); ?>";
+		schoolinfo[<?= $row["SCID"] ?>]["num_students"] = <?php echo $row["num_students"]; ?>;
 	<?php endforeach; ?>
-<?php endif; ?>
+<?php endif; ?>*/
 
+
+function setAllStudentsCount()
+{
+	var select = document.getElementById("stuschselect");
+
+	var total = 0;
+	for(var i = 1; i < select.options.length; i++)
+	{
+		if(!select.options[i].disabled)
+			total += parseInt(select.options[i].dataset.numstudents);
+	}
+
+	select.options[0].innerHTML = "All selected schools ("
+	if(total === 1)
+		select.options[0].innerHTML += "1 student)";
+	else
+		select.options[0].innerHTML += total + " students)";
+}
 
 function studentSelect()
 {
@@ -231,7 +303,7 @@ function studentSelect()
 
 			for(var j = 0; j < select.options.length; j++)
 			{
-				if(parseInt(lis[i].id) == select.options[j].value && searchCompare(searchText, studentName)) {
+				if(!select.options[j].disabled && parseInt(lis[i].id) == select.options[j].value && searchCompare(searchText, studentName)) {
 					lis[i].style.display = "block";
 					nextSibling(lis[i]).style.display = "block";
 					lastVis = i;
@@ -260,7 +332,7 @@ function studentSelect()
 		}
 	}
 
-
+	/*
 	var curschool = select.options[select.selectedIndex];
 	curschool.innerHTML = schoolinfo[curschool.value];
 
@@ -274,57 +346,72 @@ function studentSelect()
 			select.options[i].innerHTML = schoolinfo[select.options[i].value];
 
 	reloadSelect2();
-
+	*/
 
 	if(lis.length)
 		nextSibling(lis[lastVis]).style.display = "none";
 
 	<?php if(!empty($studentinfo) && !empty($schinfo)): ?>
+		var searchRes = document.getElementById("stusearchres");
+		var noStudents = document.getElementById("nostusch");
+
 		if(hidden == lis.length) {
 			if(searchText === "") {
-				document.getElementById("nostusch").style.display = "block";
-				document.getElementById("nostusearchres").style.display = "none";
+				noStudents.style.display = "block";
+				searchRes.style.display = "none";
 			}
 			else {
-				document.getElementById("nostusearchres").style.display = "block";
-				document.getElementById("nostusch").style.display = "none";
+				searchRes.style.display = "block";
+				searchRes.innerHTML = "No results found";
+
+				noStudents.style.display = "none";
 			}
 		}
 		else {
-			document.getElementById("nostusch").style.display = "none";
-			document.getElementById("nostusearchres").style.display = "none";
+			if(searchText !== "")
+			{
+				searchRes.style.display = "block";
+
+				if(lis.length - hidden === 1)
+                                	searchRes.innerHTML = "1 result";
+                        	else
+                                	searchRes.innerHTML = (lis.length - hidden) + " results";
+			}
+			else
+				searchRes.style.display = "none";
+
+			noStudents.style.display = "none";
 		}
 	<?php endif; ?>
 }
 
 window.onload = function() {
+	setAllStudentsCount();
 	studentSelect();
+	reloadSelect2();
 }
 
 function schoolSelect(scid)
 {
 	var options = document.getElementById("stuschselect").options;
+	var check = document.getElementById("check" + scid);
 
-	var exists = 0;
+	var sortArray = [];
+
         for(var i = 0; i < options.length; i++)
+	{
         	if(options[i].value == scid)
-                	exists = 1;
-
-	if(document.getElementById("check" + scid).checked && !exists)
-	{
-		var op = document.createElement("OPTION");
-		document.getElementById("stuschselect").appendChild(op);
-
-		op.outerHTML = "<option id='" + scid + "schoption' value='" + scid + "'>" + schoolinfo[scid] + "</option>";
-	}
-	else if(!document.getElementById("check" + scid).checked && exists)
-	{
-		for(var i = 0; i < options.length; i++)
-			if(options[i].value == scid)
-				options[i].parentNode.removeChild(options[i]);
+		{
+			if(check.checked)
+				options[i].disabled = false;
+			else
+				options[i].disabled = true;
+		}
 	}
 
+	setAllStudentsCount();
 	studentSelect();
+	reloadSelect2();
 }
 
 function studentCheck(type, sid)
@@ -555,10 +642,10 @@ function deleteComp()
 						<label id="partdrop">Participating students from school:</label>
 						<div class="form-group">
 							<select onchange="studentSelect();" id="stuschselect" class="js-select form-control">
-								<option value="all">All selected schools</option>
+								<option id="allschoption" value="all">All selected schools</option>
 								<?php foreach($schinfo as $row): ?>
 									<?php if(in_array($row["SCID"], $participants_row)): ?>
-										<option id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"]); ?></option>
+										<option data-numstudents="<?= $row['num_students']; ?>" id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"] . " (" . $row["num_students"] . " students)"); ?></option>
 									<?php endif; ?>
 								<?php endforeach; ?>
 							</select>
@@ -581,7 +668,7 @@ function deleteComp()
 										<li class="noschool" style="display:block">Looks like there aren't any schools yet.</li>
 									<?php else: ?>
 										<li class="noschool" id="nostusch" style="display:none;">Looks like there aren't any students in your selection.</li>
-                       		                               	        	<li class="noschool" id="nostusearchres" style="display:none;">No results found</li>
+                       		                               	        	<li class="noschool" id="stusearchres" style="display:none;">No results found</li>
 										<?php foreach($studentinfo as $row): ?>
                       		                                      	        	<li class="slider-li" id="<?= $row['SCID'] ?>student<?= $row['SID'] ?>">
 												<h5 class="text-center"><?php echo clean(getStudentFullName($row)); ?></h5>

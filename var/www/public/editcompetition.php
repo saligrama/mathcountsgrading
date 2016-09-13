@@ -185,6 +185,18 @@
         if(empty($compinfo))
 		redirectTo("/admin.php");
 
+	$i = 0;
+	foreach($schinfo as $school)
+	{
+		$schinfo[$i++]["num_students"] = 0;
+
+		foreach($studentinfo as $student)
+		{
+			if($student["SCID"] == $school["SCID"])
+				$schinfo[$i-1]["num_students"]++;
+		}
+	}
+
 	$participants = dbQuery_new($conn, "SELECT * FROM competition_participants WHERE CID=:cid", ["cid" => $_GET["CID"]]);
 	$stparticipants = dbQuery_new($conn, "SELECT * FROM student_participants WHERE CID=:cid", ["cid" => $_GET["CID"]]);
 
