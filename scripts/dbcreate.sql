@@ -278,7 +278,7 @@ CREATE TABLE `student_participants` (
 
 LOCK TABLES `student_participants` WRITE;
 /*!40000 ALTER TABLE `student_participants` DISABLE KEYS */;
-INSERT INTO `student_participants` VALUES (28,31,'regular'),(28,32,'regular'),(28,35,'regular'),(28,33,'alternate'),(28,34,'alternate'),(28,37,'regular'),(28,38,'alternate');
+INSERT INTO `student_participants` VALUES (28,31,'regular'),(28,32,'regular'),(28,35,'regular'),(28,33,'alternate'),(28,34,'alternate'),(28,37,'regular'),(28,38,'alternate'),(30,31,'regular'),(30,33,'regular'),(30,59,'regular'),(30,61,'regular'),(30,32,'alternate'),(30,58,'alternate'),(30,62,'alternate');
 /*!40000 ALTER TABLE `student_participants` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -369,4 +369,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-09-13  1:13:01
+-- Dump completed on 2016-09-13  2:11:06

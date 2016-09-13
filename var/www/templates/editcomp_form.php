@@ -65,10 +65,6 @@
 	word-wrap: break-word;
 }
 
-#stcont .slider-li:nth-child(3) {
-	padding-top: 4px !important;
-}
-
 #stcont {
 	min-height: 483px;
 	max-height: 483px;
@@ -182,25 +178,39 @@
 
 <script type="text/javascript">
 
-function alphabeticalSort(a, b)
+/*function alphabeticalSort(a, b)
 {
         var aa = a.stringToSort.toLowerCase();
         var bb = b.stringToSort.toLowerCase();
 
-        if(aa > bb)
+	var ap = parseInt(aa);
+	var bp = parseInt(bb);
+
+	if(ap != NaN) {
+		if(bp != NaN)
+			return 0;
+		else
+			return -1;
+	}
+	else if(bp != NaN) {
+		if(ap != NaN)
+			return 0;
+		else
+			return 1;
+	}
+	if(aa > bb)
                 return 1;
         else if(aa < bb)
                 return -1;
         else
                 return 0;
-}
+}*/
 
 function reloadSelect2()
 {
-	var selects = document.getElementsByClassName("js-select");
+/*	var selects = document.getElementsByClassName("js-select-sort");
 
-	var i = 0;
-	for(i in selects)
+	for(var i = 0; i < selects.length; i++)
 	{
 		var tag = selects[i].tagName;
 		if(typeof(tag) != 'undefined' && tag.toLowerCase() == "select")
@@ -209,31 +219,33 @@ function reloadSelect2()
 			var sortArray = [];
 			var index = 0;
 
-			var j = 0;
-			for(j in selects[i].childNodes)
+			for(var j = 0; j < selects[i].childNodes.length; j++)
 			{
     				var tagName = selects[i].childNodes[j].tagName;
 				if(typeof(tagName) != 'undefined' && tagName.toLowerCase() == "option")
 				{
-					//sortArray[j] = {};
+					if(selects[i].childNodes[j].dataset.first === "1")
+						continue;
 
-					//sortArray[j].node = options[j];
-					//sortArray[j].stringToSort = options[j].innerHTML;
+					sortArray[index] = {};
 
-					options[index].parentNode.removeChild(options[index]);
+					sortArray[index].node = selects[i].childNodes[j];
+					sortArray[index].stringToSort = selects[i].childNodes[j].innerHTML;
+
+					selects[i].removeChild(selects[i].childNodes[j]);
 					index++;
 				}
 			}
 
-			//if(sortArray.length > 1)
-			//	sortArray.sort(alphabeticalSort);
+			if(sortArray.length > 1)
+				sortArray.sort(alphabeticalSort);
 
-			//for(var h in sortArray)
-			//	selects[i].appendChild(sortArray[h].node);
+			for(var h = 0; h < sortArray.length; h++)
+				selects[i].appendChild(sortArray[h].node);
 		}
 	}
-
-	$(".js-select").select2({
+*/
+	$(".js-select, .js-select-sort").select2({
                 minimumResultsForSearch: 6
         });
 }
@@ -291,6 +303,8 @@ function studentSelect()
 	var hidden = 0;
 	var lastVis = 0;
 
+	var firstStudent = true;
+
 	if(scid == "all")
 	{
 		for(var i = 0; i < lis.length; i++)
@@ -303,7 +317,13 @@ function studentSelect()
 
 			for(var j = 0; j < select.options.length; j++)
 			{
-				if(!select.options[j].disabled && parseInt(lis[i].id) == select.options[j].value && searchCompare(searchText, studentName)) {
+				if(!select.options[j].disabled && parseInt(lis[i].id) == select.options[j].value && searchCompare(searchText, studentName))
+				{
+					if(firstStudent) {
+						lis[i].style.paddingTop = "4px";
+						firstStudent = false;
+					}
+
 					lis[i].style.display = "block";
 					nextSibling(lis[i]).style.display = "block";
 					lastVis = i;
@@ -319,7 +339,13 @@ function studentSelect()
 		{
 			var studentName = lis[i].getElementsByTagName("H5")[0].innerHTML;
 
-			if(parseInt(lis[i].id) == scid && searchCompare(searchText, studentName)) {
+			if(parseInt(lis[i].id) == scid && searchCompare(searchText, studentName))
+			{
+				if(firstStudent) {
+                                        lis[i].style.paddingTop = "4px";
+                	                firstStudent = false;
+                               	}
+
 				lis[i].style.display = "block";
 				nextSibling(lis[i]).style.display = "block";
 				lastVis = i;
@@ -393,25 +419,31 @@ window.onload = function() {
 
 function schoolSelect(scid)
 {
-	var options = document.getElementById("stuschselect").options;
+	var select = document.getElementById("stuschselect");
 	var check = document.getElementById("check" + scid);
 
 	var sortArray = [];
 
-        for(var i = 0; i < options.length; i++)
+        for(var i = 0; i < select.options.length; i++)
 	{
-        	if(options[i].value == scid)
+        	if(select.options[i].value == scid)
 		{
 			if(check.checked)
-				options[i].disabled = false;
-			else
-				options[i].disabled = true;
+				select.options[i].disabled = false;
+			else {
+				select.options[i].disabled = true;
+
+				if(select.selectedIndex === i)
+					select.selectedIndex = 0;
+			}
+
+			setAllStudentsCount();
+			studentSelect();
+        		reloadSelect2();
+
+			break;
 		}
 	}
-
-	setAllStudentsCount();
-	studentSelect();
-	reloadSelect2();
 }
 
 function studentCheck(type, sid)
@@ -641,11 +673,12 @@ function deleteComp()
 					<div class="row">
 						<label id="partdrop">Participating students from school:</label>
 						<div class="form-group">
-							<select onchange="studentSelect();" id="stuschselect" class="js-select form-control">
-								<option id="allschoption" value="all">All selected schools</option>
+							<select onchange="studentSelect();" id="stuschselect" class="js-select-sort form-control">
+								<option id="allschoption" data-first="1" value="all">All selected schools</option>
 								<?php foreach($schinfo as $row): ?>
 									<?php if(in_array($row["SCID"], $participants_row)): ?>
-										<option data-numstudents="<?= $row['num_students']; ?>" id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"] . " (" . $row["num_students"] . " students)"); ?></option>
+										<option data-numstudents="<?= $row['num_students']; ?>"
+										id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"] . " (" . $row["num_students"] . " students)"); ?></option>
 									<?php endif; ?>
 								<?php endforeach; ?>
 							</select>
