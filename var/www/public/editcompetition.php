@@ -6,6 +6,12 @@
 
     $conn = dbConnect_new();
 
+/*    for($i = 0; $i < 100; $i++)
+	dbQuery_new($conn, "INSERT INTO school_info SET team_name='test'");
+
+    for($i = 0; $i < 1000; $i++)
+	dbQuery_new($conn, "INSERT INTO mathlete_info SET first_name='test', SCID=9");
+*/
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"])) {
 
 	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) || !isset($_POST["cid"]) ||
@@ -177,9 +183,13 @@
 	if(empty($schinfo))
 		$schinfo = 0;
 
+	usort($schinfo, 'schoolSort');
+
 	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info");
 	if(empty($studentinfo))
 		$studentinfo = 0;
+
+	usort($studentinfo, 'studentSort');
 
         $compinfo = dbQuery_new($conn, "SELECT * FROM competition WHERE CID=:cid", ["cid" => $_GET["CID"]]);
         if(empty($compinfo))

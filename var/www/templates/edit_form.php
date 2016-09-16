@@ -65,7 +65,7 @@ function reloadSelect2()
 }
 
 $(document).ready(function() {
-       reloadSelect2();
+        reloadSelect2();
 });
 
 function studentSearch()
@@ -209,7 +209,7 @@ var studentinfo = [];
 	<?php endforeach; ?>
 <?php endif; ?>
 
-function setEditStudentHeading()
+/*function setEditStudentHeading()
 {
 	var firstname = document.getElementById("firstname-edit").value;
 	var lastname = document.getElementById("lastname-edit").value
@@ -227,7 +227,7 @@ function setEditStudentHeading()
 	}
 
 	heading.innerHTML += "':";
-}
+}*/
 
 function chooseStudentEdit(sid)
 {
@@ -243,10 +243,14 @@ function chooseStudentEdit(sid)
 	document.getElementById("nickname-edit").value = studentinfo[sid]["nickname"];
 	document.getElementById("gender-edit").value = studentinfo[sid]["gender"];
 
-	setEditStudentHeading();
-
 	reloadSelect2();
 }
+
+<?php if($editsid): ?>
+	window.onload = function() {
+		chooseStudentEdit(<?php echo clean($editsid); ?>);
+	}
+<?php endif; ?>
 
 /*function checkDiff()
 {
@@ -426,13 +430,13 @@ function deleteSchool()
 						<div class="row">
                                                        	<div class="form-group">
                                                                	<label for="firstname-edit">First name</label>
-                                                               	<input oninput="setEditStudentHeading();" id="firstname-edit" type="text" class="form-control" name="firstname" placeholder="First Name">
+                                                               	<input id="firstname-edit" type="text" class="form-control" name="firstname" placeholder="First Name">
                                                        	</div>
                                                	</div>
                                                	<div class="row">
                                                        	<div class="form-group">
                                                                	<label for="lastname-edit">Last name</label>
-                                                               	<input oninput="setEditStudentHeading();" id="lastname-edit" type="text" class="form-control" name="lastname" placeholder="Last Name">
+                                                               	<input id="lastname-edit" type="text" class="form-control" name="lastname" placeholder="Last Name">
                                                        	</div>
                                                	</div>
 						<div class="row">

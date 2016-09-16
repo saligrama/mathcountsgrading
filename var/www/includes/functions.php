@@ -243,4 +243,26 @@ function clean($data)
 	return $data;
 }
 
+function studentSort($a, $b)
+{
+        $na = strtolower(getStudentFullName($a));
+        $nb = strtolower(getStudentFullName($b));
+
+	if($na == $nb)
+		return 0;
+
+	return $na > $nb ? 1 : -1;
+}
+
+function schoolSort($a, $b)
+{
+        $na = strtolower($a["team_name"]);
+        $nb = strtolower($b["team_name"]);
+
+        if($na == $nb)
+                return 0;
+
+        return $na > $nb ? 1 : -1;
+}
+
 ?>

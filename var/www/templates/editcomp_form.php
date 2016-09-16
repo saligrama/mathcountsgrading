@@ -24,6 +24,120 @@
 
 <style>
 
+.wheel-loader-wrapper {
+   position: fixed;
+   width: 100%;
+   height: 100%;
+   left: 0;
+   top: 0;
+   background-color: rgba(1, 1, 1, 0);
+}
+
+.wheel-loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: wheel-spin 2s linear infinite;
+
+    position: relative;
+    margin-top: -50px;
+    margin-left: -50px;
+    top: 35%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    background-color: rgba(1, 1, 1, 0);
+    //background-image: url("https://upload.wikimedia.org/wikipedia/commons/a/ab/Harvard_Crimson.svg");
+    vertical-align: middle;
+}
+
+@keyframes wheel-spin {
+    0% { transform: rotate(0deg);
+	 -ms-transform: rotate(0deg);
+	 -webkit-transform: rotate(0deg);
+         //width: 110px;
+	 //height: 140px;
+	}
+    /*50% { transform: rotate(360deg);
+         -ms-transform: rotate(360deg);
+         -webkit-transform: rotate(360deg);
+          width: 1758px;
+	  height: 2068px;
+	 }*/
+    100% { transform: rotate(360deg);
+         -ms-transform: rotate(360deg);
+         -webkit-transform: rotate(360deg);
+         //width: 110px;
+         //height: 140px;
+       }
+}
+
+/*.m-overlay {
+    background-color: rgba(0.8, 0.8, 0.8, 1);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}*/
+
+.wheel-loader-wrapper {
+    opacity: 0;
+    z-index: 0;
+
+    transition: opacity 1s ease-in;
+    -webkit-transition: opacity 1s ease-in;
+
+    transition: z-index 0;
+    -webkit-transition: z-index 0;
+
+    transition-delay: z-index 1.3s;
+    -webkit-transition-delay: z-index 1.3s;
+
+}
+
+body {
+	z-index: 5;
+}
+
+body.loading-first {
+	min-width: 100%;
+	overflow: hidden;
+}
+
+.body-wrapper {
+	opacity 1;
+
+	transition: opacity 1s ease-in;
+	-webkit-transition: opacity 1s ease-in;
+}
+
+body.loading-first .body-wrapper {
+	opacity: 0;
+}
+
+body.loading .wheel-loader-wrapper {
+	opacity: 0.5;
+//	z-index: 999;
+}
+
+.slider-top-divider {
+	height: 1px;
+	overflow: hidden;
+	background-color: #d5d5d5;
+	margin-left: 5%;
+	margin-bottom: 10px;
+	width: 90%;
+}
+
+.select2-container--default {
+	max-width: 410px !important;
+}
+
 .select2-container--default .select2-results__option[aria-disabled=true] {
     display: none;
 }
@@ -75,6 +189,10 @@
 	max-height: 250px;
 }
 
+#compdate {
+	padding: 6px 12px;
+}
+
 .slider-well {
 	margin: 0;
 	position: relative;
@@ -99,7 +217,6 @@
 
 .panel-footer a,
 .panel-footer button {
-	margin: 7px 0;
 	width: 100%;
 }
 
@@ -107,8 +224,8 @@
 	display: inline-block;
 	position: relative;
 	width: 1px;
-	height: 530px;
-	bottom: 290px;
+	height: 600px;
+	bottom: 330px;
 	vertical-align: middle;
 	background-color: #d5d5d5;
 	margin: 0;
@@ -154,23 +271,8 @@
 		max-height: 350px !important;
 	}
 
-	.panel-footer .col-xs-1 {
-		width: 25%;
-		margin-bottom: 10px;
-	}
-
-	.panel-footer .col-xs-2 {
-		width: 40%;
-	}
-
-	.panel-footer .col-xs-2:last-child {
-		float: right;
-	}
-
-	.panel-footer .col-xs-3 {
-		width: 33%;
-		float: right;
-		margin-bottom: 10px;
+	.panel-footer .row div {
+        	padding: 0 5px;
 	}
 }
 
@@ -206,7 +308,7 @@
                 return 0;
 }*/
 
-function reloadSelect2()
+function loadSelect2()
 {
 /*	var selects = document.getElementsByClassName("js-select-sort");
 
@@ -245,7 +347,7 @@ function reloadSelect2()
 		}
 	}
 */
-	$(".js-select, .js-select-sort").select2({
+	$(".js-select").select2({
                 minimumResultsForSearch: 6
         });
 }
@@ -260,6 +362,17 @@ function reloadSelect2()
 	}
 }*/
 
+function toggleLoading(on)
+{
+	if(on)
+	{
+		document.getElementsByTagName("body")[0].classList.add("loading");
+	}
+	else
+	{
+		document.getElementsByTagName("body")[0].classList.remove("loading");
+	}
+}
 
 /*var schoolinfo = [];
 
@@ -290,6 +403,54 @@ function setAllStudentsCount()
 		select.options[0].innerHTML += total + " students)";
 }
 
+function checkAllStudents()
+{
+        var ul = document.getElementById("stcont");
+        var lis = ul.getElementsByClassName("slider-li");
+
+        var allregs = document.getElementById("checkallregulars");
+        var allalts = document.getElementById("checkallalternates");
+
+        allregs.checked = true;
+        allalts.checked = true;
+
+        var notregfound = false;
+        var notaltfound = false;
+
+	var numvis = 0;
+
+        for(var i = 0; i < lis.length; i++)
+        {
+                if(lis[i].style.display != "none")
+                {
+                        var inputs = lis[i].getElementsByTagName("input");
+
+                        if(!inputs[0].checked) {
+                                allregs.checked = false;
+                                notregfound = true;
+
+                                if(notaltfound)
+                                        return;
+                        }
+                        if(!inputs[1].checked) {
+                                allalts.checked = false;
+                                notaltfound = true;
+
+                                if(notregfound)
+                                        return;
+                        }
+
+			numvis++;
+                }
+        }
+
+	if(!numvis) {
+		allregs.checked = false;
+		allalts.checked = false;
+	}
+}
+
+
 function studentSelect()
 {
 	var select = document.getElementById("stuschselect");
@@ -315,20 +476,28 @@ function studentSelect()
 
 			var studentName = lis[i].getElementsByTagName("H5")[0].innerHTML;
 
-			for(var j = 0; j < select.options.length; j++)
-			{
-				if(!select.options[j].disabled && parseInt(lis[i].id) == select.options[j].value && searchCompare(searchText, studentName))
-				{
-					if(firstStudent) {
-						lis[i].style.paddingTop = "4px";
-						firstStudent = false;
-					}
+			var searchRes = searchText === "" ? true : searchCompare(searchText, studentName);
+			var id = parseInt(lis[i].id);
 
-					lis[i].style.display = "block";
-					nextSibling(lis[i]).style.display = "block";
-					lastVis = i;
-					hidden--;
-					break;
+			if(searchRes)
+			{
+				for(var j = 0; j < select.options.length; j++)
+				{
+					if(!select.options[j].disabled && id == select.options[j].value)
+					{
+						lis[i].style.paddingTop = "10px";
+
+						if(firstStudent) {
+							lis[i].style.paddingTop = "4px";
+							firstStudent = false;
+						}
+
+						lis[i].style.display = "block";
+						nextSibling(lis[i]).style.display = "block";
+						lastVis = i;
+						hidden--;
+						break;
+					}
 				}
 			}
 		}
@@ -339,7 +508,9 @@ function studentSelect()
 		{
 			var studentName = lis[i].getElementsByTagName("H5")[0].innerHTML;
 
-			if(parseInt(lis[i].id) == scid && searchCompare(searchText, studentName))
+			var searchRes = searchText === "" ? true : searchCompare(searchText, studentName);
+
+			if(parseInt(lis[i].id) == scid && searchRes)
 			{
 				if(firstStudent) {
                                         lis[i].style.paddingTop = "4px";
@@ -374,6 +545,8 @@ function studentSelect()
 	reloadSelect2();
 	*/
 
+	checkAllStudents();
+
 	if(lis.length)
 		nextSibling(lis[lastVis]).style.display = "none";
 
@@ -382,54 +555,85 @@ function studentSelect()
 		var noStudents = document.getElementById("nostusch");
 
 		if(hidden == lis.length) {
-			if(searchText === "") {
+			if(searchText === "")
+			{
 				noStudents.style.display = "block";
 				searchRes.style.display = "none";
 			}
-			else {
-				searchRes.style.display = "block";
-				searchRes.innerHTML = "No results found";
-
+			else
+			{
 				noStudents.style.display = "none";
+				searchRes.style.display = "block";
 			}
 		}
 		else {
-			if(searchText !== "")
-			{
-				searchRes.style.display = "block";
-
-				if(lis.length - hidden === 1)
-                                	searchRes.innerHTML = "1 result";
-                        	else
-                                	searchRes.innerHTML = (lis.length - hidden) + " results";
-			}
-			else
-				searchRes.style.display = "none";
-
+			searchRes.style.display = "none";
 			noStudents.style.display = "none";
 		}
 	<?php endif; ?>
 }
 
+/*window.onready = function() {
+	var main = document.getElementsByClassName("main")[0];
+        main.style.display = "none";
+}*/
+
+//var shouldBeLoading = false;
+
 window.onload = function() {
 	setAllStudentsCount();
+	loadSelect2();
 	studentSelect();
-	reloadSelect2();
+	checkAllSchools();
+
+	document.getElementsByTagName("body")[0].classList.remove("loading-first");
+	toggleLoading(false);
+	//document.getElementsByClassName("body-wrapper")[0].style.display = "block";
+
+	//window.setInterval(function() { toggleLoading(shouldBeLoading); }, 5);
 }
 
-function schoolSelect(scid)
+function checkAllSchools()
+{
+	var ul = document.getElementById("scont");
+	var lis = ul.getElementsByClassName("slider-li");
+
+	var allsch = document.getElementById("checkallschools");
+	var numvis = 0;
+
+	allsch.checked = true;
+
+	for(var i = 0; i < lis.length; i++)
+	{
+		if(lis[i].style.display != "none")
+                {
+                        var inputs = lis[i].getElementsByTagName("input");
+
+                        if(!inputs[0].checked) {
+				allsch.checked = false;
+				return;
+			}
+
+			numvis++;
+                }
+	}
+
+	if(!numvis)
+		allsch.checked = false;
+}
+
+function schoolSelect(scid, doFunc)
 {
 	var select = document.getElementById("stuschselect");
 	var check = document.getElementById("check" + scid);
 
-	var sortArray = [];
-
         for(var i = 0; i < select.options.length; i++)
 	{
-        	if(select.options[i].value == scid)
+        	if(parseInt(select.options[i].value) == scid)
 		{
-			if(check.checked)
+			if(check.checked) {
 				select.options[i].disabled = false;
+			}
 			else {
 				select.options[i].disabled = true;
 
@@ -437,13 +641,17 @@ function schoolSelect(scid)
 					select.selectedIndex = 0;
 			}
 
-			setAllStudentsCount();
-			studentSelect();
-        		reloadSelect2();
+			if(doFunc) {
+				setAllStudentsCount();
+				studentSelect();
+				loadSelect2();
+			}
 
 			break;
 		}
 	}
+
+	checkAllSchools();
 }
 
 function studentCheck(type, sid)
@@ -459,6 +667,8 @@ function studentCheck(type, sid)
 		if(rcheck.checked)
 			document.getElementById("rcheck" + sid).checked = false;
 	}
+
+	checkAllStudents();
 }
 
 function schoolSearch()
@@ -487,15 +697,73 @@ function schoolSearch()
 		}
 	}
 
+	checkAllSchools();
+
 	<?php if(!empty($schinfo)): ?>
+		var searchRes = document.getElementById("schsearchres");
+
 		if(lis.length)
 			nextSibling(lis[lastVis]).style.display = "none";
 
 		if(hidden == lis.length)
-			document.getElementById("noschsearchres").style.display = "block";
+			searchRes.style.display = "block";
 		else
-			document.getElementById("noschsearchres").style.display = "none";
+			searchRes.style.display = "none";
 	<?php endif; ?>
+}
+
+function allSchools(loading)
+{
+	var ul = document.getElementById("scont");
+	var lis = ul.getElementsByClassName("slider-li");
+
+	var select = document.getElementById("stuschselect");
+
+	var checked = document.getElementById("checkallschools").checked;
+
+	for(var i = 0; i < lis.length; i++)
+	{
+		if(lis[i].style.display != "none")
+		{
+			var inputs = lis[i].getElementsByTagName("input");
+
+			if(inputs[0].checked != checked) {
+				inputs[0].checked = checked;
+				//select.options[i+1].disabled = false;
+				schoolSelect(parseInt(inputs[0].getAttribute("name")), false);
+			}
+		}
+	}
+
+	setAllStudentsCount();
+        studentSelect();
+        loadSelect2();
+}
+
+function allStudents(type)
+{
+	var ul = document.getElementById("stcont");
+	var lis = ul.getElementsByClassName("slider-li");
+
+	var checked = document.getElementById("checkall" + (type ? "alternates" : "regulars")).checked;
+	var otherCheck = document.getElementById("checkall" + (type ? "regulars" : "alternates"));
+
+	var otherType = type ? 0 : 1;
+
+	if(otherCheck.checked)
+		otherCheck.checked = false;
+
+	for(var i = 0; i < lis.length; i++)
+	{
+		if(lis[i].style.display != "none")
+		{
+			var inputs = lis[i].getElementsByTagName("input");
+
+			inputs[type].checked = checked;
+			if(checked)
+				inputs[otherType].checked = false;
+		}
+	}
 }
 
 function checkSubmit()
@@ -593,8 +861,14 @@ function deleteComp()
 
 </head>
 
+<body class="loading loading-first">
 
-<body>
+<div class="m-overlay"></div>
+
+<div class="wheel-loader-wrapper"><div class="wheel-loader"></div></div>
+
+<div class="body-wrapper">
+
 <nav class="mnavbar">
         <div class="mnavcontainer container">
                 <ul class="mnavlist">
@@ -644,14 +918,21 @@ function deleteComp()
 								<div class="input-group searchbar">
                                                                         <input id="schsearch" type="text" class="form-control" placeholder="Search" oninput="schoolSearch();">
                                                                 </div>
+								<div class="row" style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px;">
+                                                                        <div class="col-xs-12" style="padding:0">
+                                                                                <input onchange="allSchools(true)" type="checkbox" class="checkbox-custom" id="checkallschools">
+                                                                                <label for="checkallschools" class="checkbox-custom-label" style="width:100%;">All schools</label>
+                                                                        </div>
+								</div>
+								<div class="slider-top-divider"></div>
 								<ul class="slider-container-fixed" id="scont">
 									<?php if($schinfo == 0): ?>
 										<li class="noschool" style="display:block;">Looks like there aren't any schools yet.</li>
 									<?php else: ?>
-										<li id="noschsearchres" class="noschool" style="display:none;">No results found</li>
+										<li id="schsearchres" class="noschool" style="display:none;">No results found</li>
 										<?php foreach($schinfo as $row): ?>
 											<li class="slider-li">
-												<input onchange="schoolSelect(<?= $row['SCID'] ?>);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
+												<input onchange="schoolSelect(<?= $row['SCID'] ?>, true);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
 												<label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
 												<button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
 											</li>
@@ -673,13 +954,12 @@ function deleteComp()
 					<div class="row">
 						<label id="partdrop">Participating students from school:</label>
 						<div class="form-group">
-							<select onchange="studentSelect();" id="stuschselect" class="js-select-sort form-control">
+							<select onchange="studentSelect();" id="stuschselect" class="js-select form-control">
 								<option id="allschoption" data-first="1" value="all">All selected schools</option>
 								<?php foreach($schinfo as $row): ?>
-									<?php if(in_array($row["SCID"], $participants_row)): ?>
-										<option data-numstudents="<?= $row['num_students']; ?>"
-										id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"] . " (" . $row["num_students"] . " students)"); ?></option>
-									<?php endif; ?>
+									<option data-numstudents="<?= $row['num_students']; ?>" id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"
+									<?php if(!in_array($row["SCID"], $participants_row)) echo "disabled"; ?>>
+									<?php echo clean($row["team_name"] . " (" . $row["num_students"] . " students)"); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
@@ -689,7 +969,18 @@ function deleteComp()
                	       		                	<div class="well well-sm slider-well" id="stwell">
 								<div class="input-group searchbar">
                                 	                                <input id="stusearch" type="text" class="form-control" placeholder="Search" oninput="studentSelect();">
+								</div>
+								<div class="row" style="margin-left: 19px; margin-top: 10px; margin-bottom: 5px;">
+                                                                        <div class="col-xs-5" style="padding:0">
+                                                                                <input onchange="allStudents(0)" type="checkbox" class="checkbox-custom" id="checkallregulars">
+	                                                                        <label for="checkallregulars" class="checkbox-custom-label" style="width:100%;">All regulars</label>
+                                                                        </div>
+                                                                        <div class="col-xs-6" style="padding:0;">
+                                                                                <input onchange="allStudents(1)" type="checkbox" class="checkbox-custom" id="checkallalternates">
+                                	                                        <label for="checkallalternates" class="checkbox-custom-label" style="width:100%;">All alternates</label>
+                                        	                        </div>
                                                                 </div>
+								<div class="slider-top-divider"></div>
                  		        		        <ul class="slider-container-fixed" id="stcont">
                        		               	      	       		<?php if($studentinfo == 0): ?>
 										<?php if($schinfo == 0): ?>
@@ -700,8 +991,8 @@ function deleteComp()
 									<?php elseif($schinfo == 0): ?>
 										<li class="noschool" style="display:block">Looks like there aren't any schools yet.</li>
 									<?php else: ?>
+										<li class="noschool" id="stusearchres" style="display:none;">No results found</li>
 										<li class="noschool" id="nostusch" style="display:none;">Looks like there aren't any students in your selection.</li>
-                       		                               	        	<li class="noschool" id="stusearchres" style="display:none;">No results found</li>
 										<?php foreach($studentinfo as $row): ?>
                       		                                      	        	<li class="slider-li" id="<?= $row['SCID'] ?>student<?= $row['SID'] ?>">
 												<h5 class="text-center"><?php echo clean(getStudentFullName($row)); ?></h5>
@@ -712,7 +1003,7 @@ function deleteComp()
 												<input onchange="studentCheck(0, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes" <?php if(in_array($row["SID"], $alternates_row)) echo "checked"; ?>>
  	                                                                      		        <label id="<?= $row['SCID'] . 'alabel' . $row['SID'] ?>" for=<?= "acheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Alternate</label>
 
-												<button form="" class="btn btn-primary slider-edit">Edit</button>
+												<button onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>&SID=<?= $row['SID'] ?>');" form="" class="btn btn-primary slider-edit">Edit</button>
 											</li>
                                	        	                                	<li class="divider slider-divider"></li>
                                        	        		               	<?php endforeach; ?>
@@ -726,25 +1017,28 @@ function deleteComp()
 		</div>
 		<div class="panel-footer">
                		<div class="row">
-				<div class="col-xs-offset-1 col-xs-2">
+				<div class="col-xs-2">
                                 	<a class="btn btn-danger" href="/admin.php">Back</a>
                                 </div>
 				<div class="col-xs-3">
-					<button id="finalizebtn" type="submit" class="btn btn-success" form="compinfo" name="finalize">Finalize changes</button>
-				</div>
-				<div class="col-xs-3">
 					<form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
-                                        	<button class="btn btn-danger" name="delete" type="submit">Delete competition</button>
+                                        	<button class="btn btn-danger" name="delete" type="submit">Delete</button>
                                         	<input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
                                 	</form>
 				</div>
-				<div class="col-xs-2">
+				<div class="col-xs-3">
 					<a class="btn btn-primary col-xs-2" href="/addschool.php">New school</a>
                         	</div>
+				<div class="col-xs-4">
+                                        <button id="finalizebtn" type="submit" class="btn btn-success" form="compinfo" name="finalize">Finalize changes</button>
+                                </div>
 			</div>
                 </div>
 	</div>
 </div>
+
+</div>
+
 </body>
 
 </html>
