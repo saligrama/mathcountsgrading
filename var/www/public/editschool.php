@@ -111,7 +111,19 @@
 
 	else {
 
-		if(!isset($_GET["SCID"]))
+		$editsid = 0;
+
+		if(isset($_GET["SCID"]))
+		{
+			if(isset($_GET["SID"]))
+			{
+				if(empty(dbQuery_new($conn, "SELECT * FROM mathlete_info WHERE SID=:sid AND SCID=:scid", ["sid" => $_GET["SID"], "scid" => $_GET["SCID"]])))
+					redirectTo("/admin.php");
+				else
+					$editsid = $_GET["SID"];
+			}
+		}
+		else
 			redirectTo("/admin.php");
 
 		$result = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID = :scid", ["scid" => $_GET["SCID"]]);
@@ -122,7 +134,7 @@
 		if(empty($studentinfo))
 			$studentinfo = 0;
 
-		render("edit_form.php", ["result" => $result, "studentinfo" => $studentinfo, "fullname" => getFullName($conn)]);
+		render("edit_form.php", ["result" => $result, "studentinfo" => $studentinfo, "fullname" => getFullName($conn), "editsid" => $editsid]);
 
 	}
 
