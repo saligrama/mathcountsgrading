@@ -7,7 +7,7 @@ function timers()
 {
         var timer = document.getElementById("timer");
 
-        timer.innerHTML="<h4 style='font-weight:'" + bold ? "bold" : "normal" + "';'>Good joib, you fucker! U wasted " + (sec++) + " milliseconds by doing this!</h4>";
+        timer.innerHTML="<h4 style='font-weight:'" + bold ? "bold" : "normal" + "';'>gg noob u wasted " + (sec++) + " milliseconds by doing this!</h4>";
 
         bold = !bold;
 }
@@ -32,4 +32,3 @@ window.setInterval(timers, 1);
          -webkit-transform: rotate(-30deg);
          }
 }
-
