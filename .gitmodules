@@ -1,0 +1,3 @@
+[submodule "var/www/lib/MCGExpression"]
+	path = var/www/lib/MCGExpression
+	url = http://github.com/saligrama/MCGExpression
