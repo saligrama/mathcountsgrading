@@ -14,6 +14,7 @@
 <script src="./scripts/general.js"></script>
 
 <link rel="stylesheet" type="text/css" href="./styles/custom-checkbox.css">
+<link rel="stylesheet" type="text/css" href="./styles/loader.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js" crossorigin="anonymous"></script>
@@ -23,107 +24,6 @@
 <title>Edit competition</title>
 
 <style>
-
-.wheel-loader-wrapper {
-   position: fixed;
-   width: 100%;
-   height: 100%;
-   left: 0;
-   top: 0;
-   background-color: rgba(1, 1, 1, 0);
-}
-
-.wheel-loader {
-    border: 16px solid #f3f3f3;
-    border-top: 16px solid #3498db;
-    border-radius: 50%;
-    width: 100px;
-    height: 100px;
-    animation: wheel-spin 2s linear infinite;
-
-    position: relative;
-    margin-top: -50px;
-    margin-left: -50px;
-    top: 35%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-    background-color: rgba(1, 1, 1, 0);
-    //background-image: url("https://upload.wikimedia.org/wikipedia/commons/a/ab/Harvard_Crimson.svg");
-    vertical-align: middle;
-}
-
-@keyframes wheel-spin {
-    0% { transform: rotate(0deg);
-	 -ms-transform: rotate(0deg);
-	 -webkit-transform: rotate(0deg);
-         //width: 110px;
-	 //height: 140px;
-	}
-    /*50% { transform: rotate(360deg);
-         -ms-transform: rotate(360deg);
-         -webkit-transform: rotate(360deg);
-          width: 1758px;
-	  height: 2068px;
-	 }*/
-    100% { transform: rotate(360deg);
-         -ms-transform: rotate(360deg);
-         -webkit-transform: rotate(360deg);
-         //width: 110px;
-         //height: 140px;
-       }
-}
-
-/*.m-overlay {
-    background-color: rgba(0.8, 0.8, 0.8, 1);
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-}*/
-
-.wheel-loader-wrapper {
-    opacity: 0;
-    z-index: 0;
-
-    transition: opacity 1s ease-in;
-    -webkit-transition: opacity 1s ease-in;
-
-    transition: z-index 0;
-    -webkit-transition: z-index 0;
-
-    transition-delay: z-index 1.3s;
-    -webkit-transition-delay: z-index 1.3s;
-
-}
-
-body {
-	z-index: 5;
-}
-
-body.loading-first {
-	min-width: 100%;
-	overflow: hidden;
-}
-
-.body-wrapper {
-	opacity 1;
-
-	transition: opacity 1s ease-in;
-	-webkit-transition: opacity 1s ease-in;
-}
-
-body.loading-first .body-wrapper {
-	opacity: 0;
-}
-
-body.loading .wheel-loader-wrapper {
-	opacity: 0.5;
-//	z-index: 999;
-}
 
 .slider-top-divider {
 	height: 1px;
@@ -273,6 +173,12 @@ body.loading .wheel-loader-wrapper {
 
 	.panel-footer .row div {
         	padding: 0 5px;
+	}
+
+	.panel-footer .row div a,
+	.panel-footer .row div button {
+		font-size: 12px;
+		padding: 6px 3px;
 	}
 }
 
@@ -863,8 +769,6 @@ function deleteComp()
 
 <body class="loading loading-first">
 
-<div class="m-overlay"></div>
-
 <div class="wheel-loader-wrapper"><div class="wheel-loader"></div></div>
 
 <div class="body-wrapper">
@@ -1020,16 +924,19 @@ function deleteComp()
 				<div class="col-xs-2">
                                 	<a class="btn btn-danger" href="/admin.php">Back</a>
                                 </div>
-				<div class="col-xs-3">
+				<div class="col-xs-2">
 					<form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
                                         	<button class="btn btn-danger" name="delete" type="submit">Delete</button>
                                         	<input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
                                 	</form>
 				</div>
-				<div class="col-xs-3">
-					<a class="btn btn-primary col-xs-2" href="/addschool.php">New school</a>
+				<div class="col-xs-2">
+					<a class="btn btn-primary" href="/addschool.php">New school</a>
                         	</div>
-				<div class="col-xs-4">
+				<div class="col-xs-3">
+					<a class="btn btn-primary" href="/editanswers.php?CID=<?php echo clean($_GET['CID']); ?>">Edit answer key</a>
+				</div>
+				<div class="col-xs-3">
                                         <button id="finalizebtn" type="submit" class="btn btn-success" form="compinfo" name="finalize">Finalize changes</button>
                                 </div>
 			</div>

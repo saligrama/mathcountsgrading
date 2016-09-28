@@ -1,0 +1,2 @@
+[28-Sep-2016 15:41:02 UTC] PHP Notice:  Undefined index: SCID in /var/www/templates/editcomp_form.php on line 755
+[28-Sep-2016 15:42:38 UTC] PHP Notice:  Undefined index: SCID in /var/www/templates/editcomp_form.php on line 755

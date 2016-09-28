@@ -46,6 +46,18 @@
 	padding: 7px 3px 5px 3px;
 }
 
+.editstudent {
+	-webkit-transition: border-color ease-in-out 3s, -webkit-box-shadow ease-in-out 3s;
+	transition: border-color ease-in-out 3s, box-shadow ease-in-out 3s;
+}
+
+.editstudent-load {
+	border-color: #66afe9;
+
+	-webkit-box-shadow: 0 0 30px 15px rgba(102, 175, 233, .6);
+	box-shadow: 0 0 30px 15px rgba(102, 175, 233, .6);
+}
+
 @media (max-width: 991px) {
 
 	.panel {
@@ -66,6 +78,11 @@ function reloadSelect2()
 
 $(document).ready(function() {
         reloadSelect2();
+
+	<?php if(isset($_GET["SID"])): ?>
+		chooseStudentEdit(<?php echo clean($editsid); ?>);
+		document.getElementsByClassName("editstudent")[0].classList.remove("editstudent-load");
+	<?php endif; ?>
 });
 
 function studentSearch()
@@ -198,17 +215,6 @@ function cancelEditStudent()
 	document.getElementById("editstudentheading").innerHTML = "Edit student";
 }
 
-var studentinfo = [];
-<?php if($studentinfo): ?>
-	<?php foreach($studentinfo as $row): ?>
-		studentinfo[<?= $row["SID"] ?>] = [];
-		studentinfo[<?= $row["SID"] ?>]["first_name"] = "<?php echo clean($row['first_name']); ?>";
-		studentinfo[<?= $row["SID"] ?>]["last_name"] = "<?php echo clean($row['last_name']); ?>";
-		studentinfo[<?= $row["SID"] ?>]["nickname"] = "<?php echo clean($row['nickname']); ?>";
-		studentinfo[<?= $row["SID"] ?>]["gender"] = "<?php echo clean($row['gender']); ?>";
-	<?php endforeach; ?>
-<?php endif; ?>
-
 /*function setEditStudentHeading()
 {
 	var firstname = document.getElementById("firstname-edit").value;
@@ -231,26 +237,33 @@ var studentinfo = [];
 
 function chooseStudentEdit(sid)
 {
-	document.getElementById("choosestudent").style.display = "none";
+	var list = document.getElementById("stcont").getElementsByClassName("slider-li");
 
-	document.getElementById("editstudent").style.display = "block";
-	document.getElementById("editstudentfooter").style.display = "block";
+	var e = 0;
+	for(var i = 0; i < list.length; i++)
+		if(list[i].dataset.sid == sid)
+			e = list[i];
 
-	document.getElementById("sideditstudent").value = sid;
+	if(e)
+	{
+		document.getElementById("choosestudent").style.display = "none";
 
-	document.getElementById("firstname-edit").value = studentinfo[sid]["first_name"];
-	document.getElementById("lastname-edit").value = studentinfo[sid]["last_name"];
-	document.getElementById("nickname-edit").value = studentinfo[sid]["nickname"];
-	document.getElementById("gender-edit").value = studentinfo[sid]["gender"];
+        	document.getElementById("editstudent").style.display = "block";
+        	document.getElementById("editstudentfooter").style.display = "block";
 
-	reloadSelect2();
-}
+		document.getElementById("editstudentheading").innerHTML = "Editing student '" + e.getElementsByClassName("slider-text")[0].innerHTML + "':";
+		//"Editing student '" + e.dataset.firstname + (e.dataset.firstname !== "" && e.dataset.lastname !== "" ? " " : "") + e.dataset.lastname + "':";
 
-<?php if($editsid): ?>
-	window.onload = function() {
-		chooseStudentEdit(<?php echo clean($editsid); ?>);
+        	document.getElementById("sideditstudent").value = sid;
+
+		document.getElementById("firstname-edit").value = e.dataset.firstname; //studentinfo[sid]["first_name"];
+		document.getElementById("lastname-edit").value = e.dataset.lastname; //studentinfo[sid]["last_name"];
+		document.getElementById("nickname-edit").value = e.dataset.nickname; //studentinfo[sid]["nickname"];
+		document.getElementById("gender-edit").value = e.dataset.gender; //studentinfo[sid]["gender"];
+
+		reloadSelect2();
 	}
-<?php endif; ?>
+}
 
 /*function checkDiff()
 {
@@ -345,7 +358,11 @@ function deleteSchool()
                                                                         	<?php else: ?>
                                                                                 	<li id="nostusearchres" class="nostudent" style="display:none;">No results found</li>
                                                                                 	<?php foreach($studentinfo as $row): ?>
-                                                                                	        <li class="slider-li">
+                                                                                	        <li class="slider-li" data-sid="<?= $row['SID']; ?>"
+														      data-firstname="<?php echo clean($row['first_name']); ?>"
+														      data-nickname="<?php echo clean($row['nickname']); ?>"
+														      data-lastname="<?php echo clean($row['last_name']); ?>"
+														      data-gender="<?php echo clean($row['gender']); ?>">
                                                                         	                        <p class="slider-text"><?php echo clean(getStudentFullName($row)); ?></p>
                                                                 	                                <button form="" onclick="chooseStudentEdit(<?= $row['SID'] ?>);" class="btn btn-primary slider-edit">Edit</button>
                                                 	                                        </li>
@@ -417,7 +434,7 @@ function deleteSchool()
 				</div>
 			</div>
 		</div>
-		<div class="container-fluid panel panel-primary">
+		<div class="container-fluid panel panel-primary <?php if(isset($_GET['SID'])): ?>editstudent editstudent-load<?php endif; ?>">
 			<div id="editstudentheading" class="panel-heading">Edit student</div>
 			<div class="panel-body">
 				<div id="choosestudent" class="row">

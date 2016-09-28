@@ -1,7 +1,22 @@
 <?php
 
 require(dirname(__FILE__) . "/constants.php");
-require(dirname(__FILE__) . "../lib/MCGExpression/MCGExpression/main.php");
+require(dirname(__FILE__) . "/../lib/vendor/autoload.php");
+
+use MathParser\StdMathParser;
+
+
+function getProblemSolution($solutionrows, $number, $type)
+{
+	if(empty($solutionrows))
+		return "";
+
+	foreach($solutionrows as $row)
+		if($row["problem_number"] == $number)
+			return $row["answer"];
+
+	return "";
+}
 
 function sempty($str)
 {
@@ -143,12 +158,32 @@ function dbQuery_new($conn, $query, $values = array()) {
 
 }
 
-function exprCompare($expr1, $expr2) {
+function exprParse($expr) {
 
-    $e1 = tokenize($expr1);
-    $e2 = tokenize($expr2);
+    function parseArray(&$tokenizedArray) {
 
-    return compare(shunting_yard($e1[0], $e1[1]), shunting_yard($e1[0], $e1[1]));
+        $result = [];
+
+        while (($ch = array_shift($tokenizedArray)) !== null) {
+
+            if ($ch === ')')
+                break;
+
+            $result[] = $ch === '(' ? parseArray($tokenizedArray) : $ch;
+
+        }
+        if (count($result) < 2)
+            return reset($result);
+
+        $result[] = array_splice($result, -2, 1)[0];
+        return $result;
+
+    }
+
+    $parser = new StdMathParser();
+
+    $tokenizedArray = preg_split("/([()])/", $parser->parse($expr), 0, PREG_SPLIT_DELIM_CAPTURE + PREG_SPLIT_NO_EMPTY);
+    return parseArray($tokenizedArray);
 
 }
 
