@@ -58,6 +58,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 			$_SESSION['type'] = $row['type'];
 			$_SESSION['starttime'] = time();
 
+			clearEditCompInfo();
+			clearAddCompInfo();
+
+
 			switch ($_SESSION['type'])
 			{
 			case 'admin':

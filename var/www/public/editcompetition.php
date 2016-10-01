@@ -178,18 +178,17 @@
 	if(!isset($_GET["CID"]))
 		redirectTo("/admin.php");
 
-        $conn = dbConnect_new();
         $schinfo = dbQuery_new($conn, "SELECT * FROM school_info");
 	if(empty($schinfo))
 		$schinfo = 0;
-
-	usort($schinfo, 'schoolSort');
+	else
+		usort($schinfo, 'schoolSort');
 
 	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info");
 	if(empty($studentinfo))
 		$studentinfo = 0;
-
-	usort($studentinfo, 'studentSort');
+	else
+		usort($studentinfo, 'studentSort');
 
         $compinfo = dbQuery_new($conn, "SELECT * FROM competition WHERE CID=:cid", ["cid" => $_GET["CID"]]);
         if(empty($compinfo))

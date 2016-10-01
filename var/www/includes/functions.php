@@ -6,6 +6,32 @@ require(dirname(__FILE__) . "/../lib/vendor/autoload.php");
 use MathParser\StdMathParser;
 
 
+function clearEditCompInfo()
+{
+	if(!session_id())
+		session_start();
+
+	$_SESSION['editcompdate'] = date('Y-m-d');
+	$_SESSION['editcomptype'] = "charter";
+	$_SESSION['editcompname'] = "";
+	$_SESSION['editcomppartschools'] = [];
+	$_SESSION['editcompregulars'] = [];
+	$_SESSION['editcompalternates'] = [];
+}
+
+function clearAddCompInfo()
+{
+	if(!session_id())
+		session_start();
+
+	$_SESSION['addcompdate'] = date('Y-m-d');
+	$_SESSION['addcomptype'] = "charter";
+	$_SESSION['addcompname'] = "";
+	$_SESSION['addcomppartschools'] = [];
+	$_SESSION['addcompregulars'] = [];
+	$_SESSION['addcompalternates'] = [];
+}
+
 function getProblemSolution($solutionrows, $number, $type)
 {
 	if(empty($solutionrows))

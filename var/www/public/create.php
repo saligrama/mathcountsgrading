@@ -46,12 +46,36 @@
 
     else {
 
-        $result = dbQuery_new($conn, "SELECT SCID, team_name FROM school_info");
 	$schinfo = dbQuery_new($conn, "SELECT * FROM school_info");
-	if(empty($schinfo))
+        if(empty($schinfo))
                 $schinfo = 0;
+	else
+        	usort($schinfo, 'schoolSort');
 
-	render("create_form.php", ["result" => $result, "fullname" => getFullName($conn), "schinfo" => $schinfo]);
+        $studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info");
+        if(empty($studentinfo))
+                $studentinfo = 0;
+	else
+        	usort($studentinfo, 'studentSort');
+
+        $i = 0;
+        foreach($schinfo as $school)
+        {
+                $schinfo[$i++]["num_students"] = 0;
+
+                foreach($studentinfo as $student)
+                {
+                        if($student["SCID"] == $school["SCID"])
+                                $schinfo[$i-1]["num_students"]++;
+                }
+        }
+
+        render("create_form.php", [
+               "schinfo" => $schinfo,
+               "studentinfo" => $studentinfo,
+               "fullname" => getFullName($conn)
+	     ]
+	);
 
     }
 

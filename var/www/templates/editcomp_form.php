@@ -699,16 +699,9 @@ function checkSubmit()
 	}
 
 	if(name === "")
-        {
-                if(confirm("Are you sure you want to leave the competition name empty and finalize your changes?"))
-                        return true;
+                return confirm("Are you sure you want to leave the competition name empty and finalize your changes?");
 
-                return false;
-        }
-
-	var mes = "Are you sure you want to finalize your changes?";
-
-	return confirm(mes);
+	return confirm("Are you sure you want to finalize your changes?");
 }
 
 function deleteComp()

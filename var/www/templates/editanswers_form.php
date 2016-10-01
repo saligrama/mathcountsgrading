@@ -33,6 +33,10 @@
 	padding-top: 20px;
 }
 
+.panel-footer button {
+	width: 100%;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -104,8 +108,10 @@ function checkSubmit()
 				</div>
 				<div class="panel-footer">
                                         <div class="row">
-                                                <button type="submit" class="btn btn-success col-xs-offset-3 col-xs-6" name="answersubmit" form="answers">Submit</button>
-                                        </div>
+						<div class="col-xs-offset-3 col-xs-6">
+                                                	<button type="submit" class="btn btn-success" name="answersubmit" form="answers">Submit</button>
+                                        	</div>
+					</div>
                                 </div>
 			</div>
 		</div>
@@ -129,8 +135,10 @@ function checkSubmit()
                                 </div>
                                 <div class="panel-footer">
                                         <div class="row">
-                                                <button type="submit" class="btn btn-success col-xs-offset-2 col-xs-8" name="answersubmit" form="answers">Submit</button>
-                                        </div>
+						<div class="col-xs-offset-2 col-xs-8">
+                                                	<button type="submit" class="btn btn-success" name="answersubmit" form="answers">Submit</button>
+                                        	</div>
+					</div>
                                 </div>
                         </div>
 		</div>

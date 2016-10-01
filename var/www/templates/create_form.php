@@ -25,13 +25,68 @@
 
 <style>
 
+#body-fillanswers {
+	display: none;
+	position: absolute;
+	top: 70px;
+	left: 50%;
+
+	padding: 10px 30px;
+
+	width: 85%;
+	min-height: 900px;
+	min-width: 550px;
+	max-width: 1500px;
+
+	transform: translate(-50%, 0) scale(1, 1);
+	-webkit-transform: translate(-50%, 0) scale(1, 1);
+
+	z-index: 999;
+}
+
+.bothmain {
+	max-width: 1500px;
+        padding: 20px 30px;
+	min-width: 550px;
+}
+
+.body-fillanswers-enabled {
+	display: initial !important;
+
+}
+/*	opacity: 1 !important;
+
+	-webkit-transform: translate(-50%, 0) scale(1, 1) !important;
+	transform: translate(-50%, 0) scale(1, 1) !important;
+}*/
+
+#body-createcomp {
+	opacity: 1;
+
+	transition: opacity 1s ease-out;
+	-webkit-transition: opacity 1s ease-out;
+}
+
+.body-createcomp-disabled {
+	opacity: 0.3 !important;
+}
+
+#body-fillanswers .panel {
+        max-width: none;
+        min-width: 0;
+}
+
+#body-fillanswers .panel-body {
+        padding-top: 20px;
+}
+
 .slider-top-divider {
 	height: 1px;
 	overflow: hidden;
 	background-color: #d5d5d5;
 	margin-left: 5%;
 	margin-bottom: 10px;
-	width: 90%;
+	width: 90%
 }
 
 .select2-container--default {
@@ -171,14 +226,8 @@
 		max-height: 350px !important;
 	}
 
-	.panel-footer .row div {
-        	padding: 0 5px;
-	}
-
-	.panel-footer .row div a,
-	.panel-footer .row div button {
-		font-size: 12px;
-		padding: 6px 3px;
+	#body-createcomp .panel-footer .row div {
+		padding: 0 6px;
 	}
 }
 
@@ -672,7 +721,7 @@ function allStudents(type)
 	}
 }
 
-function checkSubmit()
+function checkShowFillAnswers()
 {
 	var date = document.getElementById("compdate").value;
 	var name = document.getElementById("compname").value;
@@ -699,21 +748,40 @@ function checkSubmit()
 	}
 
 	if(name === "")
-        {
-                if(confirm("Are you sure you want to leave the competition name empty and finalize your changes?"))
-                        return true;
-
-                return false;
-        }
-
-	var mes = "Are you sure you want to finalize your changes?";
-
-	return confirm(mes);
+                return confirm("Are you sure you want to leave the competition name empty?");
 }
 
-function deleteComp()
+function toggleFillAnswers(on)
 {
-	return confirm("Are you sure you want to delete the competition?");
+	if(checkShowFillAnswers())
+	{
+		if(on)
+		{
+			document.getElementById("body-createcomp").classList.add("body-createcomp-disabled");
+			document.getElementById("body-fillanswers").classList.add("body-fillanswers-enabled");
+
+			/*var anim = window.setInterval(animframe, 5);
+			var scale = 0.2;
+			document.getElementById("body-fillanswers").style.transform = "scale(1, 1);";
+			function animframe()
+			{
+				if(scale >= 1.0)
+					clearInterval(anim);
+				else
+				{
+					document.getElementById("body-fillanswers").style.transform = "transform(-50%, 0) scale(" + scale + ", " + scale + ");";
+					document.getElementById("body-fillanswers").style.webkitTransform = "transform(-50%, 0) scale(" + scale + ", " + scale + ");";
+					scale += 0.01;
+				}
+			}*/
+
+		}
+		else
+		{
+			document.getElementById("body-createcomp").classList.remove("body-createcomp-disabled");
+                        document.getElementById("body-fillanswers").classList.remove("body-fillanswers-enabled");
+		}
+	}
 }
 
 /*function showSchools()
@@ -769,6 +837,10 @@ function deleteComp()
 
 <body class="loading loading-first">
 
+<div class="wheel-loader-wrapper"><div class="wheel-loader"></div></div>
+
+<div class="body-wrapper">
+
 <nav class="mnavbar">
         <div class="mnavcontainer container">
                 <ul class="mnavlist">
@@ -783,7 +855,101 @@ function deleteComp()
                 </ul>
         </div>
 </nav>
-<div class="main">
+
+<div class="main" id="body-fillanswers">
+        <div class="row text-center">
+                <form onsubmit="return checkSubmit();" id="answers" action="" method="post"></form>
+                <input type="hidden" form="answers" name="CID" value="<?= $_GET['CID'] ?>">
+
+                <div class="col-lg-6 col-lg-offset-0 col-md-offset-2 col-md-8 col-sm-offset-1 col-sm-10 col-xs-12">
+                        <div class="container-fluid panel panel-primary">
+                                <div class="panel-heading"><h4>Sprint Round</h4></div>
+                                <div class="panel-body">
+                                        <div class="row">
+                                                <?php for($j = 0; $j < 3; $j++): ?>
+                                                        <div class="col-xs-4">
+                                                                <div class="form-group">
+                                                                      <?php for($i = 1; $i <= 10; $i++): ?>
+                                                                                <div class="input-group">
+                                                                                        <span class="input-group-addon"><?php echo (10*$j + $i); ?> </span>
+                                                                                        <input type="text" form="answers" class="form-control col-xs-12" id="<?= (10*$j + $i) ?>question"
+                                                                                                name="<?= (10*$j + $i) ?>question"
+                                                                                                value="<?php getProblemSolution($result, (10*$j + $i), 'sprint'); ?>">
+                                                                                        </input>
+                                                                                </div><br>
+                                                                        <?php endfor; ?>
+                                                                </div>
+                                                        </div>
+                                                <?php endfor; ?>
+                                        </div>
+                                </div>
+                                <div class="panel-footer">
+                                        <div class="row">
+                                                <div class="col-xs-offset-3 col-xs-6">
+                                                        <button type="submit" class="btn btn-success" name="answersubmit" form="answers">Submit</button>
+                                                </div>
+                                        </div>
+                                </div>
+			</div>
+		</div>
+                <div class="col-lg-3 col-lg-offset-0 col-sm-5 col-sm-offset-1 col-md-offset-2 col-md-4 col-xs-6">
+                        <div class="container-fluid panel panel-primary">
+                                <div class="panel-heading"><h4>Team Round</h4></div>
+                                <div class="panel-body">
+                                        <div class="row">
+                                                <div class="col-xs-12 col-sm-10 col-sm-offset-1">
+                                                        <?php for($i = 1; $i <= 10; $i++): ?>
+                                                                <div class='input-group'>
+                                                                        <span class='input-group-addon'><?php echo $i; ?> </span>
+                                                                        <input form="answers" type="text" class="form-control col-xs-10" name="<?= (30 + $i) ?>question"
+                                                                                id="<?= (30 + $i) ?>question"
+                                                                                value="<?php getProblemSolution($result, 30 + $i, 'team'); ?>">
+                                                                        </input>
+                                                                </div><br>
+                                                        <?php endfor; ?>
+                                                </div>
+                                        </div>
+                                </div>
+                                <div class="panel-footer">
+                                        <div class="row">
+                                                <div class="col-xs-offset-2 col-xs-8">
+                                                        <button type="submit" class="btn btn-success" name="answersubmit" form="answers">Submit</button>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+                <div class="col-lg-3 col-sm-5 col-md-4 col-xs-6">
+                        <?php for($i = 1; $i <= 4; $i++): ?>
+                                <div class="container-fluid panel panel-primary">
+                                        <div class="panel-heading"><h4>Target Round <?= $i ?></h4></div>
+                                        <div class="panel-body">
+                                                <div class="row">
+                                                        <div class="col-xs-12 col-sm-offset-1 col-sm-10">
+                                                                <div class='input-group'>
+                                                                        <span class='input-group-addon'>1 </span>
+                                                                        <input form="answers" type="text" class="form-control col-xs-10" name="<?= (40 + 2*$i - 1) ?>question"
+                                                                                id="<?= (40 + 2*$i - 1) ?>question"
+                                                                                value="<?php getProblemSolution($result, 40 + 2*$i - 1, 'target' . $i); ?>">
+                                                                        </input>
+                                                                        </div><br>
+                                                                <div class='input-group'>
+                                                                        <span class='input-group-addon'>2 </span>
+                                                                        <input form="answers" type="text" class="form-control col-xs-10" name="<?= (40 + 2*$i) ?>question"
+                                                                                id="<?= (40 + 2*$i) ?>question"
+                                                                                value="<?php getProblemSolution($result, 40 + 2*$i, 'target' . $i); ?>">
+                                                                        </input>
+                                                                </div><br>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        <?php endfor; ?>
+                </div>
+        </div>
+</div>
+
+<div class="main" id="body-createcomp">
 	<div class="container-fluid panel panel-primary">
 		<div class="panel-heading"><h4 class="text-center">Create new competition</h4></div>
 		<div class="panel-body">
@@ -792,23 +958,23 @@ function deleteComp()
 					<div class="row">
 						<div class="form-group">
 							<label for="compdate">Competition Date</label>
-							<input id="compdate" data-provide="datepicker" class="form-control input-group date datepicker" data-date-format="yyyy-mm-dd" name="compdate" placeholder="Date (yyyy-mm-dd)" value="<?php echo htmlspecialchars($crow['competition_date']); ?>" required>
+							<input id="compdate" data-provide="datepicker" class="form-control input-group date datepicker" data-date-format="yyyy-mm-dd" name="compdate" placeholder="Date (yyyy-mm-dd)" value="<?php echo clean($_SESSION['addcompdate']); ?>">
 						</div>
 					</div><br>
 					<div class="row">
 						<div class="form-group">
 							<label for="comptype">Competition Type</label><br>
 							<select name="comptype" id="comptype" class="js-select form-control">
-								<option value="chapter" <?= $crow['competition_type'] == 'chapter' ? "selected" : "" ?>>Chapter</option>
-								<option value="state" <?= $crow['competition_type'] == 'state' ? "selected" : "" ?>>State</option>
-								<option value="national" <?= $crow['competition_type'] == 'national' ? "selected" : "" ?>>National</option>
+								<option value="chapter" <?php if($_SESSION['addcomptype'] === "chapter") echo "selected"; ?>>Chapter</option>
+								<option value="state" <?php if($_SESSION['addcomptype'] === "state") echo "selected"; ?>>State</option>
+								<option value="national" <?php if($_SESSION['addcomptype'] === "national") echo "selected"; ?>>National</option>
 							</select>
 						</div>
 					</div><br>
 					<div class="row">
 						<div class="form-group">
 							<label for="compname">Competition Name (optional)</label>
-							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name" value="<?php echo clean($crow['competition_name']); ?>">
+							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name" value="<?php echo clean($_SESSION['addcompname']); ?>">
 						</div>
 					</div><br>
 					<div class="row">
@@ -832,7 +998,7 @@ function deleteComp()
 										<li id="schsearchres" class="noschool" style="display:none;">No results found</li>
 										<?php foreach($schinfo as $row): ?>
 											<li class="slider-li">
-												<input onchange="schoolSelect(<?= $row['SCID'] ?>, true);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
+												<input onchange="schoolSelect(<?= $row['SCID'] ?>, true);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php if(in_array($row['SCID'], $_SESSION['addcomppartschools'])) echo "checked"; ?>>
 												<label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
 												<button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
 											</li>
@@ -843,11 +1009,6 @@ function deleteComp()
 							</div>
 							</div>
 					</div><br>
-					<div class="row">
-						<div class="form-group">
-							<input type="hidden" id="cid" name="cid" value="<?php echo clean($_GET['CID']); ?>">
-						</div>
-					</div>
 				</div>
 				<div class="col-divider"></div>
 				<div class="colobj">
@@ -857,10 +1018,11 @@ function deleteComp()
 							<select onchange="studentSelect();" id="stuschselect" class="js-select form-control">
 								<option id="allschoption" data-first="1" value="all">All selected schools</option>
 								<?php foreach($schinfo as $row): ?>
-									<option data-numstudents="<?= $row['num_students']; ?>" id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"
-									<?php if(!in_array($row["SCID"], $participants_row)) echo "disabled"; ?>>
-									<?php echo clean($row["team_name"] . " (" . $row["num_students"] . " students)"); ?></option>
-								<?php endforeach; ?>
+                                                                        <option data-numstudents="<?= $row['num_students']; ?>" id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"
+										<?php if(!in_array($row['SCID'], $_SESSION['addcomppartschools'])) echo "disabled"; ?>>
+                                                                        	<?php echo clean($row["team_name"] . " (" . $row["num_students"] . " students)"); ?>
+									</option>
+                                                                <?php endforeach; ?>
 							</select>
 						</div>
 					</div>
@@ -897,10 +1059,10 @@ function deleteComp()
                       		                                      	        	<li class="slider-li" id="<?= $row['SCID'] ?>student<?= $row['SID'] ?>">
 												<h5 class="text-center"><?php echo clean(getStudentFullName($row)); ?></h5>
 
-												<input onchange="studentCheck(1, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "rcheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'reg' . $row['SID'] ?>" value="yes" <?php if(in_array($row["SID"], $regulars_row)) echo "checked"; ?>>
+												<input onchange="studentCheck(1, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "rcheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'reg' . $row['SID'] ?>" value="yes" <?php if(in_array($row['SID'], $_SESSION['addcompregulars'])) echo "checked"; ?>>
       	                                                              	                 	<label id="<?= $row['SCID'] . 'rlabel' . $row['SID'] ?>" for=<?= "rcheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Regular</label>
 
-												<input onchange="studentCheck(0, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes" <?php if(in_array($row["SID"], $alternates_row)) echo "checked"; ?>>
+												<input onchange="studentCheck(0, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes" <?php if(in_array($row['SID'], $_SESSION['addcompalternates'])) echo "checked"; ?>>
  	                                                                      		        <label id="<?= $row['SCID'] . 'alabel' . $row['SID'] ?>" for=<?= "acheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Alternate</label>
 
 												<button onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>&SID=<?= $row['SID'] ?>');" form="" class="btn btn-primary slider-edit">Edit</button>
@@ -917,29 +1079,23 @@ function deleteComp()
 		</div>
 		<div class="panel-footer">
                		<div class="row">
-				<div class="col-xs-2">
+				<div class="col-xs-offset-1 col-xs-2">
                                 	<a class="btn btn-danger" href="/admin.php">Back</a>
                                 </div>
-				<div class="col-xs-2">
-					<form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
-                                        	<button class="btn btn-danger" name="delete" type="submit">Delete</button>
-                                        	<input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
-                                	</form>
-				</div>
-				<div class="col-xs-2">
+				<div class="col-xs-3">
 					<a class="btn btn-primary" href="/addschool.php">New school</a>
                         	</div>
-				<div class="col-xs-3">
-					<a class="btn btn-primary" href="/editanswers.php?CID=<?php echo clean($_GET['CID']); ?>">Edit answer key</a>
-				</div>
-				<div class="col-xs-3">
-                                        <button id="finalizebtn" type="submit" class="btn btn-success" form="compinfo" name="finalize">Finalize changes</button>
+				<div class="col-xs-5">
+                                        <button id="createbtn" type="submit" class="btn btn-success" onclick="toggleFillAnswers(true)" name="create">Create competition</button>
                                 </div>
 			</div>
                 </div>
 	</div>
 </div>
 
+</div>
+
 </body>
 
 </html>
+
