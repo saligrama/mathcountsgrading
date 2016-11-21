@@ -20,7 +20,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Edit competition</title>
+<title>Create competition</title>
 
 <style>
 
@@ -281,87 +281,13 @@ body.loading .wheel-loader-wrapper {
 
 <script type="text/javascript">
 
-/*function alphabeticalSort(a, b)
-{
-        var aa = a.stringToSort.toLowerCase();
-        var bb = b.stringToSort.toLowerCase();
-
-	var ap = parseInt(aa);
-	var bp = parseInt(bb);
-
-	if(ap != NaN) {
-		if(bp != NaN)
-			return 0;
-		else
-			return -1;
-	}
-	else if(bp != NaN) {
-		if(ap != NaN)
-			return 0;
-		else
-			return 1;
-	}
-	if(aa > bb)
-                return 1;
-        else if(aa < bb)
-                return -1;
-        else
-                return 0;
-}*/
 
 function loadSelect2()
 {
-/*	var selects = document.getElementsByClassName("js-select-sort");
-
-	for(var i = 0; i < selects.length; i++)
-	{
-		var tag = selects[i].tagName;
-		if(typeof(tag) != 'undefined' && tag.toLowerCase() == "select")
-		{
-			var options = selects[i].options;
-			var sortArray = [];
-			var index = 0;
-
-			for(var j = 0; j < selects[i].childNodes.length; j++)
-			{
-    				var tagName = selects[i].childNodes[j].tagName;
-				if(typeof(tagName) != 'undefined' && tagName.toLowerCase() == "option")
-				{
-					if(selects[i].childNodes[j].dataset.first === "1")
-						continue;
-
-					sortArray[index] = {};
-
-					sortArray[index].node = selects[i].childNodes[j];
-					sortArray[index].stringToSort = selects[i].childNodes[j].innerHTML;
-
-					selects[i].removeChild(selects[i].childNodes[j]);
-					index++;
-				}
-			}
-
-			if(sortArray.length > 1)
-				sortArray.sort(alphabeticalSort);
-
-			for(var h = 0; h < sortArray.length; h++)
-				selects[i].appendChild(sortArray[h].node);
-		}
-	}
-*/
 	$(".js-select").select2({
                 minimumResultsForSearch: 6
         });
 }
-
-/*function expandEllipsis(SCID)
-{
-	var e = document.getElementById("label" + SCID);
-
-	if(e.offsetWidth < e.scrollWidth)
-	{
-		e.style.display = "absolute";
-	}
-}*/
 
 function toggleLoading(on)
 {
@@ -374,17 +300,6 @@ function toggleLoading(on)
 		document.getElementsByTagName("body")[0].classList.remove("loading");
 	}
 }
-
-/*var schoolinfo = [];
-
-<?php if(!empty($schinfo)): ?>
-	<?php foreach($schinfo as $row): ?>
-		schoolinfo[<?= $row["SCID"] ?>] = [];
-		schoolinfo[<?= $row["SCID"] ?>]["team_name"] = "<?php echo clean($row['team_name']); ?>";
-		schoolinfo[<?= $row["SCID"] ?>]["num_students"] = <?php echo $row["num_students"]; ?>;
-	<?php endforeach; ?>
-<?php endif; ?>*/
-
 
 function setAllStudentsCount()
 {
@@ -795,68 +710,16 @@ function checkSubmit()
 
 	if(name === "")
         {
-                if(confirm("Are you sure you want to leave the competition name empty and finalize your changes?"))
+                if(confirm("Are you sure you want to leave the competition name empty and still create it?"))
                         return true;
 
                 return false;
         }
 
-	var mes = "Are you sure you want to finalize your changes?";
+	var mes = "Are you sure you want to create the competition?";
 
 	return confirm(mes);
 }
-
-function deleteComp()
-{
-	return confirm("Are you sure you want to delete the competition?");
-}
-
-/*function showSchools()
-{
-	var well = document.getElementById("swell").style;
-	var cont = document.getElementById("scont").style;
-
-	if(well.display == "none") {
-		well.display = "block";
-		well.maxHeight = "400px";
-		cont.maxHeight = "
-		cont.classList.add("slider-container-fixed-open");
-	}
-	else {
-		alert("not none");
-		well.display = "none";
-		well.maxHeight = "0";
-		cont.maxHeight = "0";
-		cont.padding = "0";
-	}
-}*/
-
-/*function checkDiff()
-{
-        if(document.getElementById("compname").value != "<?php echo clean($crow['competition_name']); ?>" ||
-           document.getElementById("compdate").value != "<?php echo htmlspecialchars($crow['competition_date']); ?>" ||
-           document.getElementById("comptype").value != "<?php echo clean($crow['competition_type']); ?>")
-        {
-                document.getElementById("finalizebtn").disabled = false;
-        }
-        else
-        {
-                document.getElementById("finalizebtn").disabled = true;
-        }
-}*/
-
-/*function enableFinalize(name)
-{
-	if (document.getElementsByName(name).checked != <?php echo (in_array($crow['SCID'], $participants_row)) ? true : false; ?>)
-		document.getElementById("finalizebtn").disabled = false;
-	else
-		document.getElementById("finalizebtn").disabled = true;
-}*/
-
-/*function doCheck(scid)
-{
-        document.getElementById("check" + scid).checked = !document.getElementById("check" + scid).checked;
-}*/
 
 </script>
 
@@ -886,30 +749,30 @@ function deleteComp()
 </nav>
 <div class="main">
 	<div class="container-fluid panel panel-primary">
-		<div class="panel-heading"><h4 class="text-center">Edit competition</h4></div>
+		<div class="panel-heading"><h4 class="text-center">Create new competition</h4></div>
 		<div class="panel-body">
-			<form id="compinfo" onsubmit="return checkSubmit();" action="/editcompetition.php" method="post">
+			<form id="compinfo" onsubmit="return checkSubmit();" action="/create.php" method="post">
         			<div class="colobj">
 					<div class="row">
 						<div class="form-group">
 							<label for="compdate">Competition Date</label>
-							<input id="compdate" data-provide="datepicker" class="form-control input-group date datepicker" data-date-format="yyyy-mm-dd" name="compdate" placeholder="Date (yyyy-mm-dd)" value="<?php echo htmlspecialchars($crow['competition_date']); ?>" required>
+							<input id="compdate" data-provide="datepicker" class="form-control input-group date datepicker" data-date-format="yyyy-mm-dd" name="compdate" placeholder="Date (yyyy-mm-dd)" required>
 						</div>
 					</div><br>
 					<div class="row">
 						<div class="form-group">
 							<label for="comptype">Competition Type</label><br>
 							<select name="comptype" id="comptype" class="js-select form-control">
-								<option value="chapter" <?= $crow['competition_type'] == 'chapter' ? "selected" : "" ?>>Chapter</option>
-								<option value="state" <?= $crow['competition_type'] == 'state' ? "selected" : "" ?>>State</option>
-								<option value="national" <?= $crow['competition_type'] == 'national' ? "selected" : "" ?>>National</option>
+								<option value="chapter">Chapter</option>
+								<option value="state">State</option>
+								<option value="national">National</option>
 							</select>
 						</div>
 					</div><br>
 					<div class="row">
 						<div class="form-group">
 							<label for="compname">Competition Name (optional)</label>
-							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name" value="<?php echo clean($crow['competition_name']); ?>">
+							<input type="text" class="form-control" name="compname" id="compname" placeholder="competition name">
 						</div>
 					</div><br>
 					<div class="row">
@@ -933,7 +796,7 @@ function deleteComp()
 										<li id="schsearchres" class="noschool" style="display:none;">No results found</li>
 										<?php foreach($schinfo as $row): ?>
 											<li class="slider-li">
-												<input onchange="schoolSelect(<?= $row['SCID'] ?>, true);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
+												<input onchange="schoolSelect(<?= $row['SCID'] ?>, true);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes">
 												<label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
 												<button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
 											</li>
@@ -944,11 +807,6 @@ function deleteComp()
 							</div>
 							</div>
 					</div><br>
-					<div class="row">
-						<div class="form-group">
-							<input type="hidden" id="cid" name="cid" value="<?php echo clean($_GET['CID']); ?>">
-						</div>
-					</div>
 				</div>
 				<div class="col-divider"></div>
 				<div class="colobj">
@@ -958,8 +816,7 @@ function deleteComp()
 							<select onchange="studentSelect();" id="stuschselect" class="js-select form-control">
 								<option id="allschoption" data-first="1" value="all">All selected schools</option>
 								<?php foreach($schinfo as $row): ?>
-									<option data-numstudents="<?= $row['num_students']; ?>" id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"
-									<?php if(!in_array($row["SCID"], $participants_row)) echo "disabled"; ?>>
+									<option data-numstudents="<?= $row['num_students']; ?>" id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>" disabled>
 									<?php echo clean($row["team_name"] . " (" . $row["num_students"] . " students)"); ?></option>
 								<?php endforeach; ?>
 							</select>
@@ -993,15 +850,15 @@ function deleteComp()
 										<li class="noschool" style="display:block">Looks like there aren't any schools yet.</li>
 									<?php else: ?>
 										<li class="noschool" id="stusearchres" style="display:none;">No results found</li>
-										<li class="noschool" id="nostusch" style="display:none;">Looks like there aren't any students in your selection.</li>
+										<li class="noschool" id="nostusch" style="display:block;">Looks like there aren't any students in your selection.</li>
 										<?php foreach($studentinfo as $row): ?>
-                      		                                      	        	<li class="slider-li" id="<?= $row['SCID'] ?>student<?= $row['SID'] ?>">
+                      		                                      	        	<li class="slider-li" id="<?= $row['SCID'] ?>student<?= $row['SID'] ?>" style="display:none;">
 												<h5 class="text-center"><?php echo clean(getStudentFullName($row)); ?></h5>
 
-												<input onchange="studentCheck(1, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "rcheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'reg' . $row['SID'] ?>" value="yes" <?php if(in_array($row["SID"], $regulars_row)) echo "checked"; ?>>
+												<input onchange="studentCheck(1, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "rcheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'reg' . $row['SID'] ?>" value="yes">
       	                                                              	                 	<label id="<?= $row['SCID'] . 'rlabel' . $row['SID'] ?>" for=<?= "rcheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Regular</label>
 
-												<input onchange="studentCheck(0, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes" <?php if(in_array($row["SID"], $alternates_row)) echo "checked"; ?>>
+												<input onchange="studentCheck(0, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes">
  	                                                                      		        <label id="<?= $row['SCID'] . 'alabel' . $row['SID'] ?>" for=<?= "acheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Alternate</label>
 
 												<button onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>&SID=<?= $row['SID'] ?>');" form="" class="btn btn-primary slider-edit">Edit</button>
@@ -1021,17 +878,11 @@ function deleteComp()
 				<div class="col-xs-2">
                                 	<a class="btn btn-danger" href="/admin.php">Back</a>
                                 </div>
-				<div class="col-xs-3">
-					<form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
-                                        	<button class="btn btn-danger" name="delete" type="submit">Delete</button>
-                                        	<input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
-                                	</form>
-				</div>
-				<div class="col-xs-3">
+				<div class="col-xs-4">
 					<a class="btn btn-primary col-xs-2" href="/addschool.php">New school</a>
                         	</div>
-				<div class="col-xs-4">
-                                        <button id="finalizebtn" type="submit" class="btn btn-success" form="compinfo" name="finalize">Finalize changes</button>
+				<div class="col-xs-6">
+                                        <button id="finalizebtn" type="submit" class="btn btn-success" form="compinfo" name="finalize">Create Competition</button>
                                 </div>
 			</div>
                 </div>
