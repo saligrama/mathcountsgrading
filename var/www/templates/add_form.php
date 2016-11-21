@@ -137,7 +137,7 @@ function checkSubmit()
 		</div>
 		<div class="panel-footer">
 			<div class="row">
-				<a class="btn btn-danger col-xs-offset-1 col-xs-3" href="/create.php">Back</a>
+				<a class="btn btn-danger col-xs-offset-1 col-xs-3" href=<?= ($returncid == 0) ? "/create.php" : "/editcompetition.php?CID=$returncid" ?>>Back</a>
                 		<input type="submit" class="btn btn-success col-xs-offset-1 col-xs-6" form="schoolinfo" name="createschool" value="Create school"></input>
 			</div>
 		</div>

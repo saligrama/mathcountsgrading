@@ -134,7 +134,11 @@
 		if(empty($studentinfo))
 			$studentinfo = 0;
 
-		render("edit_form.php", ["result" => $result, "studentinfo" => $studentinfo, "fullname" => getFullName($conn), "editsid" => $editsid]);
+		$returncid = 0;
+        	if(isset($_GET["returnCID"]))
+                	$returncid = $_GET["returnCID"];
+
+		render("edit_form.php", ["result" => $result, "studentinfo" => $studentinfo, "fullname" => getFullName($conn), "editsid" => $editsid, "returncid" => $returncid]);
 
 	}
 

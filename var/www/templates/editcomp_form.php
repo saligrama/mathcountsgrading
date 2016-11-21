@@ -1028,7 +1028,7 @@ function deleteComp()
                                 	</form>
 				</div>
 				<div class="col-xs-3">
-					<a class="btn btn-primary col-xs-2" href="/addschool.php">New school</a>
+					<a class="btn btn-primary col-xs-2" href="/addschool.php?returnCID=<?php echo clean($_GET['CID']); ?>">New school</a>
                         	</div>
 				<div class="col-xs-4">
                                         <button id="finalizebtn" type="submit" class="btn btn-success" form="compinfo" name="finalize">Finalize changes</button>

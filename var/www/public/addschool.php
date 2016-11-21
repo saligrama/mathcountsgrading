@@ -41,7 +41,13 @@
 	redirectTo("/create.php");
 
     }
-    else
-	render("add_form.php", ["fullname" => getFullName($conn)]);
+    else {
+
+	$returncid = 0;
+	if(isset($_GET["returnCID"]))
+		$returncid = $_GET["returnCID"];
+
+	render("add_form.php", ["fullname" => getFullName($conn), "returncid" => $returncid]);
+    }
 
 ?>

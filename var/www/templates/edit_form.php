@@ -363,7 +363,7 @@ function deleteSchool()
 			<div class="panel-footer">
                         	<div class="row">
 					<button id="finalizebtn" type="submit" class="btn btn-success col-xs-4" form="schoolinfo" name="finalize">Finalize changes</button>
-                                	<a class="btn btn-danger col-xs-offset-1 col-xs-2" href="/create.php">Back</a>
+                                	<a class="btn btn-danger col-xs-offset-1 col-xs-2" href=<?= ($returncid == 0) ? "/create.php" : "/editcompetition.php?CID=$returncid" ?>>Back</a>
 					<form onsubmit="return deleteSchool();" method="post" action="">
 						<button class="btn btn-danger col-xs-offset-1 col-xs-4" name="delete" type="submit">Delete school</button>
 						<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
