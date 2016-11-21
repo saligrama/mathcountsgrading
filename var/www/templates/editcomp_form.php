@@ -86,7 +86,8 @@
 }*/
 
 .wheel-loader-wrapper {
-    opacity: 0;
+    opacity: 0.5;
+    display: none;
     z-index: 0;
 
     transition: opacity 1s ease-in;
@@ -121,7 +122,7 @@ body.loading-first .body-wrapper {
 }
 
 body.loading .wheel-loader-wrapper {
-	opacity: 0.5;
+	display: block;
 //	z-index: 999;
 }
 

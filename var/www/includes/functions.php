@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__) . "/constants.php");
-require(dirname(__FILE__) . "../lib/MCGExpression/MCGExpression/main.php");
+require(dirname(__FILE__) . "/../lib/MCGExpression/MCGExpression/main.php");
 
 function sempty($str)
 {
