@@ -935,7 +935,7 @@ function deleteComp()
 											<li class="slider-li">
 												<input onchange="schoolSelect(<?= $row['SCID'] ?>, true);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
 												<label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
-												<button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
+												<a class="btn btn-primary slider-edit" href="/editschool.php?SCID=<?= $row['SCID'] ?>&returnCID=<?= $_GET['CID'] ?>">Edit</a>
 											</li>
 											<li class="divider slider-divider"></li>
 										<?php endforeach; ?>
@@ -1004,7 +1004,7 @@ function deleteComp()
 												<input onchange="studentCheck(0, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes" <?php if(in_array($row["SID"], $alternates_row)) echo "checked"; ?>>
  	                                                                      		        <label id="<?= $row['SCID'] . 'alabel' . $row['SID'] ?>" for=<?= "acheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Alternate</label>
 
-												<button onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>&SID=<?= $row['SID'] ?>');" form="" class="btn btn-primary slider-edit">Edit</button>
+												<a href="editschool.php?SCID=<?= $row['SCID'] ?>&SID=<?= $row['SID'] ?>&returnCID=<?= $_GET['CID'] ?>" class="btn btn-primary slider-edit">Edit</a>
 											</li>
                                	        	                                	<li class="divider slider-divider"></li>
                                        	        		               	<?php endforeach; ?>
@@ -1027,10 +1027,13 @@ function deleteComp()
                                         	<input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
                                 	</form>
 				</div>
-				<div class="col-xs-3">
-					<a class="btn btn-primary col-xs-2" href="/addschool.php?returnCID=<?php echo clean($_GET['CID']); ?>">New school</a>
+				<div class="col-xs-2">
+					<a class="btn btn-primary" href="/addschool.php?returnCID=<?php echo clean($_GET['CID']); ?>">New school</a>
                         	</div>
-				<div class="col-xs-4">
+				<div class="col-xs-2">
+					<a class="btn btn-primary" href="/editanswers.php?CID=<?php echo clean($_GET['CID']); ?>">Edit Answers</a>
+				</div>
+				<div class="col-xs-3">
                                         <button id="finalizebtn" type="submit" class="btn btn-success" form="compinfo" name="finalize">Finalize changes</button>
                                 </div>
 			</div>

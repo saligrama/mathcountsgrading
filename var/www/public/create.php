@@ -100,8 +100,8 @@
 
         }
 
-	popupAlert("Success! Competition created");
-	redirectTo("/admin.php");
+	popupAlert("Success! Competition created. Now, you can fill out the answer key");
+	redirectTo("/editanswers.php?CID=" . $cid);
 
     }
     else {

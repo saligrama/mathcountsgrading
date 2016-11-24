@@ -32,6 +32,12 @@
 	max-width: 1100px;
 }
 
+.schoolinfo {
+	text-align: center;
+	display: block;
+	font-size: 18px;
+}
+
 @media (max-width: 991px) {
 
 	.panel {
@@ -59,10 +65,6 @@ $(document).ready(function() {
 		}
         });
 });
-
-</script>
-
-<script type="text/javascript">
 
 function checkSubmit()
 {
@@ -147,15 +149,19 @@ default:
 	<div class="row text-center">
 		<?php if($sheet_type === 'sprint'): ?>
                 <div class="col-md-4">
-                <?php else: ?>
+                <?php elseif($sheet_type !== 'team'): ?>
                 <div class="col-md-offset-2 col-md-4">
                 <?php endif; ?>
+		<?php if($sheet_type !== 'team'): ?>
 			<div class="panel panel-primary">
-				<div class="panel-heading"><h4>Choose a student</h4></div>
+				<div class="panel-heading">
+					<h4>Choose a student</h4>
+				</div>
 				<div class="panel-body">
 					<div class="row">
 						<div class="form-group col-xs-12">
-							<select class="form-control js-select" id="studentlist">
+							<p class="schoolname">From school '<b><?php echo clean($schoolname); ?></b>':</p>
+							<select form="answers" name="SID" class="form-control js-select" id="studentlist">
 								<option value="0"></option>
 								<?php foreach($studentrows as $row): ?>
 									<option value=<?= $row['SID']?>> <?php echo clean(getStudentFullName($row)); ?></option>
@@ -166,8 +172,11 @@ default:
 				</div>
 			</div>
 		</div>
+		<?php endif; ?>
 		<?php if($sheet_type === 'sprint'): ?>
 		<div class="col-md-8">
+		<?php elseif($sheet_type === 'team'): ?>
+		<div class="col-md-offset-3 col-md-6">
 		<?php else: ?>
 		<div class="col-md-4">
 		<?php endif; ?>
@@ -176,10 +185,14 @@ default:
                 		<div class="panel-body">
 					<div class="row">
 						<div class="col-xs-12">
-                        				<label for="answers"><?php echo $type_name; ?></label>
+                        				<label style="font-size:21px;" for="answers"><?php echo $type_name; ?></label>
+							<?php if($sheet_type === 'team'): ?>
+								<p class="schoolname">For school '<?php echo clean($schoolname); ?>':</p>
+							<?php endif; ?>
                         			</div>
 					</div><br>
 					<form id="answers" method="post" onsubmit="return checkSubmit();" action="">
+						<input type="hidden" name="round" value="<?= $sheet_type ?>"></input>
 						<div class="row">
 							<?php if($sheet_type === 'sprint'): ?>
 
@@ -198,7 +211,7 @@ default:
 
 							<?php else: ?>
 
-								<div class="col-md-12 col-md-offset-0 col-xs-offset-1 col-xs-10">
+								<div class="col-xs-offset-1 col-xs-10">
 									<?php for($i = 1; $i <= $numq; $i++): ?>
 										<div class='input-group'>
 											<span class='input-group-addon'><?php echo $i; ?> </span>

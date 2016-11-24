@@ -26,6 +26,15 @@
 	margin-top: 3px;
 }
 
+.panel-heading {
+	text-align: center;
+}
+
+.panel-heading h4 {
+	font-weight: 600;
+	font-size: 20px;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -98,7 +107,10 @@ function checkSubmit()
 </nav>
 <div class="main">
 	<div class="container-fluid panel panel-primary">
-		<div class="panel-heading"><h4>Fill out the boxes below to create a new school</h4></div>
+		<div class="panel-heading">
+			<h4>Fill out the boxes below to create a new school</h4>
+			<p>You can create students to add to this school by editing it later</p>
+		</div>
         	<div class="panel-body">
 			<form id="schoolinfo" onsubmit="return checkSubmit();" action="" method="post">
                 		<div class="col-xs-offset-1 col-xs-10">

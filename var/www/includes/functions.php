@@ -3,6 +3,48 @@
 require(dirname(__FILE__) . "/constants.php");
 require(dirname(__FILE__) . "/../lib/MCGExpression/MCGExpression/main.php");
 
+function compareAnswers($a, $b)
+{
+	if(empty($a) && empty($b))
+		
+
+	$e1_tok = tokenize("$a");
+	$e2_tok = tokenize("$b");
+
+	return compare(
+		shunting_yard($e1_tok[0], $e1_tok[1]),
+		shunting_yard($e2_tok[0], $e2_tok[1])
+	);
+}
+
+function getCurrentComp($conn)
+{
+	$currentcomp = dbQuery_new($conn, "SELECT * FROM current_competition");
+        if(empty($currentcomp))
+                $currentcomp = 0;
+        else {
+                $currentcomp = $currentcomp[0]["CID"];
+
+                $exists = dbQuery_new($conn, "SELECT * FROM competition WHERE CID = :cid", ["cid" => $currentcomp]);
+                if(empty($exists))
+                        $currentcomp = 0;
+        }
+
+	return $currentcomp;
+}
+
+function getProblemSolution($solutionrows, $number, $type)
+{
+        if(empty($solutionrows))
+                return "";
+
+        foreach($solutionrows as $row)
+                if($row["problem_number"] == $number && $row["problem_type"] == $type)
+                        return $row["answer"];
+
+        return "";
+}
+
 function sempty($str)
 {
 	return (empty($str) && ($str !== "0"));

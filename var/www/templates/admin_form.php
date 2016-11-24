@@ -152,7 +152,7 @@ function changeComp(CID)
                                                         <?php foreach($result as $row): ?>
                                                                 <li class="slider-li" onclick="changeComp(<?php echo $row['CID']; ?>);">
                                                                         <p class="slider-text"><?php echo clean(getCompFullName($row)); ?></p>
-                                                                        <button role="button" class="btn btn-primary slider-edit"  onclick="redirectTo('/editcompetition.php?CID=' + '<?php echo $row['CID']; ?>');" id="editbtn<?php echo $row['CID']; ?>">Edit</button>
+                                                                        <div class="slider-edit"><a class="btn btn-primary" href="/editcompetition.php?CID=<?= $row['CID']; ?>" id="editbtn<?php echo $row['CID']; ?>">Edit</a></div>
                                                                 </li>
                                                                 <li class="divider slider-divider"></li>
                                                         <?php endforeach; ?>

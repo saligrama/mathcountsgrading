@@ -747,6 +747,7 @@ function checkSubmit()
                 </ul>
         </div>
 </nav>
+
 <div class="main">
 	<div class="container-fluid panel panel-primary">
 		<div class="panel-heading"><h4 class="text-center">Create new competition</h4></div>
@@ -798,7 +799,7 @@ function checkSubmit()
 											<li class="slider-li">
 												<input onchange="schoolSelect(<?= $row['SCID'] ?>, true);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes">
 												<label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
-												<button form="" class="btn btn-primary slider-edit" onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>');">Edit</button>
+												<a class="btn btn-primary slider-edit" href="editschool.php?SCID=<?= $row['SCID'] ?>">Edit</a>
 											</li>
 											<li class="divider slider-divider"></li>
 										<?php endforeach; ?>
@@ -861,7 +862,7 @@ function checkSubmit()
 												<input onchange="studentCheck(0, <?= $row['SID'] ?>);" form="compinfo" type="checkbox" class="checkbox-custom" id=<?= "acheck" . $row["SID"] ?> name="<?= $row['SCID'] . 'alt' . $row['SID'] ?>" value="yes">
  	                                                                      		        <label id="<?= $row['SCID'] . 'alabel' . $row['SID'] ?>" for=<?= "acheck" . $row["SID"] ?> class="checkbox-custom-label checkbox-custom-label-stu">Alternate</label>
 
-												<button onclick="redirectTo('editschool.php?SCID=<?= $row['SCID'] ?>&SID=<?= $row['SID'] ?>');" form="" class="btn btn-primary slider-edit">Edit</button>
+												<a href="editschool.php?SCID=<?= $row['SCID'] ?>&SID=<?= $row['SID'] ?>" class="btn btn-primary slider-edit">Edit</a>
 											</li>
                                	        	                                	<li class="divider slider-divider"></li>
                                        	        		               	<?php endforeach; ?>
