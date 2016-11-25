@@ -3,18 +3,59 @@
 require(dirname(__FILE__) . "/constants.php");
 require(dirname(__FILE__) . "/../lib/MCGExpression/MCGExpression/main.php");
 
-function compareAnswers($a, $b)
+function updateStudentScore($conn, $SID, $cid, $round)
 {
-	if(empty($a) && empty($b))
-		
+	$sinfo = dbQuery_new($conn, "SELECT SID FROM mathlete_info WHERE SID=:sid", ["sid" => $SID]);
+	if(empty($sinfo))
+		return;
 
-	$e1_tok = tokenize("$a");
-	$e2_tok = tokenize("$b");
+	$raw = dbQuery_new($conn, "SELECT SUM(points) FROM student_answers WHERE CID=:cid AND SID=:sid AND problem_type=:type", ["cid" => $cid, "sid" => $SID, "type" => $round])[0][0];
 
-	return compare(
-		shunting_yard($e1_tok[0], $e1_tok[1]),
-		shunting_yard($e2_tok[0], $e2_tok[1])
-	);
+	$arr = [
+		"cid" => $cid,
+		"sid" => $SID,
+		"raw" => $raw,
+	];
+
+	$exists = dbQuery_new($conn, "SELECT SID FROM student_cleaner WHERE CID=:cid AND SID=:sid", ["cid" => $cid, "sid" => $SID]);
+	if(empty($exists))
+		dbQuery_new($conn, "INSERT INTO student_cleaner SET CID=:cid, SID=:sid, " . $round . "_raw=:raw", $arr);
+	else
+		dbQuery_new($conn, "UPDATE student_cleaner SET " . $round . "_raw=:raw WHERE CID=:cid AND SID=:sid", $arr);
+}
+
+function compareAnswers($in1, $in2)
+{
+	$a = "$in1";//strtoupper(removeWhitespace("$in1"));
+	$b = "$in2";//strtoupper(removeWhitespace("$in2"));
+
+//	echo "$a    $b<br>";
+
+	if(sempty($a) && sempty($b))
+		return 1;
+	else if(sempty($a) || sempty($b))
+		return 0;
+
+	$e1_tok = tokenize($a);
+	$e2_tok = tokenize($b);
+
+	$result = 0;
+	try {
+		$result = compare(
+				shunting_yard($e1_tok[0], $e1_tok[1]),
+				shunting_yard($e2_tok[0], $e2_tok[1])
+			);
+
+		return $result;
+	}
+	catch(Exception $e) {
+		return 0;
+	}
+}
+
+function removeWhitespace($str)
+{
+	return preg_replace('/\s/', '', preg_replace('~\x{00a0}~siu', '', $str));
 }
 
 function getCurrentComp($conn)

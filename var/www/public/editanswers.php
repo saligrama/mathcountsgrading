@@ -24,9 +24,9 @@
 		if($i > 30)
 		{
 			if($i > 40) {
-				$tn = (int)(($i - 41/2) + 1;
+				$tn = (int)(($i - 41)/2) + 1;
 				$type = "target" . $tn;
-				$num = $i - 40 - 2*(tn-1);
+				$num = $i - 40 - 2*($tn-1);
 			}
 			else {
 				$type = "team";
