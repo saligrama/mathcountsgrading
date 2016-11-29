@@ -9,7 +9,11 @@ function updateStudentScore($conn, $SID, $cid, $round)
 	if(empty($sinfo))
 		return;
 
-	$raw = dbQuery_new($conn, "SELECT SUM(points) FROM student_answers WHERE CID=:cid AND SID=:sid AND problem_type=:type", ["cid" => $cid, "sid" => $SID, "type" => $round])[0][0];
+	$raw = dbQuery_new($conn, "SELECT SUM(points) FROM student_answers WHERE CID=:cid AND SID=:sid AND problem_type=:type", ["cid" => $cid, "sid" => $SID, "type" => $round]);
+	if(empty($raw))
+		$raw = 0;
+	else
+		$raw = $raw[0]["SUM(points)"];
 
 	$arr = [
 		"cid" => $cid,
@@ -23,6 +27,38 @@ function updateStudentScore($conn, $SID, $cid, $round)
 	else
 		dbQuery_new($conn, "UPDATE student_cleaner SET " . $round . "_raw=:raw WHERE CID=:cid AND SID=:sid", $arr);
 }
+
+function updateTeamScore($conn, $SCID, $cid)
+{
+        $sinfo = dbQuery_new($conn, "SELECT SCID FROM school_info WHERE SCID=:scid", ["scid" => $SCID]);
+        if(empty($sinfo))
+                return;
+
+        $raw = dbQuery_new($conn, "SELECT SUM(points) FROM team_answers WHERE CID=:cid AND SCID=:scid AND problem_type='team'", ["cid" => $cid, "scid" => $SCID]);
+        if(empty($raw))
+                $raw = 0;
+        else
+                $raw = $raw[0]["SUM(points)"];
+
+	$avg = dbQuery_new($conn, "SELECT AVG(sprint_raw + target1_raw + target2_raw + target3_raw + target4_raw) AS score FROM student_cleaner WHERE CID=:cid AND SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid)", ["cid" => $cid, "scid" => $SCID]);
+	if(empty($avg))
+		$avg = 0;
+	else
+		$avg = $avg[0]["score"];
+
+	$arr = [
+                "cid" => $cid,
+                "scid" => $SCID,
+                "raw" => ($raw + $avg)
+        ];
+
+        $exists = dbQuery_new($conn, "SELECT SCID FROM team_cleaner WHERE CID=:cid AND SCID=:scid", ["cid" => $cid, "scid" => $SCID]);
+        if(empty($exists))
+                dbQuery_new($conn, "INSERT INTO team_cleaner SET CID=:cid, SCID=:scid, team_raw=:raw", $arr);
+        else
+                dbQuery_new($conn, "UPDATE team_cleaner SET team_raw=:raw WHERE CID=:cid AND SCID=:scid", $arr);
+}
+
 
 function compareAnswers($in1, $in2)
 {

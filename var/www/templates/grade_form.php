@@ -160,7 +160,7 @@ default:
 				<div class="panel-body">
 					<div class="row">
 						<div class="form-group col-xs-12">
-							<p class="schoolname">From school '<b><?php echo clean($schoolname); ?></b>':</p>
+							<p class="schoolname">From school '<b><?php echo clean($schoolrow["team_name"]); ?></b>':</p>
 							<select form="answers" name="SID" class="form-control js-select" id="studentlist">
 								<option value="0"></option>
 								<?php foreach($studentrows as $row): ?>
@@ -187,12 +187,13 @@ default:
 						<div class="col-xs-12">
                         				<label style="font-size:21px;" for="answers"><?php echo $type_name; ?></label>
 							<?php if($sheet_type === 'team'): ?>
-								<p class="schoolname">For school '<?php echo clean($schoolname); ?>':</p>
+								<p class="schoolname">For school '<?php echo clean($schoolrow["team_name"]); ?>':</p>
 							<?php endif; ?>
                         			</div>
 					</div><br>
 					<form id="answers" method="post" onsubmit="return checkSubmit();" action="">
 						<input type="hidden" name="round" value="<?= $sheet_type ?>"></input>
+						<input type="hidden" name="SCID" value="<?= $schoolrow['SCID'] ?>"></input>
 						<div class="row">
 							<?php if($sheet_type === 'sprint'): ?>
 
