@@ -1,15 +1,5 @@
 <!DOCTYPE html>
 
-
-<?php
-$avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
-                10.0*floatval($comprow['status_team']) +
-                2.0*floatval($comprow['status_target1']) +
-                2.0*floatval($comprow['status_target2']) +
-                2.0*floatval($comprow['status_target3']) +
-                2.0*floatval($comprow['status_target4'])) / 48.0));
-?>
-
 <head>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -151,7 +141,7 @@ $avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
 
 #infocont {
 	padding: 0px 15px 15px 15px;
-	height: 350px;
+	height: 420px;
 }
 
 .options-wrap {
@@ -273,6 +263,17 @@ $avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
 	font-size: 22px;
 }
 
+.progress-label {
+	text-align: left;
+	font-size: 20px;
+	color: #888;
+	margin: 15px 5px 5px 5px;
+}
+
+.progress {
+	margin-bottom: 30px;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -306,7 +307,40 @@ var request;
 
 function loadProgress()
 {
-	
+	if(request)
+                request.abort();
+
+        request = $.ajax({
+                url: "/get_progress.php",
+                type: "post"
+        });
+
+        request.done(function(response, textStatus, jqXHR) {
+		if(response === "")
+			return;
+
+		var data = JSON.parse(response);
+
+		var s = parseFloat(data["status_sprint"]) * 100;
+		var t1 = parseFloat(data["status_target1"]) * 100;
+		var t2 = parseFloat(data["status_target2"]) * 100;
+		var t3 = parseFloat(data["status_target3"]) * 100;
+		var t4 = parseFloat(data["status_target4"]) * 100;
+		var tm = parseFloat(data["status_team"]) * 100;
+
+		$("#progressbar-sprint").css("width", s + "%").html(s + "%");
+		$("#progressbar-target1").css("width", t1 + "%").html(t1 + "%");
+		$("#progressbar-target2").css("width", t2 + "%").html(t2 + "%");
+		$("#progressbar-target3").css("width", t3 + "%").html(t3 + "%");
+		$("#progressbar-target4").css("width", t4 + "%").html(t4 + "%");
+		$("#progressbar-team").css("width", tm + "%").html(tm + "%");
+
+		$("#progressbar-total").css("width", (0.25 * (s + t1 + t2 + t3 + t4 + tm)) + "%").html((0.25 * (s + t1 + t2 + t3 + t4 + tm)) + "%");
+	});
+
+	request.fail(function(jqXHR, textStatus, errorThrown) {
+
+        });
 }
 
 function loadConflicts()
@@ -483,14 +517,25 @@ function getConflict(c)
         					var request1 = $.ajax({
                 					url: "/get_conflicts.php",
                 					type: "post",
-                					data: { RID: self.dataset.rid }
+                					data: { RID: self.dataset.rid, COID: c.dataset.coid }
         					});
 
 					        request1.done(function(response, textStatus, jqXHR) {
-							if(response == "success")
-								alert("Your decision has been recorded!");
-							else
+							if(response == "error")
 								alert("There was an error recording your decision.");
+							else
+							{
+								alert("Your decision has been recorded");
+
+								$("#conflict-info").css("display", "block");
+                						$("#conflict-body").css("display", "none");
+                						$("#conflict-admin-list").empty();
+                						$("#conflict-grader-list").empty();
+								if($(c).parent().children().length < 2)
+									$(c).parent().remove();
+								else
+									$(c).remove();
+							}
 						});
 
 						request1.fail(function(jqXHR, textStatus, errorThrown) {
@@ -498,6 +543,64 @@ function getConflict(c)
         					});
 					}
 				});
+			});
+
+			$("#conflict-input-save").off("click").click(function() {
+				var v = $("#conflict-input-answer").val();
+
+				var rid = 0;
+				$("#conflict-grader-list .grader-li").each(function() {
+					if(this.dataset.rid)
+					{
+						rid = this.dataset.rid;
+						return false;
+					}
+				});
+
+				if(!rid)
+				{
+					$("#conflict-admin-list .grader-li").each(function() {
+						if(this.dataset.rid)
+						{
+							rid = this.dataset.rid;
+							return false;
+						}
+					});
+				}
+
+				if(v !== "")
+				{
+					var request1 = $.ajax({
+                                               url: "/get_conflicts.php",
+                                               type: "post",
+         	                               data: { RID: rid, COID: c.dataset.coid, ranswer: v }
+                                        });
+
+                                        request1.done(function(response, textStatus, jqXHR) {
+                                                //alert(response);
+                                	        if(response == "error")
+							alert("There was an error recording your decision.");
+                                        	else
+						{
+							alert("Your response has been recorded!");
+
+							$("#conflict-info").css("display", "block");
+                                                        $("#conflict-body").css("display", "none");
+                                                        $("#conflict-admin-list").empty();
+                                                        $("#conflict-grader-list").empty();
+                                                        if($(c).parent().children().length < 2)
+                                                                $(c).parent().remove();
+                                                        else
+                                                                $(c).remove();
+						}
+					});
+
+                                        request1.fail(function(jqXHR, textStatus, errorThrown) {
+                                        	alert("There was an error recording your decision.");
+                                	});
+				}
+
+				
 			});
 		}, 50);
 	});
@@ -673,6 +776,9 @@ function init()
 		else if($("#navbar-standings").parent().hasClass("active"))
 			loadStandings();
 	}, 2000);
+
+	loadProgress();
+	$("#progress-cont").css("display", "block");
 }
 
 </script>
@@ -753,7 +859,7 @@ function init()
 			<div class="navbar navbar-default">
 				<div class="container-fluid">
 					<ul id="navbar-list" class="nav navbar-nav">
-						<li class="active"><a href="#" id="navbar-progress">Progress</a></li>
+						<li class="active"><a href="#" id="navbar-progress" data-describes="progress-cont">Progress</a></li>
 						<li><a href="#" id="navbar-conflicts" data-describes="conflicts-cont">Student Conflicts</a></li>
 						<li><a href="#" id="navbar-team-conflicts" data-describes="team-conflicts-cont">Team Conflicts</a></li>
 						<li><a href="#" id="navbar-standings" data-describes="standings-cont">Current Standings</a></li>
@@ -810,9 +916,9 @@ function init()
 									<p class="conflict-inst">Or enter a new answer here</p>
 									<div class="conflict-input">
 										<div class="input-group input-group-lg">
-											<input type="text" class="form-control" placeholder="Enter a new answer">
+											<input id="conflict-input-answer" type="text" class="form-control" placeholder="Enter a new answer">
       											<span class="input-group-btn">
-        											<button class="btn btn-default" type="button">Save</button>
+        											<button id="conflict-input-save" class="btn btn-default" type="button">Save</button>
       											</span>
     										</div>
 									</div>
@@ -834,6 +940,42 @@ function init()
                                                 </div>
                                         </div>
                                 </div>
+				<div class="options-wrap" id="progress-cont" style="overflow: auto;">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="progress-label" style="font-size: 25px;text-align: center;">Total grading progress</div>
+								<div class="progress" style="height: 35px">
+									<div class="progress-bar progress-bar-info" style="width: 0%;line-height: 35px;font-size:18px" id="progressbar-total"></div>
+								</div>
+								<div class="progress-label">Sprint</div>
+								<div class="progress">
+                                                                        <div class="progress-bar progress-bar-warning" style="width: 0%" id="progressbar-sprint"></div>
+                                                                </div>
+								<div class="progress-label">Target, round 1</div>
+								<div class="progress">
+                                                                        <div class="progress-bar progress-bar-success" style="width: 0%" id="progressbar-target1"></div>
+                                                                </div>
+								<div class="progress-label">Target, round 2</div>
+								<div class="progress">
+                                                                        <div class="progress-bar progress-bar-success" style="width: 0%" id="progressbar-target2"></div>
+                                                                </div>
+								<div class="progress-label">Target, round 3</div>
+								<div class="progress">
+                                                                        <div class="progress-bar progress-bar-success" style="width: 0%" id="progressbar-target3"></div>
+                                                                </div>
+								<div class="progress-label">Target, round 4</div>
+								<div class="progress">
+                                                                        <div class="progress-bar progress-bar-success" style="width: 0%" id="progressbar-target4"></div>
+                                                                </div>
+								<div class="progress-label">Team</div>
+								<div class="progress">
+                                                                        <div class="progress-bar progress-bar-danger" style="width: 0%" id="progressbar-team"></div>
+                                                                </div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

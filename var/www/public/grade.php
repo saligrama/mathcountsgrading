@@ -192,8 +192,9 @@
 						}
 						else
 						{
-							dbQuery_new($conn, "UPDATE $student_answers SET answer=:answer WHERE CID=:cid AND $id AND problem_number=:pn AND problem_type=:round", [
+							dbQuery_new($conn, "UPDATE $student_answers SET answer=:answer, points=:points WHERE CID=:cid AND $id AND problem_number=:pn AND problem_type=:round", [
 									"answer" => $answer,
+									"points" => $points,
 									"cid" => $cid,
                                                         		"pn" => $i,
                                                  		       	"round" => $_POST["round"]
