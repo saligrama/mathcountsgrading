@@ -208,6 +208,8 @@
 
                         updateTeamScore($conn, $_POST["SCID"], $cid);
 
+			updateCompStatus($conn, $cid);
+
 			popupAlert("Your input has been scored successfully!");
 			redirectTo("/grader.php");
 		}

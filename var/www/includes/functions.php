@@ -3,6 +3,46 @@
 require(dirname(__FILE__) . "/constants.php");
 require(dirname(__FILE__) . "/../lib/MCGExpression/MCGExpression/main.php");
 
+
+function updateCompStatus($conn, $cid)
+{
+	$snum = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_participants WHERE CID=:cid", ["cid" => $cid]);
+	$snum = $snum[0]["val"];
+
+	$scnum = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM competition_participants WHERE CID=:cid", ["cid" => $cid]);
+	$scnum = $scnum[0]["val"];
+
+
+	$target1 = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND problem_type='target1'", ["cid" => $cid]);
+	$target1 = $target1[0]["val"] / ($snum * 2);
+
+	$target2 = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND problem_type='target2'", ["cid" => $cid]);
+        $target2 = $target2[0]["val"] / ($snum * 2);
+
+	$target3 = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND problem_type='target3'", ["cid" => $cid]);
+        $target3 = $target3[0]["val"] / ($snum * 2);
+
+	$target4 = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND problem_type='target4'", ["cid" => $cid]);
+        $target4 = $target4[0]["val"] / ($snum * 2);
+
+	$sprint = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND problem_type='sprint'", ["cid" => $cid]);
+        $sprint = $sprint[0]["val"] / ($snum * 30);
+
+	$team = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM team_answers WHERE CID=:cid AND problem_type='team'", ["cid" => $cid]);
+        $team = $team[0]["val"] / ($scnum * 10);
+
+
+	dbQuery_new($conn, "UPDATE competition SET status_sprint=:sprint, status_target1=:target1, status_target2=:target2, status_target3=:target3, status_target4=:target4, status_team=:team WHERE CID=:cid", [
+			"sprint" => $sprint,
+			"target1" => $target1,
+			"target2" => $target2,
+			"target3" => $target3,
+			"target4" => $target4,
+			"team" => $team,
+			"cid" => $cid
+	]);
+}
+
 function updateStudentScore($conn, $SID, $cid, $round)
 {
 	$sinfo = dbQuery_new($conn, "SELECT SID FROM mathlete_info WHERE SID=:sid", ["sid" => $SID]);
@@ -40,7 +80,7 @@ function updateTeamScore($conn, $SCID, $cid)
         else
                 $raw = $raw[0]["SUM(points)"];
 
-	$avg = dbQuery_new($conn, "SELECT AVG(sprint_raw + target1_raw + target2_raw + target3_raw + target4_raw) AS score FROM student_cleaner WHERE CID=:cid AND SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid)", ["cid" => $cid, "scid" => $SCID]);
+	$avg = dbQuery_new($conn, "SELECT AVG(sprint_raw + target1_raw + target2_raw + target3_raw + target4_raw) AS score FROM student_cleaner WHERE CID=:cid AND SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid) AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid2 AND type='regular')", ["cid" => $cid, "cid2" => $cid, "scid" => $SCID]);
 	if(empty($avg))
 		$avg = 0;
 	else

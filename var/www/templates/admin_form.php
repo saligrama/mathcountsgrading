@@ -172,6 +172,7 @@ $avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
 	text-align: left;
 	border-radius: 5px;
 	background-color: #eee;
+	overflow: auto;
 }
 
 .standings-li {
@@ -198,6 +199,79 @@ $avgprogress = clean(intval((30.0*floatval($comprow['status_sprint']) +
 	color: white;
 }
 
+.graders-list-wrap {
+	overflow: auto;
+	max-height: 40%;
+	margin: 15px 0px;
+	text-align: center;
+}
+
+.graders-list-wrap ul {
+	margin: 0;
+	list-style-type: none;
+	padding: 0;
+	display: table;
+	table-layout: fixed;
+}
+
+.grader-li {
+	margin: 2px;
+	display: table-row;
+}
+
+.grader-li:first-child span {
+	background-color: #ccc;
+}
+
+.grader-li span {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+	background-color: #ddd;
+	padding: 5px 10px;
+	border-bottom: 1px solid #b9b9b9;
+}
+
+.grader-li:not(:first-child):hover span {
+	color: white;
+	background-color: #aaa;
+	cursor: pointer;
+}
+
+.grader-li:last-child span {
+	border-bottom: none;
+}
+
+.grader-li span:first-child {
+	border-right: 1px solid #b9b9b9;
+	width: 1%;
+	padding: 5px 15px;
+}
+
+.conflict-inst {
+	text-align: center;
+	color: #555;
+	padding: 0;
+	margin: 15px 5px;
+	font-size: 18px;
+}
+
+.conflict-name {
+	text-align: center;
+	font-size: 25px;
+	padding: 8px;
+}
+
+.conflict-problem {
+	text-align: center;
+	font-size: 20px;
+	border-bottom: 1px solid #ccc;
+	padding: 5px;
+}
+
+.conflict-problem span {
+	font-size: 22px;
+}
 
 </style>
 
@@ -251,7 +325,6 @@ function loadConflicts()
 		else
 		{
 			var array = JSON.parse(response);
-
 			for(var i = 0; i < array.length; i++)
 			{
 				//console.log(array[i]["SID"]);
@@ -259,13 +332,13 @@ function loadConflicts()
 				var clist = 0;
 				var cexists = [];
 
-				console.log(li);
+				//console.log(li);
 
 				$("#conflicts-cont .conflicts-li").each(function() {
 					cexists.push(parseInt(this.dataset.coid));
 				});
 
-				console.log(cexists);
+				//console.log(cexists);
 
 				var exist = $("#conflicts-cont .conflicts-student-li");
 				for(var k = 0; k < exist.length; k++)
@@ -312,7 +385,8 @@ function loadConflicts()
 
 			$("#conflicts-cont .conflicts-li").off("click").each(function() {
 				$(this).click(function() {
-					getConflict($(this).data("coid"));
+					$("#conflict-body").css("display", "none");
+					getConflict($(this)[0]);
 				});
 			});
 		}, 50);
@@ -331,13 +405,101 @@ function getConflict(c)
         request = $.ajax({
                 url: "/get_conflicts.php",
                 type: "post",
-		data: { COID: c }
+		data: { COID: c.dataset.coid }
 	});
 
         request.done(function(response, textStatus, jqXHR) {
+
 		if(response === "")
 			return;
-		
+
+		var array = JSON.parse(response);
+
+		$("#conflict-info").css("display", "none");
+		$("#conflict-body").css("display", "block");
+		$("#conflict-admin-list").empty().prev().css("display", "none");
+		$("#conflict-grader-list").empty().prev().css("display", "none");
+		$("#conflict-problem").html(c.innerHTML);
+		$("#conflict-name").html(c.parentNode.previousSibling.innerHTML);
+
+		var graders = 0;
+		var admins = 0;
+
+		for(var i = 0; i < array.length; i++)
+		{
+			if(array[i]["gtype"] == "admin")
+			{
+				$("#conflict-admin-list").append(
+				"<li class='grader-li' data-rid='" + array[i]["RID"] + "'>" +
+					"<span>" + array[i]["gname"] + "</span>" +
+					"<span>'" + array[i]["answer"] + "'</span>" +
+				"</li>");
+				admins++;
+			}
+			else
+			{
+				$("#conflict-grader-list").append(
+                                "<li class='grader-li' data-rid='" + array[i]["RID"] + "'>" +
+                                        "<span>" + array[i]["gname"] + "</span>" +
+                                        "<span>'" + array[i]["answer"] + "'</span>" +
+                                "</li>");
+				graders++;
+			}
+		}
+
+		if(graders)
+                {
+                        $("#conflict-grader-list").prev().css("display", "inline-block");
+
+                        $("#conflict-grader-list").prepend(
+                        "<li class='grader-li'>" +
+                                "<span>Name</span>" +
+                                "<span>Answer</span>" +
+                        "</li>"
+                        );
+                }
+
+		if(admins)
+                {
+                        $("#conflict-admin-list").prev().css("display", "inline-block");
+
+                        $("#conflict-admin-list").prepend(
+                        "<li class='grader-li'>" +
+                                "<span>Name</span>" +
+                                "<span>Answer</span>" +
+                        "</li>"
+                        );
+                }
+
+		setTimeout(function() {
+			$(".grader-li").each(function() {
+				$(this).click(function() {
+					var self = this;
+					var name = self.children[0].innerHTML;
+					var answer = self.children[1].innerHTML;
+
+					if(confirm("Are you sure you want to choose " + name + "'s answer of '" + answer + "'?"))
+					{
+        					var request1 = $.ajax({
+                					url: "/get_conflicts.php",
+                					type: "post",
+                					data: { RID: self.dataset.rid }
+        					});
+
+					        request1.done(function(response, textStatus, jqXHR) {
+							if(response == "success")
+								alert("Your decision has been recorded!");
+							else
+								alert("There was an error recording your decision.");
+						});
+
+						request1.fail(function(jqXHR, textStatus, errorThrown) {
+							alert("There was an error recording your decision.");
+        					});
+					}
+				});
+			});
+		}, 50);
 	});
 
 	request.fail(function(jqXHR, textStatus, errorThrown) {
@@ -369,13 +531,13 @@ function loadTeamConflicts()
                                 var clist = 0;
                                 var cexists = [];
 
-                                console.log(li);
+                                //console.log(li);
 
                                 $("#team-conflicts-cont .conflicts-li").each(function() {
                                         cexists.push(parseInt(this.dataset.tcid));
                                 });
 
-                                console.log(cexists);
+                                //console.log(cexists);
 
                                 var exist = $("#team-conflicts-cont .conflicts-student-li");
                                 for(var k = 0; k < exist.length; k++)
@@ -419,7 +581,7 @@ function loadTeamConflicts()
                         $("#team-conflicts-cont .conflicts-student-li button").off("click").click(function() {
                                 $(this).next().toggleClass("cactive");
                         });
-                });
+                }, 50);
         });
 
         request.fail(function(jqXHR, textStatus, errorThrown) {
@@ -532,6 +694,7 @@ function init()
 			</li>
 			<li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
 			<li class="mnav-right"><a href="/register.php">New User</a></li>
+			<li class="mnav-right"><a href="/grader.php">Grade Participants</a></li>
 		</ul>
 	</div>
 </nav>
@@ -620,7 +783,40 @@ function init()
 						</div>
 						<div class="col-xs-6">
 							<div class="conflict-wrap">
-								Click on a student to the left to see their grading conflicts, and click on a conflict to inspect and resolve it here.
+								<div id="conflict-info">Click on a student to the left to see their grading conflicts, and click on a conflict to inspect and resolve it here.</div>
+								<div id="conflict-body" style="display: none;">
+									<div id="conflict-name" class="conflict-name"></div>
+									<div id="conflict-problem" class="conflict-problem"></div>
+									<p class="conflict-inst">Click on one of the answers submitted below to choose it as the final answer</p>
+									<div class="graders-list-wrap">
+										<label>Grader Responses:</label>
+										<ul id="conflict-grader-list">
+											<li class="grader-li">
+                                                        	                                <span>Name</span>
+                                                      	        	                	<span>Answer</span>
+                               		                                                </li>
+										</ul>
+									</div>
+									<div class="graders-list-wrap">
+										<label>Admin Responses</label>
+										<ul id="conflict-admin-list">
+											<li class="grader-li">
+												<span>Name</span>
+												<span>Answer</span>
+											</li>
+										</ul>
+									</div>
+									<br>
+									<p class="conflict-inst">Or enter a new answer here</p>
+									<div class="conflict-input">
+										<div class="input-group input-group-lg">
+											<input type="text" class="form-control" placeholder="Enter a new answer">
+      											<span class="input-group-btn">
+        											<button class="btn btn-default" type="button">Save</button>
+      											</span>
+    										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -633,8 +829,8 @@ function init()
                                                 </div>
                                                 <div class="col-xs-6">
                                                         <div class="conflict-wrap">
-                                                                <div id="conflict-info">Click on a student to the left to see their grading conflicts, and click on a conflict to inspect and resolve it here.</div>
-                                                        </div>
+                                                                <div id="team-conflict-info">Click on a student to the left to see their grading conflicts, and click on a conflict to inspect and resolve it here.</div>
+							</div>
                                                 </div>
                                         </div>
                                 </div>
