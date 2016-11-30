@@ -31,10 +31,10 @@ CREATE TABLE `competition` (
   `status_target2` float(10,2) DEFAULT '0.00',
   `status_target3` float(10,2) DEFAULT '0.00',
   `status_target4` float(10,2) DEFAULT '0.00',
-  `status_team` float(10,2) DEFAULT NULL,
+  `status_team` float(10,2) DEFAULT '0.00',
   `competition_name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`CID`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,7 +115,7 @@ CREATE TABLE `grader_responses_team` (
   `points` int(11) NOT NULL,
   `TRID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`TRID`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,7 +149,7 @@ CREATE TABLE `grading_conflicts_team` (
   `problem_type` enum('team') NOT NULL,
   `TCID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`TCID`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,7 +167,7 @@ CREATE TABLE `mathlete_info` (
   `nickname` varchar(100) DEFAULT NULL,
   `gender` enum('Male','Female','Other') DEFAULT NULL,
   PRIMARY KEY (`SID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11176 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11183 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,7 +206,7 @@ CREATE TABLE `school_info` (
   `address` varchar(100) NOT NULL,
   `contact_email` varchar(100) NOT NULL,
   PRIMARY KEY (`SCID`)
-) ENGINE=InnoDB AUTO_INCREMENT=739 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=741 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -305,7 +305,7 @@ CREATE TABLE `user` (
   `SCID` int(11) DEFAULT NULL,
   `type` enum('admin','grader') DEFAULT NULL,
   PRIMARY KEY (`UID`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -317,4 +317,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-30 11:56:12
+-- Dump completed on 2016-11-30 15:05:03

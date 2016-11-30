@@ -110,24 +110,30 @@
         $schinfo = dbQuery_new($conn, "SELECT * FROM school_info");
 	if(empty($schinfo))
 		$schinfo = 0;
-
-	usort($schinfo, 'schoolSort');
+	else
+		usort($schinfo, 'schoolSort');
 
 	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info");
 	if(empty($studentinfo))
 		$studentinfo = 0;
+	else
+		usort($studentinfo, 'studentSort');
 
-	usort($studentinfo, 'studentSort');
-
-	$i = 0;
-	foreach($schinfo as $school)
+	if($schinfo !== 0)
 	{
-		$schinfo[$i++]["num_students"] = 0;
-
-		foreach($studentinfo as $student)
+		$i = 0;
+		foreach($schinfo as $school)
 		{
-			if($student["SCID"] == $school["SCID"])
-				$schinfo[$i-1]["num_students"]++;
+			$schinfo[$i++]["num_students"] = 0;
+
+			if($studentinfo !== 0)
+			{
+				foreach($studentinfo as $student)
+				{
+					if($student["SCID"] == $school["SCID"])
+						$schinfo[$i-1]["num_students"]++;
+				}
+			}
 		}
 	}
 
