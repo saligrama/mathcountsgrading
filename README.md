@@ -8,17 +8,26 @@ The system is designed to work on a LAMP stack, so make sure you have Apache, PH
 You can then clone the repo:
 `git clone https://github.com/saligrama/mathcountsgrading.git`
 
-And the execute the following commands:
-`cd mathcountsgrading`
-`git submodule init`
+And the execute the following commands:   
+
+`cd mathcountsgrading`   
+
+`git submodule init`    
+
 `git submodule update`
+
 `sudo cp -rf var/www/* /var/www`
+
 To put the files in place (make sure your Apache serveris running from /var/www, with /var/www/public as the public directory)
 
 Then, to set up the database:
+
 `mysql`
+
 And in the mysql prompt:
+
 `CREATE DATABASE mathcountsgrading;`
+
 `exit;`
 
 Outside of the mysql prompt enter `mysql mathcountsgrading < scripts/dbcreate.sql` to create the tables
