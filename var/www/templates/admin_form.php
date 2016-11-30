@@ -1150,19 +1150,19 @@ function init()
 				<div class="options-wrap" id="standings-cont" style="overflow-y:auto;overflow-x:hidden;">
 					<div class="row">
 						<div class="col-xs-6" style="overflow: auto;">
-							<label class="standings-label" id="standings-label-regulars">Top Regulars</label>
+							<label class="standings-label" id="standings-label-regulars"></label>
 							<ul class="standings-list" id="standings-regular-list">
 							</ul>
 						</div>
 						<div class="col-xs-6" style="overflow: auto;">
-							<label class="standings-label" id="standings-label-schools">Top Schools</label>
+							<label class="standings-label" id="standings-label-schools"></label>
 							<ul class="standings-list" id="standings-team-list">
 							</ul>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-xs-6" style="overflow: auto;">
-							<label class="standings-label" id="standings-label-alternates">Top Alternates</label>
+							<label class="standings-label" id="standings-label-alternates"></label>
                                                         <ul class="standings-list" id="standings-alternate-list">
                                                         </ul>
 						</div>
