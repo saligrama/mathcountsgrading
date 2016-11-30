@@ -79,13 +79,13 @@
     border: 1px solid #e7e7e7;
 }
 
-.conflicts-list, #conflicts-student-list, #standings-cont ul {
+.conflicts-list, #conflicts-student-list, #team-conflicts-student-list, #standings-cont ul {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
 }
 
-#conflicts-student-list {
+#conflicts-student-list, #team-conflicts-student-list {
 	background-color: #f8f8f8;
 }
 
@@ -506,7 +506,7 @@ function getConflict(c)
                 }
 
 		setTimeout(function() {
-			$(".grader-li").each(function() {
+			$("#conflict-body .grader-li").each(function() {
 				$(this).click(function() {
 					var self = this;
 					var name = self.children[0].innerHTML;
@@ -568,7 +568,7 @@ function getConflict(c)
 					});
 				}
 
-				if(v !== "")
+				if(v !== "" && confirm("Are you sure you want to record '" + v + "' as the answer?"))
 				{
 					var request1 = $.ajax({
                                                url: "/get_conflicts.php",
@@ -579,7 +579,7 @@ function getConflict(c)
                                         request1.done(function(response, textStatus, jqXHR) {
                                                 //alert(response);
                                 	        if(response == "error")
-							alert("There was an error recording your decision.");
+							alert("There was an error recording your response.");
                                         	else
 						{
 							alert("Your response has been recorded!");
@@ -596,7 +596,7 @@ function getConflict(c)
 					});
 
                                         request1.fail(function(jqXHR, textStatus, errorThrown) {
-                                        	alert("There was an error recording your decision.");
+                                        	alert("There was an error recording your response.");
                                 	});
 				}
 
@@ -621,12 +621,12 @@ function loadTeamConflicts()
         });
 
         request.done(function(response, textStatus, jqXHR) {
-		if(response === "")
+        //alert(response);
+	       if(response === "")
                         $("#team-conflicts-student-list").html("Looks like there aren't any conflicts yet");
                 else
                 {
                         var array = JSON.parse(response);
-
                         for(var i = 0; i < array.length; i++)
                         {
                                 //console.log(array[i]["SID"]);
@@ -673,10 +673,9 @@ function loadTeamConflicts()
                                 {
                                         var row = array[i]["conflicts"][j];
 
-                                        if(cexists.indexOf(row['COID']) === -1)
+                                        if(cexists.indexOf(row['TCID']) === -1)
                                                 $(clist).append("<li class='conflicts-li' data-tcid='" + row["TCID"] + "'>Number: <span>" + row["pn"] + "</span></li>");
                                 }
-
                         }
                 }
 
@@ -684,14 +683,200 @@ function loadTeamConflicts()
                         $("#team-conflicts-cont .conflicts-student-li button").off("click").click(function() {
                                 $(this).next().toggleClass("cactive");
                         });
+
+                        $("#team-conflicts-cont .conflicts-li").off("click").each(function() {
+                                $(this).click(function() {
+                                        $("#team-conflict-body").css("display", "none");
+                                        getTeamConflict($(this)[0]);
+                                });
+                        });
                 }, 50);
         });
 
         request.fail(function(jqXHR, textStatus, errorThrown) {
-                
+
         });
 }
 
+function getTeamConflict(c)
+{
+        if(request)
+                request.abort();
+
+        request = $.ajax({
+                url: "/get_team_conflicts.php",
+                type: "post",
+                data: { TCID: c.dataset.tcid }
+        });
+
+        request.done(function(response, textStatus, jqXHR) {
+//alert(response);
+                if(response === "")
+                        return;
+
+                var array = JSON.parse(response);
+
+                $("#team-conflict-info").css("display", "none");
+                $("#team-conflict-body").css("display", "block");
+                $("#team-conflict-admin-list").empty().prev().css("display", "none");
+                $("#team-conflict-grader-list").empty().prev().css("display", "none");
+                $("#team-conflict-problem").html(c.innerHTML);
+                $("#team-conflict-name").html(c.parentNode.previousSibling.innerHTML);
+
+                var graders = 0;
+                var admins = 0;
+
+                for(var i = 0; i < array.length; i++)
+                {
+                        if(array[i]["gtype"] == "admin")
+                        {
+                                $("#team-conflict-admin-list").append(
+                                "<li class='grader-li' data-trid='" + array[i]["TRID"] + "'>" +
+                                        "<span>" + array[i]["gname"] + "</span>" +
+                                        "<span>'" + array[i]["answer"] + "'</span>" +
+                                "</li>");
+                                admins++;
+                        }
+                        else
+                        {
+                                $("#team-conflict-grader-list").append(
+                                "<li class='grader-li' data-trid='" + array[i]["TRID"] + "'>" +
+                                        "<span>" + array[i]["gname"] + "</span>" +
+                                        "<span>'" + array[i]["answer"] + "'</span>" +
+                                "</li>");
+                                graders++;
+                        }
+                }
+
+                if(graders)
+                {
+                        $("#team-conflict-grader-list").prev().css("display", "inline-block");
+
+                        $("#team-conflict-grader-list").prepend(
+                        "<li class='grader-li'>" +
+                                "<span>Name</span>" +
+                                "<span>Answer</span>" +
+                        "</li>"
+                        );
+                }
+
+                if(admins)
+                {
+                        $("#team-conflict-admin-list").prev().css("display", "inline-block");
+
+                        $("#team-conflict-admin-list").prepend(
+                        "<li class='grader-li'>" +
+                                "<span>Name</span>" +
+                                "<span>Answer</span>" +
+                        "</li>"
+                        );
+                }
+
+		setTimeout(function() {
+ 		       $("#team-conflict-body .grader-li").each(function() {
+                                $(this).click(function() {
+                                        var self = this;
+                                        var name = self.children[0].innerHTML;
+                                        var answer = self.children[1].innerHTML;
+
+                                        if(confirm("Are you sure you want to choose " + name + "'s answer of '" + answer + "'?"))
+                                        {
+                                                var request1 = $.ajax({
+                                                        url: "/get_team_conflicts.php",
+                                                        type: "post",
+                                                        data: { TRID: self.dataset.trid, TCID: c.dataset.tcid }
+                                                });
+
+                                                request1.done(function(response, textStatus, jqXHR) {
+        //                    alert(response);
+			                            if(response == "error")
+                                                                alert("There was an error recording your decision.");
+                                                        else
+                                                        {
+                                                                alert("Your decision has been recorded");
+
+                                                                $("#team-conflict-info").css("display", "block");
+                                                                $("#team-conflict-body").css("display", "none");
+                                                                $("#team-conflict-admin-list").empty();
+                                                                $("#team-conflict-grader-list").empty();
+                                                                if($(c).parent().children().length < 2)
+                                                                        $(c).parent().remove();
+                                                                else
+                                                                        $(c).remove();
+                                                        }
+                                                });
+
+                                                request1.fail(function(jqXHR, textStatus, errorThrown) {
+                                                        alert("There was an error recording your decision.");
+                                                });
+                                        }
+                                });
+                        });
+
+                        $("#team-conflict-input-save").off("click").click(function() {
+                                var v = $("#team-conflict-input-answer").val();
+
+                                var trid = 0;
+                                $("#team-conflict-grader-list .grader-li").each(function() {
+                                        if(this.dataset.trid)
+                                        {
+                                                trid = this.dataset.trid;
+                                                return false;
+                                        }
+                                });
+
+                                if(!trid)
+                                {
+                                        $("#team-conflict-admin-list .grader-li").each(function() {
+                                                if(this.dataset.trid)
+                                                {
+                                                        trid = this.dataset.trid;
+                                                        return false;
+                                                }
+                                        });
+                                }
+
+                                if(v !== "" && confirm("Are you sure you want to record '" + v + "' as the answer?"))
+                                {
+                                        var request1 = $.ajax({
+                                               url: "/get_team_conflicts.php",
+                                               type: "post",
+                                               data: { TRID: trid, TCID: c.dataset.tcid, ranswer: v }
+                                        });
+
+                                        request1.done(function(response, textStatus, jqXHR) {
+             //                                   alert(response);
+                                                if(response == "error")
+                                                        alert("There was an error recording your response.");
+                                                else
+                                                {
+                                                        alert("Your response has been recorded!");
+
+                                                        $("#team-conflict-info").css("display", "block");
+                                                        $("#team-conflict-body").css("display", "none");
+                                                        $("#team-conflict-admin-list").empty();
+                                                        $("#team-conflict-grader-list").empty();
+                                                        if($(c).parent().children().length < 2)
+                                                                $(c).parent().remove();
+                                                        else
+                                                                $(c).remove();
+                                                }
+                                        });
+
+                                        request1.fail(function(jqXHR, textStatus, errorThrown) {
+                                                alert("There was an error recording your response.");
+                                        });
+                                }
+
+
+                        });
+                }, 50);
+        });
+
+	request.fail(function(jqXHR, textStatus, errorThrown) {
+
+        });
+}
 
 function loadStandings()
 {
@@ -764,6 +949,7 @@ function init()
 
 	$("#navbar-progress").click(loadProgress);
 	$("#navbar-conflicts").click(loadConflicts);
+	$("#navbar-team-conflicts").click(loadConflicts);
 	$("#navbar-standings").click(loadStandings);
 
 	setInterval(function() {
@@ -935,7 +1121,40 @@ function init()
                                                 </div>
                                                 <div class="col-xs-6">
                                                         <div class="conflict-wrap">
-                                                                <div id="team-conflict-info">Click on a student to the left to see their grading conflicts, and click on a conflict to inspect and resolve it here.</div>
+                                                                <div id="team-conflict-info">Click on a team to the left to see its grading conflicts, and click on a conflict to inspect and resolve it here.</div>
+								<div id="team-conflict-body" style="display: none;">
+                                                                        <div id="team-conflict-name" class="conflict-name"></div>
+                                                                        <div id="team-conflict-problem" class="conflict-problem"></div>
+                                                                        <p class="conflict-inst">Click on one of the answers submitted below to choose it as the final answer</p>
+                                                                        <div class="graders-list-wrap">
+                                                                                <label>Grader Responses:</label>
+                                                                                <ul id="team-conflict-grader-list">
+                                                                                        <li class="grader-li">
+                                                                                                <span>Name</span>
+                                                                                                <span>Answer</span>
+                                                                                        </li>
+                                                                                </ul>
+                                                                        </div>
+                                                                        <div class="graders-list-wrap">
+                                                                                <label>Admin Responses</label>
+                                                                                <ul id="team-conflict-admin-list">
+                                                                                        <li class="grader-li">
+                                                                                                <span>Name</span>
+                                                                                                <span>Answer</span>
+                                                                                        </li>
+                                                                                </ul>
+                                                                        </div>
+                                                                        <br>
+                                                                        <p class="conflict-inst">Or enter a new answer here</p>
+                                                                        <div class="conflict-input">
+                                                                                <div class="input-group input-group-lg">
+                                                                                        <input id="team-conflict-input-answer" type="text" class="form-control" placeholder="Enter a new answer">
+                                                                                        <span class="input-group-btn">
+                                                                                                <button id="team-conflict-input-save" class="btn btn-default" type="button">Save</button>
+                                                                                        </span>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
 							</div>
                                                 </div>
                                         </div>
