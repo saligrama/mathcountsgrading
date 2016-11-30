@@ -95,7 +95,7 @@ CREATE TABLE `grader_responses` (
   `points` int(11) NOT NULL,
   `RID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`RID`)
-) ENGINE=InnoDB AUTO_INCREMENT=181 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=199 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -112,8 +112,10 @@ CREATE TABLE `grader_responses_team` (
   `problem_number` int(11) NOT NULL,
   `problem_type` enum('team') NOT NULL,
   `answer` varchar(100) DEFAULT NULL,
-  `points` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `points` int(11) NOT NULL,
+  `TRID` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`TRID`)
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,7 +132,7 @@ CREATE TABLE `grading_conflicts` (
   `problem_type` enum('sprint','target1','target2','target3','target4') DEFAULT NULL,
   `COID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`COID`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -147,7 +149,7 @@ CREATE TABLE `grading_conflicts_team` (
   `problem_type` enum('team') NOT NULL,
   `TCID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`TCID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -165,7 +167,7 @@ CREATE TABLE `mathlete_info` (
   `nickname` varchar(100) DEFAULT NULL,
   `gender` enum('Male','Female','Other') DEFAULT NULL,
   PRIMARY KEY (`SID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11174 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11176 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -315,4 +317,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-29 20:42:57
+-- Dump completed on 2016-11-30 11:56:12
