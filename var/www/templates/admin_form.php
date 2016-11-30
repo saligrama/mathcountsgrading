@@ -165,30 +165,6 @@
 	overflow: auto;
 }
 
-.standings-li {
-	margin: 3px;
-}
-
-.standings-li .input-group-addon:nth-child(2) {
-	border-left: 1px solid #ccc;
-	width: auto;
-}
-
-.standings-li:first-child .input-group-addon:first-child {
-	background-color: #FFD700;
-	color: white;
-}
-
-.standings-li:nth-child(2) .input-group-addon:first-child {
-        background-color: #c0c0c0;
-	color: white;
-}
-
-.standings-li:nth-child(3) .input-group-addon:first-child {
-        background-color: #CD7F32;
-	color: white;
-}
-
 .graders-list-wrap {
 	overflow: auto;
 	max-height: 40%;
@@ -272,6 +248,73 @@
 
 .progress {
 	margin-bottom: 30px;
+}
+
+.standings-list {
+	display: table;
+	width: 100%;
+}
+
+.standings-li {
+	display: table-row;
+}
+
+.standings-li span {
+	display: table-cell;
+	background-color: #ccc;
+	border-bottom: 1px solid #aaa;
+	vertical-align: middle;
+	padding: 4px;
+}
+
+.standings-li:first-child span {
+	background-color: #999;
+	color: white;
+}
+
+.standings-li span:not(:last-child) {
+	border-right: 1px solid #aaa;
+}
+
+.standings-li span:nth-child(2) {
+	width: auto;
+}
+
+.standings-li:last-child span {
+	border-bottom: none;
+}
+
+.standings-li:nth-child(2) span:first-child {
+        background-color: #FFD700;
+        color: white;
+}
+
+.standings-li:nth-child(3) span:first-child {
+        background-color: #c0c0c0;
+        color: white;
+}
+
+.standings-li:nth-child(4) span:first-child {
+        background-color: #CD7F32;
+        color: white;
+}
+
+#standings-cont .row {
+	height: auto;
+	max-height: 100%;
+	margin-bottom: 40px;
+}
+
+#standings-cont .col-xs-6 {
+	height: auto;
+	max-height: 100%;
+}
+
+.standings-label {
+	color: #777;
+	font-size: 18px;
+	text-align: center;
+	font-weight: normal
 }
 
 </style>
@@ -895,32 +938,82 @@ function loadStandings()
 		{
 			var array = JSON.parse(response);
 
-			$("#standings-student-list").empty();
-			for(var i = 0; i < array["students"].length; i++)
+			$("#standings-regular-list").empty();
+			$("#standings-label-regulars").html("Looks like there aren't any regulars that have been graded yet.");
+			if(array["regulars"].length)
 			{
-				$("#standings-student-list").append(
+				$("#standings-label-regulars").html("Top regulars");
+
+				$("#standings-regular-list").append(
 					"<li class='standings-li'>" +
-						"<div class='input-group'>" +
-  							"<span class='input-group-addon'>" + (i+1) + "</span>" +
-							"<span class='input-group-addon'>" + array["students"][i]["name"] + "</span>" +
-							"<span class='input-group-addon'>" + array["students"][i]["score"] + "</span>" +
-						"</div>" +
-					"</li>"
+                                                "<span>Rank</span>" +
+                                                "<span>Name</span>" +
+                                                "<span>Score</span>" +
+                                        "</li>"
 				);
+
+				for(var i = 0; i < array["regulars"].length; i++)
+				{
+					$("#standings-regular-list").append(
+						"<li class='standings-li'>" +
+  							"<span>" + (i+1) + "</span>" +
+							"<span>" + array["regulars"][i]["name"] + "</span>" +
+							"<span>" + array["regulars"][i]["score"] + "</span>" +
+						"</li>"
+					);
+				}
 			}
 
-			$("#standings-team-list").empty();
-			for(var i = 0; i < array["teams"].length; i++)
-			{
-                                $("#standings-team-list").append(
+			$("#standings-alternate-list").empty();
+			$("#standings-label-alternates").html("Looks like there aren't any alternates that have been graded yet.");
+                        if(array["alternates"].length)
+                        {
+				$("#standings-label-alternates").html("Top alternates");
+
+                                $("#standings-alternate-list").append(
                                         "<li class='standings-li'>" +
-                                                "<div class='input-group'>" +
-                                                        "<span class='input-group-addon'>" + (i+1) + "</span>" +
-                                                        "<span class='input-group-addon'>" + array["teams"][i]["team_name"] + "</span>" +
-                                            		"<span class='input-group-addon'>" + array["teams"][i]["team_raw"] + "</span>" +
-						"</div>" +
+                                                "<span>Rank</span>" +
+                                                "<span>Name</span>" +
+                                                "<span>Score</span>" +
                                         "</li>"
                                 );
+
+                                for(var i = 0; i < array["alternates"].length; i++)
+                                {
+                                        $("#standings-alternate-list").append(
+                                                "<li class='standings-li'>" +
+                                                        "<span>" + (i+1) + "</span>" +
+                                                        "<span>" + array["alternates"][i]["name"] + "</span>" +
+                                                        "<span>" + array["alternates"][i]["score"] + "</span>" +
+                                                "</li>"
+                                        );
+                                }
+                        }
+
+			$("#standings-team-list").empty();
+			$("#standings-label-schools").html("Looks like there aren't any schools that have been graded yet.");
+			if(array["teams"].length)
+                        {
+				$("#standings-label-schools").html("Top schools");
+
+                                $("#standings-team-list").append(
+                                        "<li class='standings-li'>" +
+                                                "<span>Rank</span>" +
+                                                "<span>Team Name</span>" +
+                                                "<span>Score</span>" +
+                                        "</li>"
+                                );
+
+				for(var i = 0; i < array["teams"].length; i++)
+				{
+                	                $("#standings-team-list").append(
+                        	                "<li class='standings-li'>" +
+                                	                "<span>" + (i+1) + "</span>" +
+                                        	        "<span>" + array["teams"][i]["team_name"] + "</span>" +
+                                            		"<span>" + array["teams"][i]["team_raw"] + "</span>" +
+                                        	"</li>"
+                                	);
+				}
 			}
 		}
 	});
@@ -959,8 +1052,8 @@ function init()
 			loadConflicts();
 		else if($("#navbar-team-conflicts").parent().hasClass("active"))
 			loadTeamConflicts();
-		else if($("#navbar-standings").parent().hasClass("active"))
-			loadStandings();
+		//else if($("#navbar-standings").parent().hasClass("active"))
+		//	loadStandings();
 	}, 2000);
 
 	loadProgress();
@@ -1041,6 +1134,7 @@ function init()
 			</div>
 		<?php endif; ?>
 
+		<?php if($comprow !== 0): ?>
 		<div class="info-wrapper">
 			<div class="navbar navbar-default">
 				<div class="container-fluid">
@@ -1053,17 +1147,24 @@ function init()
 				</div>
 			</div>
 			<div id="infocont" class="container-fluid">
-				<div class="options-wrap" id="standings-cont">
+				<div class="options-wrap" id="standings-cont" style="overflow-y:auto;overflow-x:hidden;">
 					<div class="row">
 						<div class="col-xs-6" style="overflow: auto;">
-							<label>Top students, by score (to the right)</label>
-							<ul id="standings-student-list">
+							<label class="standings-label" id="standings-label-regulars">Top Regulars</label>
+							<ul class="standings-list" id="standings-regular-list">
 							</ul>
 						</div>
 						<div class="col-xs-6" style="overflow: auto;">
-							<label>Top schools, by score (to the right)</label>
-							<ul id="standings-team-list">
+							<label class="standings-label" id="standings-label-schools">Top Schools</label>
+							<ul class="standings-list" id="standings-team-list">
 							</ul>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-6" style="overflow: auto;">
+							<label class="standings-label" id="standings-label-alternates">Top Alternates</label>
+                                                        <ul class="standings-list" id="standings-alternate-list">
+                                                        </ul>
 						</div>
 					</div>
 				</div>
@@ -1197,6 +1298,7 @@ function init()
 				</div>
 			</div>
 		</div>
+		<?php endif; ?>
 	</div>
 </div>
 

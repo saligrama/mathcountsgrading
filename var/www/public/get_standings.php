@@ -10,22 +10,40 @@ $cid = getCurrentComp($conn);
 if($cid !== 0)
 {
 	$array = [
-		"students" => [],
+		"regulars" => [],
+		"alternates" => [],
 		"teams" => []
 	];
 
 	$students = dbQuery_new($conn, "SELECT (sprint_raw + target1_raw + target2_raw + target3_raw + target4_raw) AS score, SID FROM student_cleaner WHERE CID=:cid ORDER BY score DESC", ["cid" => $cid]);
+	$r = 0;
+	$a = 0;
 	for($i = 0; $i < count($students); $i++)
 	{
 		$name = dbQuery_new($conn, "SELECT first_name, last_name, SCID FROM mathlete_info WHERE SID=:sid", ["sid" => $students[$i]["SID"]]);
 		if(empty($name))
 			exit;
 
-		$array["students"][$i] = [
-			"name" => getStudentFullName($name[0]),
-			"SCID" => $name[0]["SCID"],
-			"score" => $students[$i]["score"]
-		];
+		$type = dbQuery_new($conn, "SELECT type FROM student_participants WHERE CID=:cid AND SID=:sid", ["cid" => $cid, "sid" => $students[$i]["SID"]]);
+		if(empty($type))
+			exit;
+
+		if($type[0]["type"] == "regular")
+		{
+			$array["regulars"][$r++] = [
+				"name" => getStudentFullName($name[0]),
+				"SCID" => $name[0]["SCID"],
+				"score" => $students[$i]["score"]
+			];
+		}
+		else
+		{
+			$array["alternates"][$a++] = [
+                                "name" => getStudentFullName($name[0]),
+                                "SCID" => $name[0]["SCID"],
+                                "score" => $students[$i]["score"]
+                        ];
+		}
 	}
 
 	$array["teams"] = dbQuery_new($conn, "SELECT a.team_raw, b.team_name, b.SCID FROM team_cleaner AS a LEFT JOIN (school_info AS b) ON (a.CID=:cid AND a.SCID=b.SCID) ORDER BY a.team_raw DESC", ["cid" => $cid]);
