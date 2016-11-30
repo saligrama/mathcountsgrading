@@ -1052,8 +1052,8 @@ function init()
 			loadConflicts();
 		else if($("#navbar-team-conflicts").parent().hasClass("active"))
 			loadTeamConflicts();
-		//else if($("#navbar-standings").parent().hasClass("active"))
-		//	loadStandings();
+		else if($("#navbar-standings").parent().hasClass("active"))
+			loadStandings();
 	}, 2000);
 
 	loadProgress();
