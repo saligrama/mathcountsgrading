@@ -63,13 +63,13 @@ For each grader (teacher), you have to create an account with their name and sch
 
 To manually grade a school or student as admin, click on the 'Grade Participants' tab in admin.php. This is also the page through which the graders grade their assigned students and schools.
 
-### Competition progress
+### Current Competition Info
 
 From admin.php you can see the following tabs:
 
 #### Progress 
 
-This show the grading progress, in percentage. A student is considered fully graded only after they have been graded by two or more graders or at least one admin and all the responses of the graders/admins are the same, OR there is a conflict in the responses but it has been resolved (see the conflict tab). In addition, a grader may only grade a student or school if it not already been graded by 2 other graders.
+This show the grading progress, in percentage. A student is considered fully graded only after they have been graded by two or more graders or at least one admin and all the responses of the graders/admins are the same, OR there is a conflict in the responses but it has been resolved (see the conflict tab). In addition, a grader may only grade a student or school if it not already been graded by 2 other graders, but an admin can.
 
 #### Student Conflicts
 
