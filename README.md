@@ -18,7 +18,7 @@ And the execute the following commands:
 
 `sudo cp -rf var/www/* /var/www`
 
-To put the files in place (make sure your Apache serveris running from /var/www, with /var/www/public as the public directory)
+To put the files in place (make sure your Apache server is running from /var/www, with /var/www/public as the public directory)
 
 Then, to set up the database:
 
@@ -30,4 +30,33 @@ And in the mysql prompt:
 
 `exit;`
 
-Outside of the mysql prompt enter `mysql mathcountsgrading < scripts/dbcreate.sql` to create the tables
+Then, outside of the mysql prompt enter 
+
+`mysql mathcountsgrading < scripts/dbcreate.sql` 
+
+to create the tables, and your done!
+
+## Usage instructions
+
+### Create account
+
+Upon directing your browser to your servers's index.html, you will see a form to create the first admin account, that controls the system and competition.
+
+### Create competition
+
+After creating your admin account, you can create the first competition by clicking 'Add competition' in admin.php.
+
+In create.php, first create all the schools you will need by clicking on the 'New school' button and filling out the form.
+
+After creating a school, you can create students in it through the 'Add student' panel on its edit page (click on the 'edit' button next to it in the list of schools in the create competition page).
+
+Once you have your schools and students, select which ones you want to participate in the competition you're creating by checking the boxes next to them in their lists in create.php. 
+Students selected as 'regular' have their score factored into their team score (they count), but alternates do not. However, alternates are still seperately ranked.
+
+### Create graders
+
+For each grader (teacher), you have to create an account with their name and school affiliation, etc. by clicking on the 'New User' tab in the navbar in admin.php. Make sure to tell them the email (username) and password you enter for their account so they can access it.
+
+### Grading workflow
+
+To manually grade a school or student as admin, click on the 'Grade Participants' tab in admin.php. This is also the page through which the graders grade their assigned students and schools.
