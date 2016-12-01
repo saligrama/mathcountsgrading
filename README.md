@@ -69,7 +69,7 @@ From admin.php you can see the following tabs:
 
 #### Progress 
 
-This show the grading progress, in percentage. A student is considered fully graded only after they have been graded by two or more graders or at least one admin and all the responses of the graders/admins are the same, OR there is a conflict in the responses but it has been resolved (see the conflict tab).
+This show the grading progress, in percentage. A student is considered fully graded only after they have been graded by two or more graders or at least one admin and all the responses of the graders/admins are the same, OR there is a conflict in the responses but it has been resolved (see the conflict tab). In addition, a grader may only grade a student or school if it not already been graded by 2 other graders.
 
 #### Student Conflicts
 
