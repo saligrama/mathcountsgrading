@@ -53,6 +53,8 @@ After creating a school, you can create students in it through the 'Add student'
 Once you have your schools and students, select which ones you want to participate in the competition you're creating by checking the boxes next to them in their lists in create.php. 
 Students selected as 'regular' have their score factored into their team score (they count), but alternates do not. However, alternates are still seperately ranked.
 
+The edit competition page is very similar to create.php.
+
 ### Create graders
 
 For each grader (teacher), you have to create an account with their name and school affiliation, etc. by clicking on the 'New User' tab in the navbar in admin.php. Make sure to tell them the email (username) and password you enter for their account so they can access it.
@@ -60,3 +62,23 @@ For each grader (teacher), you have to create an account with their name and sch
 ### Grading workflow
 
 To manually grade a school or student as admin, click on the 'Grade Participants' tab in admin.php. This is also the page through which the graders grade their assigned students and schools.
+
+### Competition progress
+
+From admin.php you can see the following tabs:
+
+#### Progress 
+
+This show the grading progress, in percentage. A student is considered fully graded only after they have been graded by two or more graders or at least one admin and all the responses of the graders/admins are the same, OR there is a conflict in the responses but it has been resolved (see the conflict tab).
+
+#### Student Conflicts
+
+From here, you can resolve any conflicts in grader responses. Simply follow the text instructions.
+
+The same goes for the team conflicts tab, except it is for the team round grading, instead of the individual rounds (sprint, target)
+
+#### Current Standings
+
+The student score is the sum of the scores in the individual rounds (sprint, target).
+
+This tab shows the results of the grading so far: which school or student is doing the best. The team score is the score in team round plus the average of all the individual scores of the regular students of that school.
