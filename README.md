@@ -6,15 +6,11 @@ Automated grading system for Mathcounts competition. Please see http://github.co
 The system is designed to work on a LAMP stack, so make sure you have Apache, PHP, and MySQL installed first on your linux server that your intend to place the system on.
 
 You can then clone the repo:
-`git clone https://github.com/saligrama/mathcountsgrading.git`
+`git clone --recursive https://github.com/saligrama/mathcountsgrading.git`
 
 And the execute the following commands:   
 
-`cd mathcountsgrading`   
-
-`git submodule init`    
-
-`git submodule update`
+`cd mathcountsgrading`
 
 `sudo cp -rf var/www/* /var/www`
 
