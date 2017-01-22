@@ -9,6 +9,7 @@ You can then clone the repo:
 
 `git clone --recursive https://github.com/saligrama/mathcountsgrading.git`
 
+Then, clear the directory where you wish to install the system (for apache serve
 And the execute the following commands:   
 
 `cd mathcountsgrading`
