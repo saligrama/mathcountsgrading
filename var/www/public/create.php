@@ -14,8 +14,8 @@
 */
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"])) {
 
-	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) ||
-	   sempty($_POST["compdate"]) || sempty($_POST["comptype"]))
+	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) || !isset($_POST["complevel"]) ||
+	   sempty($_POST["compdate"]) || sempty($_POST["complevel"]))
 	{
 		internalErrorRedirect("/create.php");
 	}
@@ -23,7 +23,7 @@
 	$previous = dbQuery_new($conn, "SELECT * FROM competition WHERE competition_date = :compdate AND competition_name = :compname;",
                                 ["compdate" => $_POST["compdate"], "compname" => $_POST["compname"]]);
         if(!empty($previous)) {
-                popupAlert("Whoops! A competition with the same name and date already exists.");
+                popupAlert("Whoops! A competition of with the same name and date already exists.");
                 redirectTo("/create.php");
         }
 
@@ -52,11 +52,13 @@
 
         dbQuery_new($conn, "INSERT INTO competition SET
                             competition_date = :compdate,
-                            competition_type = :comptype,
-                            competition_name = :compname", [
+                            competition_level = :complevel,
+                            competition_name = :compname,
+			    CTID = :ctid", [
                                 "compdate" => $_POST["compdate"],
-                                "comptype" => $_POST["comptype"],
-                                "compname" => $_POST["compname"]
+                                "complevel" => $_POST["complevel"],
+                                "compname" => $_POST["compname"],
+				"ctid" => $_POST["comptype"]
                             ]
        );
 
@@ -113,6 +115,13 @@
 	else
 		usort($schinfo, 'schoolSort');
 
+	// Get competition types for the dropdown
+        $comptypes = dbQuery_new($conn, "SELECT CTID, type_name FROM competition_type");
+        if(empty($comptypes)) {
+                popupAlert("There aren't any competition types yet. Press ok to create one");
+                redirectTo("/createtype.php");
+        }
+
 	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info");
 	if(empty($studentinfo))
 		$studentinfo = 0;
@@ -139,6 +148,7 @@
 
         render("create_form.php", [
                "schinfo" => $schinfo,
+	       "comptypeinfo" => $comptypes,
 	       "studentinfo" => $studentinfo,
                "fullname" => getFullName($conn)
 	     ]

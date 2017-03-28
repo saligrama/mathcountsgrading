@@ -14,8 +14,8 @@
 */
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"])) {
 
-	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) || !isset($_POST["cid"]) ||
-	   sempty($_POST["compdate"]) || sempty($_POST["comptype"]))
+	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) || !isset($_POST["cid"]) || !isset($_POST["complevel"]) ||
+	   sempty($_POST["compdate"]) || sempty($_POST["complevel"]))
 	{
 		internalErrorRedirect(isset($_POST["cid"]) ? "/editcompetition.php?CID=" . $_POST["cid"] : "/admin.php");
 	}
@@ -73,12 +73,14 @@
 
         dbQuery_new($conn, "UPDATE competition SET
                             competition_date = :compdate,
-                            competition_type = :comptype,
-                            competition_name = :compname
+                            competition_level = :complevel,
+                            competition_name = :compname,
+			    CTID = :ctid
                             WHERE CID=:cid", [
                                 "compdate" => $_POST["compdate"],
-                                "comptype" => $_POST["comptype"],
+                                "complevel" => $_POST["complevel"],
                                 "compname" => $_POST["compname"],
+				"ctid" => $_POST["comptype"],
                                 "cid" => $_POST["cid"]
                             ]
        );
@@ -183,6 +185,13 @@
 	if(empty($schinfo))
 		$schinfo = 0;
 
+	// Get competition types for the dropdown
+        $comptypes = dbQuery_new($conn, "SELECT CTID, type_name FROM competition_type");
+        if(empty($comptypes)) {
+                popupAlert("There aren't any competition types yet. Press ok to create one");
+                redirectTo("/createtype.php");
+        }
+
 	usort($schinfo, 'schoolSort');
 
 	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info");
@@ -229,8 +238,9 @@
                "participants_row" => $participants_row,
 	       "regulars_row" => $regulars_row,
 	       "alternates_row" => $alternates_row,
-               "fullname" => getFullName($conn)
-	     ]
+               "fullname" => getFullName($conn),
+	       "comptypeinfo" => $comptypes
+	    ]
         );
 
     }

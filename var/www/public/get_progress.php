@@ -9,9 +9,9 @@ $conn = dbConnect_new();
 $cid = getCurrentComp($conn);
 if($cid !== 0)
 {
-	$data = dbQuery_new($conn, "SELECT status_sprint, status_target1, status_target2, status_target3, status_target4, status_team FROM competition WHERE CID=:cid", ["cid" => $cid]);
+	$data = dbQuery_new($conn, "SELECT status, RNDID FROM competition_status WHERE CID=:cid", ["cid" => $cid]);
 	if(!empty($data))
-		echo json_encode($data[0]);
+		echo json_encode($data);
 }
 
 ?>

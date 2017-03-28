@@ -8,6 +8,7 @@
 
 	$currentcomp = getCurrentComp($conn);
 	$schoolinfo = 0;
+	$rtypes = 0;
 
 	if($currentcomp !== 0)
 	{
@@ -17,6 +18,11 @@
 
         	if(empty($schoolinfo))
         		$schoolinfo = 0;
+
+
+		$rtypes = dbQuery_new($conn, "SELECT RNDID, round_name FROM round WHERE CTID IN (SELECT CTID FROM competition WHERE CID=:cid)", ["cid" => $currentcomp]);
+		if(empty($rtypes))
+			$rtypes = 0;
 	}
 
 	$result = dbQuery_new($conn, "SELECT SCID FROM user WHERE UID = :UID", ["UID" => $_SESSION["UID"]]);
@@ -27,6 +33,6 @@
 		$gschool = $result[0]["SCID"];
 
 
-	render("grader_form.php", ["schoolinfo" => $schoolinfo, "currentcomp" => $currentcomp, "gschool" => $gschool, "fullname" => getFullName($conn)]);
+	render("grader_form.php", ["schoolinfo" => $schoolinfo, "currentcomp" => $currentcomp, "gschool" => $gschool, "fullname" => getFullName($conn), "roundtypes" => $rtypes]);
 
 ?>

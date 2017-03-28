@@ -147,10 +147,6 @@ body.loading .wheel-loader-wrapper {
 	max-width: 900px;
 }
 
-.panel-body {
-	margin-bottom: -246px;
-}
-
 .noschool {
 	display: block;
 	padding: 3px 6px 2px 10px;
@@ -186,7 +182,6 @@ body.loading .wheel-loader-wrapper {
 }
 
 #scont {
-	min-height: 250px;
 	max-height: 250px;
 }
 
@@ -210,6 +205,7 @@ body.loading .wheel-loader-wrapper {
 	padding-right: 15px;
 	margin-left: 5%;
 	margin-right: 4%;
+	vertical-align: top;
 }
 
 .colobj:last-child {
@@ -238,7 +234,37 @@ body.loading .wheel-loader-wrapper {
 	margin-bottom: 8px;
 }
 
+.panel-body {
+	padding-top: 25px;
+}
+
+.foot-button-2, .foot-button-3 {
+	float: left;
+	padding: 0px 15px;
+}
+
+.foot-button-2 {
+	width: 16.66666667%;
+}
+
+.foot-button-3 {
+	width: 25%;
+}
+
 @media (max-width: 1000px) {
+	.foot-button-2, .foot-button-3 {
+		width: 50%;
+	}
+
+	.foot-button-small {
+		padding-bottom: 10px !important;
+		width: 33%;
+	}
+
+	.foot-button-large {
+		width: 50%;
+	}
+
 	.colobj {
 		display: block;
 		width: 82.66%;
@@ -257,10 +283,6 @@ body.loading .wheel-loader-wrapper {
 
 	.panel {
 		max-width: 500px;
-	}
-
-	.panel-body {
-		margin: 0;
 	}
 
 	.slider-container-fixed {
@@ -900,12 +922,22 @@ function deleteComp()
 						<div class="form-group">
 							<label for="comptype">Competition Type</label><br>
 							<select name="comptype" id="comptype" class="js-select form-control">
-								<option value="chapter" <?= $crow['competition_type'] == 'chapter' ? "selected" : "" ?>>Chapter</option>
-								<option value="state" <?= $crow['competition_type'] == 'state' ? "selected" : "" ?>>State</option>
-								<option value="national" <?= $crow['competition_type'] == 'national' ? "selected" : "" ?>>National</option>
+								<?php foreach($comptypeinfo as $type): ?>
+                                                                        <option value="<?= $type['CTID'] ?>" <?= $crow['CTID'] == $type['CTID'] ? "selected" : "" ?>><?php echo clean($type["type_name"]); ?></option>
+                                                                <?php endforeach; ?>
 							</select>
 						</div>
 					</div><br>
+					 <div class="row">
+                                                <div class="form-group">
+                                                        <label for="complevel">Competition Level</label><br>
+                                                        <select name="complevel" id="complevel" class="js-select form-control">
+								<option value="chapter" <?= $crow['competition_level'] == 'chapter' ? "selected" : "" ?>>Chapter</option>
+                                                                <option value="state" <?= $crow['competition_level'] == 'state' ? "selected" : "" ?>>State</option>
+                                                                <option value="national" <?= $crow['competition_level'] == 'national' ? "selected" : "" ?>>National</option>
+                                                        </select>
+                                                </div>
+                                        </div><br>
 					<div class="row">
 						<div class="form-group">
 							<label for="compname">Competition Name (optional)</label>
@@ -950,7 +982,6 @@ function deleteComp()
 						</div>
 					</div>
 				</div>
-				<div class="col-divider"></div>
 				<div class="colobj">
 					<div class="row">
 						<label id="partdrop">Participating students from school:</label>
@@ -1018,22 +1049,22 @@ function deleteComp()
 		</div>
 		<div class="panel-footer">
                		<div class="row">
-				<div class="col-xs-2">
+				<div class="foot-button-2 foot-button-small">
                                 	<a class="btn btn-danger" href="/admin.php">Back</a>
                                 </div>
-				<div class="col-xs-3">
+				<div class="foot-button-3 foot-button-small">
 					<form onsubmit="return deleteComp();" method="post" action="/editcompetition.php">
                                         	<button class="btn btn-danger" name="delete" type="submit">Delete</button>
                                         	<input type="hidden" name="cid" value="<?php echo clean($_GET['CID']); ?>">
                                 	</form>
 				</div>
-				<div class="col-xs-2">
+				<div class="foot-button-2 foot-button-small">
 					<a class="btn btn-primary" href="/addschool.php?returnCID=<?php echo clean($_GET['CID']); ?>">New school</a>
                         	</div>
-				<div class="col-xs-2">
+				<div class="foot-button-2 foot-button-large">
 					<a class="btn btn-primary" href="/editanswers.php?CID=<?php echo clean($_GET['CID']); ?>">Edit Answers</a>
 				</div>
-				<div class="col-xs-3">
+				<div class="foot-button-3 foot-button-large">
                                         <button id="finalizebtn" type="submit" class="btn btn-success" form="compinfo" name="finalize">Finalize changes</button>
                                 </div>
 			</div>

@@ -22,6 +22,7 @@
 
 .ncont {
 	width: 800px;
+	margin-bottom: 60px;
 }
 
 .dropdown-toggle {
@@ -284,6 +285,14 @@
 	border-bottom: none;
 }
 
+.standings-li span:first-child {
+	width: 55px;
+}
+
+.standings-li span:last-child {
+	width: 65px;
+}
+
 .standings-li:nth-child(2) span:first-child {
         background-color: #FFD700;
         color: white;
@@ -317,6 +326,20 @@
 	font-weight: normal
 }
 
+.nav > li {
+	float: left;
+}
+
+.navbar-nav > li > a {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.navbar-nav {
+	float: left;
+	margin: 0;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -338,18 +361,22 @@ function changeComp(CID)
 			redirectTo("/admin.php?setComp=" + CID);
 }
 
-function getRoundName(r)
+/*function getRoundName(r)
 {
 	if(r.substr(0, r.length-2) == "target")
 		return "Target, Round " + r.slice(-1);
 	else
 		return r.charAt(0).toUpperCase() + r.slice(1);
-}
+}*/
 
 var request;
 
+var intervalFunc;
+
 function loadProgress()
 {
+	intervalFunc = loadProgress;
+
 	if(request)
                 request.abort();
 
@@ -364,7 +391,20 @@ function loadProgress()
 
 		var data = JSON.parse(response);
 
-		var s = parseFloat(data["status_sprint"]) * 100;
+		//console.log(data);
+
+		var avg = 0.0;
+
+		$(data).each(function() {
+			var p = Math.round(parseFloat(this.status) * 100);
+			$("#progressbar-" + this.RNDID + " .progress-bar").css("width", p + "%").html(p + "%");
+
+			avg += p / data.length;
+		});
+
+		avg = Math.round(avg);
+
+		/*var s = parseFloat(data["status_sprint"]) * 100;
 		var t1 = parseFloat(data["status_target1"]) * 100;
 		var t2 = parseFloat(data["status_target2"]) * 100;
 		var t3 = parseFloat(data["status_target3"]) * 100;
@@ -376,9 +416,9 @@ function loadProgress()
 		$("#progressbar-target2").css("width", t2 + "%").html(t2 + "%");
 		$("#progressbar-target3").css("width", t3 + "%").html(t3 + "%");
 		$("#progressbar-target4").css("width", t4 + "%").html(t4 + "%");
-		$("#progressbar-team").css("width", tm + "%").html(tm + "%");
+		$("#progressbar-team").css("width", tm + "%").html(tm + "%");*/
 
-		$("#progressbar-total").css("width", (0.25 * (s + t1 + t2 + t3 + t4 + tm)) + "%").html((0.25 * (s + t1 + t2 + t3 + t4 + tm)) + "%");
+		$("#progressbar-total").css("width", avg + "%").html(avg + "%");
 	});
 
 	request.fail(function(jqXHR, textStatus, errorThrown) {
@@ -388,6 +428,8 @@ function loadProgress()
 
 function loadConflicts()
 {
+	intervalFunc = loadConflicts;
+
 	if(request)
 		request.abort();
 
@@ -402,6 +444,7 @@ function loadConflicts()
 		else
 		{
 			var array = JSON.parse(response);
+
 			for(var i = 0; i < array.length; i++)
 			{
 				//console.log(array[i]["SID"]);
@@ -411,11 +454,11 @@ function loadConflicts()
 
 				//console.log(li);
 
-				$("#conflicts-cont .conflicts-li").each(function() {
-					cexists.push(parseInt(this.dataset.coid));
-				});
-
 				//console.log(cexists);
+
+				$("#conflicts-cont .conflicts-li").each(function() {
+                                	cexists.push(parseInt(this.dataset.coid));
+                       	 	});
 
 				var exist = $("#conflicts-cont .conflicts-student-li");
 				for(var k = 0; k < exist.length; k++)
@@ -447,7 +490,7 @@ function loadConflicts()
 				for(var j = 0; j < array[i]["conflicts"].length; j++)
 				{
 					var row = array[i]["conflicts"][j];
-					var round = getRoundName(row["round"]);
+					var round = row["round_name"];
 
 					if(cexists.indexOf(row['COID']) === -1)
 						$(clist).append("<li class='conflicts-li' data-coid='" + row["COID"] + "'>Number: <span>" + row["pn"] + "</span>  |  Round: <span>" + round + "</span></li>");
@@ -486,6 +529,8 @@ function getConflict(c)
 	});
 
         request.done(function(response, textStatus, jqXHR) {
+
+		//console.log(response);
 
 		if(response === "")
 			return;
@@ -568,6 +613,7 @@ function getConflict(c)
 								alert("There was an error recording your decision.");
 							else
 							{
+								console.log(response);
 								alert("Your decision has been recorded");
 
 								$("#conflict-info").css("display", "block");
@@ -655,6 +701,8 @@ function getConflict(c)
 
 function loadTeamConflicts()
 {
+	intervalFunc = loadTeamConflicts;
+
         if(request)
                 request.abort();
 
@@ -715,9 +763,10 @@ function loadTeamConflicts()
                                 for(var j = 0; j < array[i]["conflicts"].length; j++)
                                 {
                                         var row = array[i]["conflicts"][j];
+					var round = row["round_name"];
 
                                         if(cexists.indexOf(row['TCID']) === -1)
-                                                $(clist).append("<li class='conflicts-li' data-tcid='" + row["TCID"] + "'>Number: <span>" + row["pn"] + "</span></li>");
+                                                $(clist).append("<li class='conflicts-li' data-tcid='" + row["TCID"] + "'>Number: <span>" + row["pn"] + "</span> | Round: <span>" + round + "</span></li>");
                                 }
                         }
                 }
@@ -923,6 +972,8 @@ function getTeamConflict(c)
 
 function loadStandings()
 {
+	intervalFunc = loadStandings;
+
 	if(request)
 		request.abort();
 
@@ -947,7 +998,7 @@ function loadStandings()
 				$("#standings-regular-list").append(
 					"<li class='standings-li'>" +
                                                 "<span>Rank</span>" +
-                                                "<span>Name</span>" +
+                                                "<span>Student Name</span>" +
                                                 "<span>Score</span>" +
                                         "</li>"
 				);
@@ -973,7 +1024,7 @@ function loadStandings()
                                 $("#standings-alternate-list").append(
                                         "<li class='standings-li'>" +
                                                 "<span>Rank</span>" +
-                                                "<span>Name</span>" +
+                                                "<span>Student Name</span>" +
                                                 "<span>Score</span>" +
                                         "</li>"
                                 );
@@ -1042,19 +1093,10 @@ function init()
 
 	$("#navbar-progress").click(loadProgress);
 	$("#navbar-conflicts").click(loadConflicts);
-	$("#navbar-team-conflicts").click(loadConflicts);
+	$("#navbar-team-conflicts").click(loadTeamConflicts);
 	$("#navbar-standings").click(loadStandings);
 
-	setInterval(function() {
-		if($("#navbar-progress").parent().hasClass("active"))
-			loadProgress();
-		else if($("#navbar-conflicts").parent().hasClass("active"))
-			loadConflicts();
-		else if($("#navbar-team-conflicts").parent().hasClass("active"))
-			loadTeamConflicts();
-		else if($("#navbar-standings").parent().hasClass("active"))
-			loadStandings();
-	}, 2000);
+	setInterval(function() { intervalFunc(); }, 2000);
 
 	loadProgress();
 	$("#progress-cont").css("display", "block");
@@ -1265,33 +1307,25 @@ function init()
 						<div class="row">
 							<div class="col-xs-12">
 								<div class="progress-label" style="font-size: 25px;text-align: center;">Total grading progress</div>
-								<div class="progress" style="height: 35px">
-									<div class="progress-bar progress-bar-info" style="width: 0%;line-height: 35px;font-size:18px" id="progressbar-total"></div>
+								<div id="progress-bars">
+									<div class="progress" style="height: 35px">
+										<div class="progress-bar progress-bar-info" style="width: 0%;line-height: 35px;font-size:18px" id="progressbar-total">0%</div>
+									</div>
+									<?php if($compstatus === 0): ?>
+										<div class="well">
+											<p>Looks like there aren't any round in this competition type</p>
+										</div>
+									<?php else: ?>
+										<?php foreach($compstatus as $round): ?>
+											<div id="progressbar-<?= $round['RNDID'] ?>">
+												<div class="progress-label"><?php echo clean($round["round_name"]); ?></div>
+												<div class="progress">
+                               	                                			        	<div class="progress-bar <?= $round['indiv'] == 1 ? 'progress-bar-warning' : 'progress-bar-success'?>" style="width: 0%">0%</div>
+												</div>
+											</div>
+										<?php endforeach; ?>
+                                                                	<?php endif; ?>
 								</div>
-								<div class="progress-label">Sprint</div>
-								<div class="progress">
-                                                                        <div class="progress-bar progress-bar-warning" style="width: 0%" id="progressbar-sprint"></div>
-                                                                </div>
-								<div class="progress-label">Target, round 1</div>
-								<div class="progress">
-                                                                        <div class="progress-bar progress-bar-success" style="width: 0%" id="progressbar-target1"></div>
-                                                                </div>
-								<div class="progress-label">Target, round 2</div>
-								<div class="progress">
-                                                                        <div class="progress-bar progress-bar-success" style="width: 0%" id="progressbar-target2"></div>
-                                                                </div>
-								<div class="progress-label">Target, round 3</div>
-								<div class="progress">
-                                                                        <div class="progress-bar progress-bar-success" style="width: 0%" id="progressbar-target3"></div>
-                                                                </div>
-								<div class="progress-label">Target, round 4</div>
-								<div class="progress">
-                                                                        <div class="progress-bar progress-bar-success" style="width: 0%" id="progressbar-target4"></div>
-                                                                </div>
-								<div class="progress-label">Team</div>
-								<div class="progress">
-                                                                        <div class="progress-bar progress-bar-danger" style="width: 0%" id="progressbar-team"></div>
-                                                                </div>
 							</div>
 						</div>
 					</div>

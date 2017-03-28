@@ -1,4 +1,4 @@
-<?php
+\<?php
 
     require(dirname(__FILE__) . "/../includes/functions.php");
 
@@ -12,6 +12,8 @@
 
     $comprow = dbQuery_new($conn, "SELECT * FROM current_competition;");
 
+    $compstatus = 0;
+
     if(empty($comprow))
     {
         $comprow = 0;
@@ -20,6 +22,10 @@
     else
     {
 	$comprow = dbQuery_new($conn, "SELECT * FROM competition WHERE CID = :CID;", ["CID" => $comprow[0]["CID"]]);
+
+	$compstatus = dbQuery_new($conn, "SELECT * FROM round WHERE CTID=:ctid", ["ctid" => $comprow[0]["CTID"]]);
+	if(empty($compstatus))
+	    $compstatus = 0;
 
 	if(empty($comprow))
 	    $comprow = 0;
@@ -47,6 +53,6 @@
 	}
     }
 
-    render("admin_form.php", ["result" => $result, "comprow" => $comprow, "fullname" => getFullName($conn)]);
+    render("admin_form.php", ["result" => $result, "comprow" => $comprow, "compstatus" => $compstatus, "fullname" => getFullName($conn)]);
 
 ?>

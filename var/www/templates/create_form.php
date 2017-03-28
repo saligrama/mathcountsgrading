@@ -147,10 +147,6 @@ body.loading .wheel-loader-wrapper {
 	max-width: 900px;
 }
 
-.panel-body {
-	margin-bottom: -246px;
-}
-
 .noschool {
 	display: block;
 	padding: 3px 6px 2px 10px;
@@ -186,7 +182,6 @@ body.loading .wheel-loader-wrapper {
 }
 
 #scont {
-	min-height: 250px;
 	max-height: 250px;
 }
 
@@ -210,6 +205,7 @@ body.loading .wheel-loader-wrapper {
 	padding-right: 15px;
 	margin-left: 5%;
 	margin-right: 4%;
+	vertical-align: top;
 }
 
 .colobj:last-child {
@@ -238,6 +234,10 @@ body.loading .wheel-loader-wrapper {
 	margin-bottom: 8px;
 }
 
+.panel-body {
+        padding-top: 25px;
+}
+
 @media (max-width: 1000px) {
 	.colobj {
 		display: block;
@@ -257,10 +257,6 @@ body.loading .wheel-loader-wrapper {
 
 	.panel {
 		max-width: 500px;
-	}
-
-	.panel-body {
-		margin: 0;
 	}
 
 	.slider-container-fixed {
@@ -764,12 +760,22 @@ function checkSubmit()
 						<div class="form-group">
 							<label for="comptype">Competition Type</label><br>
 							<select name="comptype" id="comptype" class="js-select form-control">
-								<option value="chapter">Chapter</option>
-								<option value="state">State</option>
-								<option value="national">National</option>
+								<?php foreach($comptypeinfo as $type): ?>
+									<option value="<?= $type['CTID'] ?>"><?php echo clean($type["type_name"]); ?></option>
+								<?php endforeach; ?>
 							</select>
 						</div>
 					</div><br>
+					 <div class="row">
+                                                <div class="form-group">
+                                                        <label for="complevel">Competition Level</label><br>
+                                                        <select name="complevel" id="complevel" class="js-select form-control">
+                                                                <option value="chapter">Chapter</option>
+                                                                <option value="state">State</option>
+                                                                <option value="national">National</option>
+                                                        </select>
+                                                </div>
+                                        </div><br>
 					<div class="row">
 						<div class="form-group">
 							<label for="compname">Competition Name (optional)</label>
@@ -809,7 +815,6 @@ function checkSubmit()
 							</div>
 					</div><br>
 				</div>
-				<div class="col-divider"></div>
 				<div class="colobj">
 					<div class="row">
 						<label id="partdrop">Participating students from school:</label>

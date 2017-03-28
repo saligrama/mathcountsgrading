@@ -8,9 +8,10 @@
 
 	if($_SERVER["REQUEST_METHOD"] == "POST")
      	{
+		// Coming from grader.php
 		if(isset($_POST["goptsubmit"]))
 		{
-			if(!isset($_POST["School"]) || !isset($_POST["Sheet_Type"]))
+			if(!isset($_POST["School"]) || !isset($_POST["Round"]))
 				internalErrorRedirect("/grader.php");
 
         		$studentrows = dbQuery_new($conn, "SELECT * FROM mathlete_info WHERE SCID = :school AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid);", ["school" => $_POST["School"], "cid" => getCurrentComp($conn)]);
@@ -23,16 +24,37 @@
 			if(empty($school))
 				internalErrorRedirect("/grader.php");
 
-			render("grade_form.php", ["studentrows" => $studentrows, "schoolrow" => $school[0], "sheet_type" => $_POST["Sheet_Type"], "fullname" => getFullName($conn)]);
+			$roundrow = dbQuery_new($conn, "SELECT * FROM round WHERE RNDID=:id", ["id" => $_POST["Round"]]);
+			if(empty($roundrow))
+				internalErrorRedirect("/grader.php");
+			$roundrow = $roundrow[0];
+
+			render("grade_form.php", ["studentrows" => $studentrows, "schoolrow" => $school[0], "roundrow" => $roundrow, "fullname" => getFullName($conn)]);
 		}
+		// Coming from grade.php
 		elseif(isset($_POST["gradesubmit"]))
 		{
 			// sanity check
-			if(!isset($_POST["numquestions"]) || !isset($_POST["round"]) || !isset($_POST["SCID"]) || ($_POST["round"] != "team" && !isset($_POST["SID"])))
+			if(!isset($_POST["numquestions"]) || !isset($_POST["round"]) || !isset($_POST["SCID"]))
 				internalErrorRedirect("/grader.php");
 
+			// Get round info
+			$roundrow = dbQuery_new($conn, "SELECT * FROM round WHERE RNDID=:id", ["id" => $_POST["round"]]);
+			if(empty($roundrow))
+				internalErrorRedirect("/grader.php");
+			$roundrow = $roundrow[0];
+
+			if($roundrow["indiv"] == "1" && !isset($_POST["SID"]))
+				internalErrorRedirect("/grader.php");
+
+			// Get competition type info
+			$typerow = dbQuery_new($conn, "SELECT * FROM competition_type WHERE CTID=:id", ["id" => $roundrow["CTID"]]);
+			if(empty($typerow))
+				internalErrorRedirect("/grader.php");
+			$typerow = $typerow[0];
+
 			// more sanity checks
-			for($i = 1; $i <= intval($_POST["numquestions"]); $i++)
+			for($i = 1; $i <= intval($roundrow["num_questions"]); $i++)
 				if(!isset($_POST[$i . "question"]))
 					internalErrorRedirect("/grader.php");
 
@@ -50,7 +72,7 @@
 			$valid = dbQuery_new($conn, "SELECT SCID FROM competition_participants WHERE CID=:cid AND SCID=:scid", ["cid" => $cid, "scid" => $_POST["SCID"]]);
 			if(empty($valid))
 				internalErrorRedirect("/grader.php");
-			else if($_POST["round"] != "team")
+			else if($roundrow["indiv"] == "1")
 			{
 				$valid = dbQuery_new($conn, "SELECT SID FROM student_participants WHERE CID=:cid AND SID=:sid", ["cid" => $cid, "sid" => $_POST["SID"]]);
 				if(empty($valid))
@@ -58,7 +80,7 @@
 			}
 
 			// insert responses
-			for($i = 1; $i <= intval($_POST["numquestions"]); $i++)
+			for($i = 1; $i <= intval($roundrow["num_questions"]); $i++)
 			{
 				/*$graded = dbQuery_new($conn, "SELECT * FROM student_cleaner WHERE SID=:sid", [
 						"sid" => $_POST["SID"]
@@ -67,9 +89,9 @@
 				$grader_responses = "grader_responses";
 				$student_answers = "student_answers";
 				$grading_conflicts = "grading_conflicts";
-				$id = $_POST["round"] == "team" ? ("SCID=" . $_POST["SCID"]) : ("SID=" . $_POST["SID"]);
+				$id = $roundrow["indiv"] == "0" ? ("SCID=" . $_POST["SCID"]) : ("SID=" . $_POST["SID"]);
 
-				if($_POST["round"] == "team")
+				if($roundrow["indiv"] == "0")
 				{
 					$grader_responses = "grader_responses_team";
 					$student_answers = "team_answers";
@@ -78,51 +100,58 @@
 
 				// sanity check
 				$sexists = [];
-				if($_POST["round"] == "team")
+				if($roundrow["indiv"] == "0")
 					$sexists = dbQuery_new($conn, "SELECT SCID FROM school_info WHERE SCID=:scid", ["scid" => $_POST["SCID"]]);
 				else
 					$sexists = dbQuery_new($conn, "SELECT SID FROM mathlete_info WHERE SID=:sid", ["sid" => $_POST["SID"]]);
 				if(empty($sexists))
 					internalErrorRedirect("/grader.php");
 
+				// Grader's response
 				$answer = $_POST[$i . "question"];
 
 				// other grader's (or admin's) responses
-				$presponses = dbQuery_new($conn, "SELECT answer, UID FROM $grader_responses WHERE CID=:cid AND $id AND problem_number=:pn AND problem_type=:round", [
+				$presponses = dbQuery_new($conn, "SELECT answer, UID FROM $grader_responses WHERE CID=:cid AND $id AND problem_number=:pn AND RNDID=:round", [
 						"cid" => $cid,
                       	        	        "pn" => $i,
-                               	                "round" => $_POST["round"]
+                               	                "round" => $roundrow["RNDID"]
 				]);
 
 				/*
 
 				The admin's response is automatically entered into the database.
 				As for the grader, their response is only recorded if the question hasn't
-				already been graded twice.
+				already been graded the number of times it should be graded.
 
 				*/
-				if(count($presponses) > 1 && $ut == "grader") {
-					popupAlert("That student has already been graded!");
-					redirectTo("/grader.php");
+				if($ut == "grader") {
+					if(count($presponses) >= $typerow["num_graders_to_confirm"]) {
+                                        	popupAlert("That student has already been graded!");
+                                        	redirectTo("/grader.php");
+                                	}
+
+					for($k = 0; $k < count($presponses); $k++) {
+						if($presponses[$k]["UID"] == $_SESSION["UID"]) {
+							popupAlert("You can't grade this " . ($roundrow["indiv"] == "0" ? "school" : "student") . " twice.");
+							redirectTo("/grader.php");
+						}
+					}
 				}
-				else if(count($presponses) == 1 && $presponses[0]["UID"] == $_SESSION["UID"] && $ut == "grader") {
-					popupAlert("You can't grade this " . ($_POST["round"] == "team" ? "school" : "student") . " twice.");
-					redirectTo("/grader.php");
-				}
-				else if(count($presponses) < 2 || $ut == "admin")
+
+				if(count($presponses) < $typerow["num_graders_to_confirm"] || $ut == "admin")
 				{
 					$arr = [
 						"cid" => $cid,
                                                 "uid" => $_SESSION["UID"],
                                                 "pn" => $i,
-                                                "round" => $_POST["round"],
+                                                "round" => $roundrow["RNDID"],
                                                 "answer" => $answer
 					];
 
 					// enter response in database
-					$exist = dbQuery_new($conn, "SELECT UID FROM $grader_responses WHERE CID=:cid AND UID=:uid AND $id AND problem_number=:pn AND problem_type=:round AND answer=:answer", $arr);
+					$exist = dbQuery_new($conn, "SELECT UID FROM $grader_responses WHERE CID=:cid AND UID=:uid AND $id AND problem_number=:pn AND RNDID=:round AND answer=:answer", $arr);
 					if(empty($exist))
-						dbQuery_new($conn, "INSERT INTO $grader_responses SET CID=:cid, UID=:uid, $id, problem_number=:pn, problem_type=:round, answer=:answer", $arr);
+						dbQuery_new($conn, "INSERT INTO $grader_responses SET CID=:cid, UID=:uid, $id, problem_number=:pn, RNDID=:round, answer=:answer", $arr);
 
 					// look for a conflict between graders
 					$conflict = 0;
@@ -135,18 +164,18 @@
 							$array = [
 								"cid" => $cid,
                                                                	"pn" => $i,
-                                                               	"round" => $_POST["round"]
+                                                               	"round" => $roundrow["RNDID"]
 							];
 
-							$exists = dbQuery_new($conn, "SELECT CID FROM $grading_conflicts WHERE CID=:cid AND $id AND problem_number=:pn AND problem_type=:round", $array);
+							$exists = dbQuery_new($conn, "SELECT CID FROM $grading_conflicts WHERE CID=:cid AND $id AND problem_number=:pn AND RNDID=:round", $array);
 							if(empty($exists))
-								dbQuery_new($conn, "INSERT INTO $grading_conflicts SET CID=:cid, $id, problem_number=:pn, problem_type=:round", $array);
+								dbQuery_new($conn, "INSERT INTO $grading_conflicts SET CID=:cid, $id, problem_number=:pn, RNDID=:round", $array);
 
 							// If there is a conflict, there shouldn't be a final answer for the problem and student
-							dbQuery_new($conn, "DELETE FROM $student_answers WHERE CID=:cid AND $id AND problem_number=:pn AND problem_type=:round", [
+							dbQuery_new($conn, "DELETE FROM $student_answers WHERE CID=:cid AND $id AND problem_number=:pn AND RNDID=:round", [
 									"cid" => $cid,
 									"pn" => $i,
-									"round" => $_POST["round"]
+									"round" => $roundrow["RNDID"]
 							]);
 
 							$conflict = 1;
@@ -154,13 +183,14 @@
 						}
 					}
 
-					if(!$conflict && (count($presponses) > 0 || $ut == "admin"))
+					// The student's final answer is only entered if an admin graded it or the correct number of graders have provided unconflicting responses
+					if((!$conflict && (count($presponses) > ($typerow["num_graders_to_confirm"] - 2)) || $ut == "admin"))
 					{
 						// Get the correct answer
-						$key = dbQuery_new($conn, "SELECT answer FROM competition_answers WHERE CID=:cid AND problem_number=:pn AND problem_type=:round", [
+						$key = dbQuery_new($conn, "SELECT answer FROM competition_answers WHERE CID=:cid AND problem_number=:pn AND RNDID=:round", [
 								"cid" => $cid,
 								"pn" => $i,
-								"round" => $_POST["round"]
+								"round" => $roundrow["RNDID"]
 						]);
 						if(empty($key))
 							internalErrorRedirect("/grader.php");
@@ -170,46 +200,46 @@
 
 						// Check if the entered answer is right
 						$correct = compareAnswers($key, $answer);
-						$points = $correct * ($_POST["round"] == "sprint" ? 1 : 2);
+						$points = $correct * $roundrow["points_per_question"];
 
 						// Is there a final answer in the database already?
-						$exists = dbQuery_new($conn, "SELECT CID FROM $student_answers WHERE CID=:cid AND $id AND problem_number=:pn AND problem_type=:round", [
+						$exists = dbQuery_new($conn, "SELECT CID FROM $student_answers WHERE CID=:cid AND $id AND problem_number=:pn AND RNDID=:round", [
 								"cid" => $cid,
                                                         	"pn" => $i,
-                                                		"round" => $_POST["round"]
+                                                		"round" => $roundrow["RNDID"]
 						]);
 
 						if(empty($exists))
 						{
 							// Insert it if it doesn't exist
-							dbQuery_new($conn, "INSERT INTO $student_answers SET CID=:cid, $id, problem_number=:pn, problem_type=:round, answer=:answer, points=:points", [
+							dbQuery_new($conn, "INSERT INTO $student_answers SET CID=:cid, $id, problem_number=:pn, RNDID=:round, answer=:answer, points=:points", [
 									"cid" => $cid,
                                                         		"pn" => $i,
-                                                        		"round" => $_POST["round"],
+                                                        		"round" => $roundrow["RNDID"],
 									"answer" => $answer,
 									"points" => $points
 							]);
 						}
 						else
 						{
-							dbQuery_new($conn, "UPDATE $student_answers SET answer=:answer, points=:points WHERE CID=:cid AND $id AND problem_number=:pn AND problem_type=:round", [
+							dbQuery_new($conn, "UPDATE $student_answers SET answer=:answer, points=:points WHERE CID=:cid AND $id AND problem_number=:pn AND RNDID=:round", [
 									"answer" => $answer,
 									"points" => $points,
 									"cid" => $cid,
                                                         		"pn" => $i,
-                                                 		       	"round" => $_POST["round"]
+                                                 		       	"round" => $roundrow["RNDID"]
 							]);
 						}
 					}
 				}
 			}
 
-			if($_POST["round"] != "team")
-				updateStudentScore($conn, $_POST["SID"], $cid, $_POST["round"]);
+			if($roundrow["indiv"] == "1")
+				updateStudentScore($conn, $_POST["SID"], $cid, $roundrow["RNDID"]);
 
-                        updateTeamScore($conn, $_POST["SCID"], $cid);
+                        updateTeamScore($conn, $_POST["SCID"], $cid, $roundrow["RNDID"]);
 
-			updateCompStatus($conn, $cid);
+			updateCompStatus($conn, $cid, $roundrow["RNDID"]);
 
 			popupAlert("Your input has been scored successfully!");
 			redirectTo("/grader.php");

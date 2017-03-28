@@ -86,7 +86,6 @@ function checkSubmit()
                                         <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
                                 </form>
                         </li>
-                        <li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
                 </ul>
         </div>
 </nav>
@@ -99,6 +98,12 @@ function checkSubmit()
 				<?php else: ?>
 					<h4>There aren't any schools yet in the current competition. Please contact your administrator.</h4>
 				<?php endif; ?>
+			</div>
+		</div>
+	<?php elseif($roundtypes == 0): ?>
+		<div class="container ncont text-center">
+			<div class="jumbotron">
+				<h4>There aren't any rounds in this competition type yet. Please contact your administrator.</h4>
 			</div>
 		</div>
 	<?php else: ?>
@@ -120,14 +125,11 @@ function checkSubmit()
 						</div>
 						<div class="row">
 							<div class="form-group">
-								<label for="sheet_type">Round</label>
-								<select name="Sheet_Type" id="sheet_type" class="js-select form-control" required>
-        		    						<option value='sprint'>Sprint</option>
-       	        	             					<option value='target1'>Target, Round 1</option>
-		        	   					<option value='target2'>Target, Round 2</option>
-                  	       	  					<option value='target3'>Target, Round 3</option>
-                        	   					<option value='target4'>Target, Round 4</option>
-                            						<option value='team'>Team</option>
+								<label for="round">Round</label>
+								<select name="Round" id="round" class="js-select form-control" required>
+									<?php foreach($roundtypes as $type): ?>
+										<option value="<?= $type['RNDID'] ?>"><?php echo clean($type["round_name"]); ?></option>
+									<?php endforeach; ?>
 								</select>
 							</div>
 						</div>

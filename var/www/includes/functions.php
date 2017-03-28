@@ -4,7 +4,7 @@ require(dirname(__FILE__) . "/constants.php");
 require(dirname(__FILE__) . "/../lib/MCGExpression/MCGExpression/main.php");
 
 
-function updateCompStatus($conn, $cid)
+function updateCompStatus($conn, $cid, $round)
 {
 	$snum = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_participants WHERE CID=:cid", ["cid" => $cid]);
 	$snum = $snum[0]["val"];
@@ -12,11 +12,26 @@ function updateCompStatus($conn, $cid)
 	$scnum = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM competition_participants WHERE CID=:cid", ["cid" => $cid]);
 	$scnum = $scnum[0]["val"];
 
+	$rinfo = dbQuery_new($conn, "SELECT * from round WHERE RNDID=:round", ["round" => $round]);
+	if(empty($rinfo))
+		return;
+	$rinfo = $rinfo[0];
 
-	$target1 = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND problem_type='target1'", ["cid" => $cid]);
-	$target1 = $target1[0]["val"] / ($snum * 2);
 
-	$target2 = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND problem_type='target2'", ["cid" => $cid]);
+	$status = 0.0;
+
+	if($rinfo["indiv"] == "1")
+	{
+		$status = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND RNDID=:round", ["cid" => $cid, "round" => $round]);
+		$status = $status[0]["val"] / ($snum * $rinfo["num_questions"]);
+	}
+	else
+	{
+		$status = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM team_answers WHERE CID=:cid AND RNDID=:round", ["cid" => $cid, "round" => $round]);
+                $status = $status[0]["val"] / ($scnum * $rinfo["num_questions"]);
+	}
+
+	/*$target2 = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND problem_type='target2'", ["cid" => $cid]);
         $target2 = $target2[0]["val"] / ($snum * 2);
 
 	$target3 = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND problem_type='target3'", ["cid" => $cid]);
@@ -29,18 +44,28 @@ function updateCompStatus($conn, $cid)
         $sprint = $sprint[0]["val"] / ($snum * 30);
 
 	$team = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM team_answers WHERE CID=:cid AND problem_type='team'", ["cid" => $cid]);
-        $team = $team[0]["val"] / ($scnum * 10);
+        $team = $team[0]["val"] / ($scnum * 10);*/
 
-
-	dbQuery_new($conn, "UPDATE competition SET status_sprint=:sprint, status_target1=:target1, status_target2=:target2, status_target3=:target3, status_target4=:target4, status_team=:team WHERE CID=:cid", [
-			"sprint" => $sprint,
-			"target1" => $target1,
-			"target2" => $target2,
-			"target3" => $target3,
-			"target4" => $target4,
-			"team" => $team,
-			"cid" => $cid
-	]);
+	$exists = dbQuery_new($conn, "SELECT CID FROM competition_status WHERE CID=:cid AND RNDID=:round", [
+                        "round" => $round,
+                        "cid" => $cid
+        ]);
+	if(empty($exists))
+	{
+		dbQuery_new($conn, "INSERT INTO competition_status SET status=:status, CID=:cid, RNDID=:round", [
+				"status" => $status,
+				"round" => $round,
+				"cid" => $cid
+		]);
+	}
+	else
+	{
+		dbQuery_new($conn, "UPDATE competition_status SET status=:status WHERE CID=:cid AND RNDID=:round", [
+                        "status" => $status,
+                        "round" => $round,
+                        "cid" => $cid
+        	]);
+	}
 }
 
 function updateStudentScore($conn, $SID, $cid, $round)
@@ -49,54 +74,65 @@ function updateStudentScore($conn, $SID, $cid, $round)
 	if(empty($sinfo))
 		return;
 
-	$raw = dbQuery_new($conn, "SELECT SUM(points) FROM student_answers WHERE CID=:cid AND SID=:sid AND problem_type=:type", ["cid" => $cid, "sid" => $SID, "type" => $round]);
+	$ro = dbQuery_new($conn, "SELECT RNDID FROM round WHERE RNDID=:round AND indiv=true", ["round" => $round]);
+	if(empty($ro))
+		return;
+
+	$raw = dbQuery_new($conn, "SELECT SUM(points) FROM student_answers WHERE CID=:cid AND SID=:sid AND RNDID=:round", ["cid" => $cid, "sid" => $SID, "round" => $round]);
 	if(empty($raw))
 		$raw = 0;
 	else
-		$raw = $raw[0]["SUM(points)"];
+		$raw = $raw[0]["SUM(points)"] ? $raw[0]["SUMP(points)"] : 0;
 
 	$arr = [
 		"cid" => $cid,
 		"sid" => $SID,
 		"raw" => $raw,
+		"round" => $round
 	];
 
-	$exists = dbQuery_new($conn, "SELECT SID FROM student_cleaner WHERE CID=:cid AND SID=:sid", ["cid" => $cid, "sid" => $SID]);
+	$exists = dbQuery_new($conn, "SELECT SID FROM student_cleaner WHERE CID=:cid AND SID=:sid AND RNDID=:round", ["cid" => $cid, "sid" => $SID, "round" => $round]);
 	if(empty($exists))
-		dbQuery_new($conn, "INSERT INTO student_cleaner SET CID=:cid, SID=:sid, " . $round . "_raw=:raw", $arr);
+		dbQuery_new($conn, "INSERT INTO student_cleaner SET CID=:cid, SID=:sid, RNDID=:round, raw=:raw", $arr);
 	else
-		dbQuery_new($conn, "UPDATE student_cleaner SET " . $round . "_raw=:raw WHERE CID=:cid AND SID=:sid", $arr);
+		dbQuery_new($conn, "UPDATE student_cleaner SET raw=:raw WHERE RNDID=:round AND CID=:cid AND SID=:sid", $arr);
 }
 
-function updateTeamScore($conn, $SCID, $cid)
+function updateTeamScore($conn, $SCID, $cid, $round)
 {
         $sinfo = dbQuery_new($conn, "SELECT SCID FROM school_info WHERE SCID=:scid", ["scid" => $SCID]);
         if(empty($sinfo))
                 return;
 
-        $raw = dbQuery_new($conn, "SELECT SUM(points) FROM team_answers WHERE CID=:cid AND SCID=:scid AND problem_type='team'", ["cid" => $cid, "scid" => $SCID]);
+	$ro = dbQuery_new($conn, "SELECT RNDID FROM round WHERE RNDID=:round AND indiv=false", ["round" => $round]);
+        if(empty($ro))
+                return;
+
+        $raw = dbQuery_new($conn, "SELECT SUM(points) FROM team_answers WHERE CID=:cid AND SCID=:scid AND RNDID=:round", ["cid" => $cid, "scid" => $SCID, "round" => $round]);
         if(empty($raw))
                 $raw = 0;
         else
                 $raw = $raw[0]["SUM(points)"];
 
-	$avg = dbQuery_new($conn, "SELECT AVG(sprint_raw + target1_raw + target2_raw + target3_raw + target4_raw) AS score FROM student_cleaner WHERE CID=:cid AND SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid) AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid2 AND type='regular')", ["cid" => $cid, "cid2" => $cid, "scid" => $SCID]);
-	if(empty($avg))
-		$avg = 0;
-	else
-		$avg = $avg[0]["score"];
+	// Select all rows in student_cleaner whose students who are in the school and are regulars in the competition
+	//$avg = dbQuery_new($conn, "SELECT SUM(raw) as score FROM (SELECT SUM(raw) FROM student_cleaner WHERE CID=:cid AND SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid) AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid2 AND type='regular'))", ["cid" => $cid, "cid2" => $cid, "scid" => $SCID]);
+	//if(empty($avg))
+	//	$avg = 0;
+	//else
+	//	$avg = $avg[0]["score"];
 
 	$arr = [
                 "cid" => $cid,
                 "scid" => $SCID,
-                "raw" => ($raw + $avg)
+                "raw" => $raw,
+		"round" => $round
         ];
 
-        $exists = dbQuery_new($conn, "SELECT SCID FROM team_cleaner WHERE CID=:cid AND SCID=:scid", ["cid" => $cid, "scid" => $SCID]);
+        $exists = dbQuery_new($conn, "SELECT SCID FROM team_cleaner WHERE CID=:cid AND SCID=:scid AND RNDID=:round", ["cid" => $cid, "scid" => $SCID, "round" => $round]);
         if(empty($exists))
-                dbQuery_new($conn, "INSERT INTO team_cleaner SET CID=:cid, SCID=:scid, team_raw=:raw", $arr);
+                dbQuery_new($conn, "INSERT INTO team_cleaner SET CID=:cid, SCID=:scid, RNDID=:round, raw=:raw", $arr);
         else
-                dbQuery_new($conn, "UPDATE team_cleaner SET team_raw=:raw WHERE CID=:cid AND SCID=:scid", $arr);
+                dbQuery_new($conn, "UPDATE team_cleaner SET raw=:raw WHERE RNDID=:round AND CID=:cid AND SCID=:scid", $arr);
 }
 
 

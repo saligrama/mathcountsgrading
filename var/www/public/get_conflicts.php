@@ -6,6 +6,7 @@ checkSession('admin');
 
 $conn = dbConnect_new();
 
+// Resolves a conflict
 if(isset($_POST["RID"]) && isset($_POST["COID"]))
 {
 	$conflict = dbQuery_new($conn, "SELECT * FROM grading_conflicts WHERE COID=:coid", ["coid" => $_POST["COID"]]);
@@ -22,7 +23,16 @@ if(isset($_POST["RID"]) && isset($_POST["COID"]))
 		}
 
 		$response = $response[0];
-		$answer = $response["answer"];
+                $answer = $response["answer"];
+
+		$roundinfo = dbQuery_new($conn, "SELECT * FROM round WHERE RNDID=:round AND indiv=true", ["round" => $response["RNDID"]]);
+		if(empty($roundinfo))
+		{
+			echo "error";
+			exit;
+		}
+
+		$roundinfo = $roundinfo[0];
 
 		if(isset($_POST["ranswer"]))
 		{
@@ -30,21 +40,21 @@ if(isset($_POST["RID"]) && isset($_POST["COID"]))
                                                 "cid" => $response["CID"],
                                                 "uid" => $_SESSION["UID"],
                                                 "pn" => $response["problem_number"],
-                                                "round" => $response["problem_type"],
+                                                "round" => $response["RNDID"],
                                                 "answer" => $_POST["ranswer"]
                         ];
 
-			$exists = dbQuery_new($conn, "SELECT CID FROM grader_responses WHERE CID=:cid AND UID=:uid AND problem_number=:pn AND problem_type=:round AND answer=:answer", $arr);
+			$exists = dbQuery_new($conn, "SELECT CID FROM grader_responses WHERE CID=:cid AND UID=:uid AND problem_number=:pn AND RNDID=:round AND answer=:answer", $arr);
 			if(empty($exists))
-				dbQuery_new($conn, "INSERT INTO grader_responses SET CID=:cid, UID=:uid, problem_number=:pn, problem_type=:round, answer=:answer", $arr);
+				dbQuery_new($conn, "INSERT INTO grader_responses SET CID=:cid, UID=:uid, problem_number=:pn, RNDID=:round, answer=:answer", $arr);
 
 			$answer = $_POST["ranswer"];
 		}
 
-                $key = dbQuery_new($conn, "SELECT answer FROM competition_answers WHERE CID=:cid AND problem_number=:pn AND problem_type=:round", [
+                $key = dbQuery_new($conn, "SELECT answer FROM competition_answers WHERE CID=:cid AND problem_number=:pn AND RNDID=:round", [
                 		"cid" => $response["CID"],
                                 "pn" => $response["problem_number"],
-                                "round" => $response["problem_type"]
+                                "round" => $response["RNDID"]
                 ]);
                 if(empty($key))
 		{
@@ -56,33 +66,33 @@ if(isset($_POST["RID"]) && isset($_POST["COID"]))
 
 
                 $correct = compareAnswers($key, $answer);
-                $points = $correct * ($response["problem_type"] == "sprint" ? 1 : 2);
+                $points = $correct * $roundinfo["points_per_question"];
 
 
-		$exists = dbQuery_new($conn, "SELECT CID FROM student_answers WHERE CID=:cid AND SID=:sid AND problem_number=:pn AND problem_type=:round", [
+		$exists = dbQuery_new($conn, "SELECT CID FROM student_answers WHERE CID=:cid AND SID=:sid AND problem_number=:pn AND RNDID=:round", [
 				"cid" => $response["CID"],
 				"pn" => $response["problem_number"],
 				"sid" => $response["SID"],
-				"round" => $response["problem_type"]
+				"round" => $response["RNDID"]
 		]);
 		if(empty($exists))
 		{
-                	dbQuery_new($conn, "INSERT INTO student_answers SET CID=:cid, SID=:sid, problem_number=:pn, problem_type=:round, answer=:answer, points=:points", [
+                	dbQuery_new($conn, "INSERT INTO student_answers SET CID=:cid, SID=:sid, problem_number=:pn, RNDID=:round, answer=:answer, points=:points", [
                         	        "cid" => $response["CID"],
                         	        "pn" => $response["problem_number"],
 					"sid" => $response["SID"],
-                        	        "round" => $response["problem_type"],
+                        	        "round" => $response["RNDID"],
                                 	"answer" => $answer,
                 			"points" => $points
         		]);
 		}
 		else
 		{
-			dbQuery_new($conn, "UPDATE student_answers SET answer=:answer, points=:points WHERE CID=:cid AND SID=:sid AND problem_number=:pn AND problem_type=:round", [
+			dbQuery_new($conn, "UPDATE student_answers SET answer=:answer, points=:points WHERE CID=:cid AND SID=:sid AND problem_number=:pn AND RNDID=:round", [
                                         "cid" => $response["CID"],
                                         "pn" => $response["problem_number"],
                                         "sid" => $response["SID"],
-                                        "round" => $response["problem_type"],
+                                        "round" => $response["RNDID"],
                                         "answer" => $answer,
                                         "points" => $points
                         ]);
@@ -90,19 +100,20 @@ if(isset($_POST["RID"]) && isset($_POST["COID"]))
 
 		dbQuery_new($conn, "DELETE FROM grading_conflicts WHERE COID=:coid", ["coid" => $_POST["COID"]]);
 
-		updateStudentScore($conn, $response["SID"], $response["CID"], $response["problem_type"]);
+		updateStudentScore($conn, $response["SID"], $response["CID"], $response["RNDID"]);
 
 		$scid = dbQuery_new($conn, "SELECT SCID FROM mathlete_info WHERE SID=:sid", ["sid" => $response["SID"]]);
 		if(empty($scid))
 			echo "error";
 		else
 		{
-                	updateTeamScore($conn, $scid[0]["SCID"], $response["CID"]);
+                	updateTeamScore($conn, $scid[0]["SCID"], $response["CID"], $response["RNDID"]);
 
-                	updateCompStatus($conn, $response["CID"]);
+                	updateCompStatus($conn, $response["CID"], $response["RNDID"]);
 		}
 	}
 }
+// Gets more info about one conflict
 else if(isset($_POST["COID"]))
 {
 	$info = dbQuery_new($conn, "SELECT * FROM grading_conflicts WHERE COID=:coid", ["coid" => $_POST["COID"]]);
@@ -110,10 +121,10 @@ else if(isset($_POST["COID"]))
 		exit;
 	$info = $info[0];
 
-	$responses = dbQuery_new($conn, "SELECT a.*, b.answer, b.RID FROM user AS a LEFT JOIN (grader_responses AS b) ON (a.UID=b.UID) WHERE b.SID=:sid AND b.problem_number=:pn AND b.problem_type=:round AND b.CID=:cid", [
+	$responses = dbQuery_new($conn, "SELECT a.*, b.answer, b.RID FROM user AS a LEFT JOIN (grader_responses AS b) ON (a.UID=b.UID) WHERE b.SID=:sid AND b.problem_number=:pn AND b.RNDID=:round AND b.CID=:cid", [
 			"sid" => $info["SID"],
 			"pn" => $info["problem_number"],
-			"round" => $info["problem_type"],
+			"round" => $info["RNDID"],
 			"cid" => $info["CID"]
 	]);
 
@@ -146,6 +157,7 @@ else if(isset($_POST["COID"]))
 	if(!empty($result))
 		echo json_encode($result);
 }
+// Gets all conflicts
 else
 {
 $cid = dbQuery_new($conn, "SELECT * FROM current_competition");
@@ -153,7 +165,7 @@ if(!empty($cid))
 {
 	$cid = $cid[0]["CID"];
 
-	$result = dbQuery_new($conn, "SELECT COID, SID, problem_number, problem_type FROM grading_conflicts WHERE CID=:cid", ["cid" => $cid]);
+	$result = dbQuery_new($conn, "SELECT COID, SID, problem_number, RNDID FROM grading_conflicts WHERE CID=:cid", ["cid" => $cid]);
 
 	if(!empty($result))
 	{
@@ -169,6 +181,12 @@ if(!empty($cid))
 			else
 				$name = $name[0];
 
+			$roundinfo = dbQuery_new($conn, "SELECT round_name FROM round WHERE RNDID=:round AND indiv=true", ["round" => $result[$i]["RNDID"]]);
+			if(empty($roundinfo))
+				exit;
+			else
+				$roundinfo = $roundinfo[0];
+
 			$idx = array_search($result[$i]["SID"], $sids);
 			if($idx === FALSE)
 			{
@@ -180,7 +198,7 @@ if(!empty($cid))
 					"conflicts" => [[
 						"COID" => $result[$i]["COID"],
 						"pn" => $result[$i]["problem_number"],
-						"round" => $result[$i]["problem_type"]
+						"round_name" => $roundinfo["round_name"]
 					]]
 				]);
 
@@ -192,7 +210,7 @@ if(!empty($cid))
 				array_push($array[$indices[$sids[$idx]]]["conflicts"], [
 					"COID" => $result[$i]["COID"],
 					"pn" => $result[$i]["problem_number"],
-					"round" => $result[$i]["problem_type"]
+					"round_name" => $roundinfo["round_name"]
 				]);
 			}
 		}
