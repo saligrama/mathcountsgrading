@@ -114,6 +114,8 @@ function updateTeamScore($conn, $SCID, $cid, $round)
         else
                 $raw = $raw[0]["SUM(points)"];
 
+	$raw = $raw ? $raw : 0;
+
 	// Select all rows in student_cleaner whose students who are in the school and are regulars in the competition
 	//$avg = dbQuery_new($conn, "SELECT SUM(raw) as score FROM (SELECT SUM(raw) FROM student_cleaner WHERE CID=:cid AND SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid) AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid2 AND type='regular'))", ["cid" => $cid, "cid2" => $cid, "scid" => $SCID]);
 	//if(empty($avg))

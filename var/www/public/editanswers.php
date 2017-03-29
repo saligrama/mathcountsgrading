@@ -8,39 +8,30 @@
 
     if($_SERVER["REQUEST_METHOD"] == "POST")
     {
-	if(isset($_POST["answersubmit"]))
+	if(isset($_POST["answerssubmit"]))
 	{
-	    if(!isset($_POST["CID"]))
+	    if(!isset($_POST["CID"]) || !isset($_POST["round"]))
 		internalErrorRedirect("/admin.php");
 
-	    for($i = 1; $i <= 48; $i++)
+	    $roundinfo = dbQuery_new($conn, "SELECT * FROM round WHERE RNDID=:round", ["round" => $_POST["round"]]);
+	    if(empty($roundinfo))
+		internalErrorRedirect("/admin.php");
+
+	    $roundinfo = $roundinfo[0];
+
+	    for($i = 1; $i <= $roundinfo["num_questions"]; $i++)
 		if(!isset($_POST[$i . "question"]))
 		    internalErrorRedirect("/editanswers.php?CID=" . $_POST["CID"]);
 
-	    for($i = 1; $i <= 48; $i++)
+	    for($i = 1; $i <= $roundinfo["num_questions"]; $i++)
 	    {
-		$num = $i;
-		$type = "sprint";
-		if($i > 30)
-		{
-			if($i > 40) {
-				$tn = (int)(($i - 41)/2) + 1;
-				$type = "target" . $tn;
-				$num = $i - 40 - 2*($tn-1);
-			}
-			else {
-				$type = "team";
-				$num = $i - 30;
-			}
-		}
-
 		$exists = dbQuery_new($conn, "SELECT * FROM competition_answers WHERE
                            	              CID=:cid AND
-                                	      problem_type=:problem_type AND
+                                	      RNDID=:round AND
                               	              problem_number=:problem_number", [
                                                  "cid" => $_POST["CID"],
-                                        	 "problem_type" => $type,
-                               		         "problem_number" => $num
+                                        	 "round" => $roundinfo["RNDID"],
+                               		         "problem_number" => $i
                                      	      ]
                 );
 
@@ -49,12 +40,12 @@
 	    		dbQuery_new($conn, "UPDATE competition_answers SET
 				    	     answer=:answer WHERE
 					     CID=:cid AND
-					     problem_type=:problem_type AND
+					     RNDID=:round AND
 					     problem_number=:problem_number", [
 			    			"answer" => $_POST[$i . "question"],
 						"cid" => $_POST["CID"],
-						"problem_type" => $type,
-						"problem_number" => $num
+						"round" => $roundinfo["RNDID"],
+						"problem_number" => $i
 				     	     ]
 			);
 		}
@@ -63,12 +54,12 @@
 			dbQuery_new($conn, "INSERT INTO competition_answers SET
                                              answer=:answer,
                                              CID=:cid,
-                                             problem_type=:problem_type,
+                                             RNDID=:round,
                                              problem_number=:problem_number", [
                                                 "answer" => $_POST[$i . "question"],
                                                 "cid" => $_POST["CID"],
-                                                "problem_type" => $type,
-                                                "problem_number" => $num
+                                                "round" => $roundinfo["RNDID"],
+                                                "problem_number" => $i
                                              ]
                         );
 		}
@@ -77,16 +68,24 @@
 	    redirectTo("/editcompetition.php?CID=" . $_POST["CID"]);
 	}
     }
+    else
+    {
+        if(!isset($_GET["CID"]))
+	    redirectTo("/admin.php");
 
-    if(!isset($_GET["CID"]))
-	redirectTo("/admin.php");
+        $exists = dbQuery_new($conn, "SELECT CTID, competition_name, competition_date FROM competition WHERE CID=:cid", ["cid" => $_GET["CID"]]);
+        if(empty($exists))
+	    redirectTo("/admin.php");
 
-    $exists = dbQuery_new($conn, "SELECT competition_name, competition_date FROM competition WHERE CID=:cid", ["cid" => $_GET["CID"]]);
-    if(empty($exists))
-	redirectTo("/admin.php");
+        $typeinfo = dbQuery_new($conn, "SELECT * FROM competition_type WHERE CTID=:ctid", ["ctid" => $exists[0]["CTID"]]);
+        if(empty($typeinfo))
+	    redirectTo("/admin.php");
 
-    $result = dbQuery_new($conn, "SELECT * FROM competition_answers WHERE CID=:cid", ["cid" => $_GET["CID"]]);
+        $typeinfo = $typeinfo[0];
 
-    render("editanswers_form.php", ["result" => $result, "fullname" => getFullName($conn), "comprow" => $exists[0]]);
+        $result = dbQuery_new($conn, "SELECT * FROM round WHERE CTID=:ctid", ["ctid" => $typeinfo["CTID"]]);
+
+        render("editanswers_form.php", ["roundrows" => $result, "fullname" => getFullName($conn), "comprow" => $exists[0], "typerow" => $typeinfo]);
+    }
 
 ?>

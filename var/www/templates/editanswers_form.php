@@ -19,22 +19,9 @@
 
 <style>
 
-.panel {
-	max-width: none;
-	min-width: 0;
-}
-
 .main {
 	max-width: 1500px;
 	padding: 10px 30px;
-}
-
-.panel-body {
-	padding-top: 20px;
-}
-
-.panel-footer button {
-	width: 100%;
 }
 
 .title {
@@ -44,6 +31,38 @@
 
 .title label {
 	font-size: 19px;
+}
+
+.panel {
+        max-width: none;
+        min-width: 0;
+}
+
+.panel-heading {
+        margin: 0;
+}
+
+.main {
+        max-width: 1100px;
+}
+
+.schoolinfo {
+        text-align: center;
+        display: block;
+        font-size: 18px;
+}
+
+@media (max-width: 991px) {
+
+        .panel {
+                margin-left: auto;
+                margin-right: auto;
+                max-width: 400px;
+        }
+
+        .form-group {
+                margin: 0;
+        }
 }
 
 </style>
@@ -68,11 +87,32 @@ function checkSubmit()
         return confirm(mes);
 }
 
+function loadRound(id)
+{
+	$.post("/get_answers.php", { round: id }, function(data) {
+		$("#answers-cont").html(data);
+	});
+}
+
+function loadSelectedRound()
+{
+	loadRound($("#roundlist").val());
+}
+
+function init()
+{
+	$(".js-select").select2();
+
+	loadSelectedRound();
+
+	$("#roundlist").change(loadSelectedRound);
+}
+
 </script>
 
 </head>
 
-<body>
+<body onload="init()">
 
 <nav class="mnavbar">
         <div class="mnavcontainer container">
@@ -88,108 +128,35 @@ function checkSubmit()
                 </ul>
         </div>
 </nav>
-<div class="main">
-	<div class="row text-center">
-		<form onsubmit="return checkSubmit();" id="answers" action="" method="post"></form>
-		<input type="hidden" form="answers" name="CID" value="<?php echo clean($_GET['CID']); ?>">
-
-		<div class="title container">
-			<label>Editing answer key of competition:</label>
-			<div class="jumbotron">
-				<h2><?php echo clean(getCompFullName($comprow)); ?></h2>
-			</div>
-		</div>
-
-		<div class="col-lg-6 col-lg-offset-0 col-md-offset-2 col-md-8 col-sm-offset-1 col-sm-10 col-xs-12">
-			<div class="container-fluid panel panel-primary">
-                                <div class="panel-heading"><h4>Sprint Round</h4></div>
+<div class="container-fluid main">
+        <div class="row text-center">
+		<form id="answers" method="post" action="">
+			<input type="hidden" name="CID" value="<?php echo clean($_GET['CID']); ?>"></input>
+                </form>
+		<div class="col-md-4">
+                        <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                        <h4>Choose a student</h4>
+                                </div>
                                 <div class="panel-body">
                                         <div class="row">
-						<?php for($j = 0; $j < 3; $j++): ?>
-                                       	                <div class="col-xs-4">
-                               	                                <div class="form-group">
-                  	                                              <?php for($i = 1; $i <= 10; $i++): ?>
-                		                                                <div class="input-group">
-        	                                                                        <span class="input-group-addon"><?php echo (10*$j + $i); ?> </span>
-      		                                                                        <input type="text" form="answers" class="form-control col-xs-12" id="<?= (10*$j + $i) ?>question"
-												name="<?= (10*$j + $i) ?>question"
-												value="<?php echo clean(getProblemSolution($result, 10*$j + $i, 'sprint')); ?>">
-											</input>
-                                                                              	</div><br>
-                      	                                                <?php endfor; ?>
-                               	                                </div>
-                                       	                </div>
-                                               	<?php endfor; ?>
-					</div>
-				</div>
-				<div class="panel-footer">
-                                        <div class="row">
-						<div class="col-xs-3 col-xs-offset-1">
-							<a style="width: 100%;" class="btn btn-danger" href="editcompetition.php?CID=<?php echo clean($_GET['CID']); ?>">Back</a>
-						</div>
-						<div class="col-xs-offset-1 col-xs-6">
-                                                	<button type="submit" class="btn btn-success" name="answersubmit" form="answers">Submit</button>
-                                        	</div>
-					</div>
-                                </div>
-			</div>
-		</div>
-		<div class="col-lg-3 col-lg-offset-0 col-sm-5 col-sm-offset-1 col-md-offset-2 col-md-4 col-xs-6">
-			<div class="container-fluid panel panel-primary">
-				<div class="panel-heading"><h4>Team Round</h4></div>
-				<div class="panel-body">
-					<div class="row">
-						<div class="col-xs-12 col-sm-10 col-sm-offset-1">
-                        	                        <?php for($i = 1; $i <= 10; $i++): ?>
-        	                                                <div class='input-group'>
-                                         	                      	<span class='input-group-addon'><?php echo $i; ?> </span>
-                                                                      	<input form="answers" type="text" class="form-control col-xs-10" name="<?= (30 + $i) ?>question"
-										id="<?= (30 + $i) ?>question"
-										value="<?php echo clean(getProblemSolution($result, 30 + $i, 'team')); ?>">
-									</input>
-                                                                </div><br>
-                                                        <?php endfor; ?>
+                                                <div class="form-group col-xs-12">
+                                                        <p class="roundname">Competition type: <?php echo clean($typerow["type_name"]); ?></b>':</p>
+                                                        <select form="answers" name="round" class="form-control js-select" id="roundlist">
+                                                                <?php foreach($roundrows as $row): ?>
+                                                                        <option value=<?= $row['RNDID']?>> <?php echo clean($row["round_name"]); ?></option>
+                                                                <?php endforeach; ?>
+								<option value="0"></option>
+                                                        </select>
                                                 </div>
                                         </div>
                                 </div>
-                                <div class="panel-footer">
-                                        <div class="row">
-						<div class="col-xs-offset-2 col-xs-8">
-                                                	<button type="submit" class="btn btn-success" name="answersubmit" form="answers">Submit</button>
-                                        	</div>
-					</div>
-                                </div>
                         </div>
-		</div>
-		<div class="col-lg-3 col-sm-5 col-md-4 col-xs-6">
-			<?php for($i = 1; $i <= 4; $i++): ?>
-				<div class="container-fluid panel panel-primary">
-                                	<div class="panel-heading"><h4>Target Round <?= $i ?></h4></div>
-                                	<div class="panel-body">
-                                        	<div class="row">
-                                                	<div class="col-xs-12 col-sm-offset-1 col-sm-10">
-                              	                        	<div class='input-group'>
-                                                               		<span class='input-group-addon'>1 </span>
-                                         	               		<input form="answers" type="text" class="form-control col-xs-10" name="<?= (40 + 2*$i - 1) ?>question"
-										id="<?= (40 + 2*$i - 1) ?>question"
-										value="<?php echo clean(getProblemSolution($result, 40 + 2*$i - 1, 'target' . $i)); ?>">
-									</input>
-                                        	        		</div><br>
-								<div class='input-group'>
-                                                        	       	<span class='input-group-addon'>2 </span>
-                                                               		<input form="answers" type="text" class="form-control col-xs-10" name="<?= (40 + 2*$i) ?>question"
-										id="<?= (40 + 2*$i) ?>question"
-										value="<?php echo clean(getProblemSolution($result, 40 + 2*$i, 'target' . $i)); ?>">
-									</input>
-                                                        	</div><br>
-                                                	</div>
-                                        	</div>
-                                	</div>
-				</div>
-			<?php endfor; ?>
                 </div>
+		<div id="answers-cont"></div>
 	</div>
 </div>
+
 </body>
 
 </html>

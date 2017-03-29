@@ -153,11 +153,9 @@ else if(isset($_POST["TCID"]))
 // Get all conflicts
 else
 {
-$cid = dbQuery_new($conn, "SELECT * FROM current_competition");
-if(!empty($cid))
+$cid = getCurrentComp($conn);
+if($cid !== 0)
 {
-	$cid = $cid[0]["CID"];
-
 	$result = dbQuery_new($conn, "SELECT TCID, SCID, problem_number, RNDID FROM grading_conflicts_team WHERE CID=:cid", ["cid" => $cid]);
 
 	if(!empty($result))
@@ -170,14 +168,18 @@ if(!empty($cid))
 		for($i = 0; $i < count($result); $i++)
 		{
 			$name = dbQuery_new($conn, "SELECT team_name FROM school_info WHERE SCID=:scid", ["scid" => $result[$i]["SCID"]]);
-			if(empty($name))
+			if(empty($name)) {
+				echo "invalid school id";
 				exit;
+			}
 			else
 				$name = $name[0];
 
-			$roundinfo = dbQuery_new($conn, "SELECT round_name FROM round WHERE RNDID=:round AND indiv=true", ["round" => $result[$i]["RNDID"]]);
-                        if(empty($roundinfo))
+			$roundinfo = dbQuery_new($conn, "SELECT round_name FROM round WHERE RNDID=:round AND indiv=false", ["round" => $result[$i]["RNDID"]]);
+                        if(empty($roundinfo)) {
+				echo "invalid round id";
                                 exit;
+			}
                         else
                                 $roundinfo = $roundinfo[0];
 

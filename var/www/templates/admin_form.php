@@ -688,8 +688,6 @@ function getConflict(c)
                                         	alert("There was an error recording your response.");
                                 	});
 				}
-
-				
 			});
 		}, 50);
 	});
@@ -713,7 +711,7 @@ function loadTeamConflicts()
 
         request.done(function(response, textStatus, jqXHR) {
         //alert(response);
-	       if(response === "")
+		if(response === "")
                         $("#team-conflicts-student-list").html("Looks like there aren't any conflicts yet");
                 else
                 {

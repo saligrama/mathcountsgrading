@@ -119,12 +119,10 @@
 
 				/*
 
-				The admin's response is automatically entered into the database.
-				As for the grader, their response is only recorded if the question hasn't
-				already been graded the number of times it should be graded.
+				The response is automatically entered into the database.
 
 				*/
-				if($ut == "grader") {
+				/*if($ut == "grader") {
 					if(count($presponses) >= $typerow["num_graders_to_confirm"]) {
                                         	popupAlert("That student has already been graded!");
                                         	redirectTo("/grader.php");
@@ -136,9 +134,9 @@
 							redirectTo("/grader.php");
 						}
 					}
-				}
+				}*/
 
-				if(count($presponses) < $typerow["num_graders_to_confirm"] || $ut == "admin")
+				//if(count($presponses) < $typerow["num_graders_to_confirm"] || $ut == "admin")
 				{
 					$arr = [
 						"cid" => $cid,
@@ -159,6 +157,7 @@
 					{
 						if(!compareAnswers($presponses[$j]["answer"], $answer))
 						{
+							//echo "conflict found\n";
 							// If a conflict is found, put it in the database so the admin can see it and fix it from their homepage
 
 							$array = [
@@ -183,8 +182,8 @@
 						}
 					}
 
-					// The student's final answer is only entered if an admin graded it or the correct number of graders have provided unconflicting responses
-					if((!$conflict && (count($presponses) > ($typerow["num_graders_to_confirm"] - 2)) || $ut == "admin"))
+					// The student's final answer is only entered if an admin graded it (Admin's responses override the grader responses, but if the admin's response has a conflict with the grader response then it is still registered in the conflicts) or the correct number of graders have provided unconflicting responses
+					if(!$conflict && ((count($presponses) > ($typerow["num_graders_to_confirm"] - 2)) || $ut == "admin"))
 					{
 						// Get the correct answer
 						$key = dbQuery_new($conn, "SELECT answer FROM competition_answers WHERE CID=:cid AND problem_number=:pn AND RNDID=:round", [
