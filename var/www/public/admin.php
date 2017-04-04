@@ -1,4 +1,4 @@
-\<?php
+<?php
 
     require(dirname(__FILE__) . "/../includes/functions.php");
 
@@ -14,6 +14,10 @@
 
     $compstatus = 0;
 
+    $rounds = 0;
+    $students = 0;
+    $schools = 0;
+
     if(empty($comprow))
     {
         $comprow = 0;
@@ -26,6 +30,10 @@
 	$compstatus = dbQuery_new($conn, "SELECT * FROM round WHERE CTID=:ctid", ["ctid" => $comprow[0]["CTID"]]);
 	if(empty($compstatus))
 	    $compstatus = 0;
+
+	$students = dbQuery_new($conn, "SELECT mathlete_info.*, student_participants.type FROM mathlete_info INNER JOIN student_participants ON mathlete_info.SID = student_participants.SID WHERE student_participants.CID=:cid ORDER BY SCID", ["cid" => $comprow[0]["CID"]]);
+
+	$schools = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID IN (SELECT SCID FROM competition_participants WHERE CID=:cid)", ["cid" => $comprow[0]["CID"]]);
 
 	if(empty($comprow))
 	    $comprow = 0;
@@ -53,6 +61,6 @@
 	}
     }
 
-    render("admin_form.php", ["result" => $result, "comprow" => $comprow, "compstatus" => $compstatus, "fullname" => getFullName($conn)]);
+    render("admin_form.php", ["result" => $result, "comprow" => $comprow, "compstatus" => $compstatus, "fullname" => getFullName($conn), "students" => $students, "schools" => $schools]);
 
 ?>

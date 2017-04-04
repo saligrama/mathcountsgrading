@@ -2,7 +2,7 @@
 
 require("../includes/functions.php");
 
-if(!isset($_POST["round"]))
+if(!isset($_POST["round"]) || !isset($_POST["CID"]))
 	exit;
 
 $conn = dbConnect_new();
@@ -12,6 +12,12 @@ if(empty($roundrow))
 	exit;
 
 $roundrow = $roundrow[0];
+
+$answers = dbQuery_new($conn, "SELECT problem_number, answer FROM competition_answers WHERE CID=:cid AND RNDID=:round", ["cid" => $_POST["CID"], "round" => $_POST["round"]]);
+
+echo json_encode([ "answers" => $answers ]);
+
+echo "\n";
 
 ?>
 
@@ -46,7 +52,7 @@ $roundrow = $roundrow[0];
 											<?php for($k = 0; $k < ($roundrow["num_questions"] - 30 * $i - 10 * $j) && $k < 10; $k++): ?>
 												<div class="input-group">
                                 	                					<span class="input-group-addon"><?php echo (30 * $i + 10 * $j + $k + 1); ?> </span>
-               	                         	        					<input type="text" form="answers" class="form-control" name=<?= (30 * $i + 10 * $j + $k + 1)  . "question"?>></input>
+               	                         	        					<input type="text" form="answers" class="form-control" id=<?= (30 * $i + 10 * $j + $k + 1)  . "answer"?> name=<?= (30 * $i + 10 * $j + $k + 1)  . "question"?>></input>
                	                         						</div><br>
 											<?php endfor; ?>
 										</div>
@@ -64,4 +70,3 @@ $roundrow = $roundrow[0];
 				</div>
 			</div>
 		</div>
-

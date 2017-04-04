@@ -82,7 +82,7 @@ function updateStudentScore($conn, $SID, $cid, $round)
 	if(empty($raw))
 		$raw = 0;
 	else
-		$raw = $raw[0]["SUM(points)"] ? $raw[0]["SUMP(points)"] : 0;
+		$raw = $raw[0]["SUM(points)"] ? $raw[0]["SUM(points)"] : 0;
 
 	$arr = [
 		"cid" => $cid,

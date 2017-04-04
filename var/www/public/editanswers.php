@@ -65,7 +65,8 @@
 		}
 	    }
 
-	    redirectTo("/editcompetition.php?CID=" . $_POST["CID"]);
+	    redirectTo("/editanswers.php?CID=" . $_POST["CID"]);
+	//    redirectTo("/editcompetition.php?CID=" . $_POST["CID"]);
 	}
     }
     else

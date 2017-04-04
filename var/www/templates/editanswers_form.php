@@ -89,8 +89,27 @@ function checkSubmit()
 
 function loadRound(id)
 {
-	$.post("/get_answers.php", { round: id }, function(data) {
-		$("#answers-cont").html(data);
+	$.post("/get_answers.php", { round: id, CID: <?php echo clean($_GET["CID"]); ?> }, function(data) {
+		//console.log(data);
+
+		var brk = data.indexOf("\n");
+
+		//console.log(brk);
+
+		var answers = JSON.parse(data.substr(0, brk));
+
+		console.log(answers);
+
+		var html = data.substr(brk + 1);
+
+		$("#answers-cont").html(html);
+
+		setTimeout(function() {
+			$(answers.answers).each(function() {
+				console.log(this.answer);
+				$("#" + this.problem_number + "answer").val(this.answer);
+			});
+		}, 50);
 	});
 }
 
@@ -146,7 +165,7 @@ function init()
                                                                 <?php foreach($roundrows as $row): ?>
                                                                         <option value=<?= $row['RNDID']?>> <?php echo clean($row["round_name"]); ?></option>
                                                                 <?php endforeach; ?>
-								<option value="0"></option>
+								<option value="0" style="display: none;"></option>
                                                         </select>
                                                 </div>
                                         </div>

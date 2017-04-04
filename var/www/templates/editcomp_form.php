@@ -157,6 +157,8 @@ body.loading .wheel-loader-wrapper {
 	overflow: hidden;
 	white-space: nowrap;
 	width: 75%;
+	text-align: left;
+    	float: left;
 }
 
 #stcont .slider-edit {

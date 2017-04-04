@@ -337,17 +337,11 @@
 }
 
 .progress-wrap {
-	display: -moz-flex;
-	display: -ms-flex;
-	display: -webkit-flex;
 	display: flex;
 	margin-bottom: 30px;
 }
 
 .progress {
-	-moz-flex: 1;
-	-ms-flex: 1;
-	-webkit-flex: 1;
 	flex: 1;
 	margin-bottom: 0px;
 	border-top-right-radius: 0px;
@@ -357,50 +351,7 @@
 .progress-button {
 	border-top-left-radius: 0px;
 	border-bottom-left-radius: 0px;
-	-moz-flex: 0;
-	-ms-flex: 0;
-	-webkit-flex: 0;
 	flex: 0;
-}
-
-.more-progress {
-	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;
-	background-color: #eee;
-	padding: 6px 12px 12px 12px;
-	height: 300px;
-	transition: height 1s;
-	overflow: auto;
-}
-
-.more-progress.hidden {
-	height: 0px;
-}
-
-.more-progress-table {
-	width: 100%;
-	table-layout: fixed;
-}
-
-.more-progress-table th {
-	font-size: 18px;
-	padding: 10px 5px 7px 5px;
-	text-align: center;
-}
-
-td .wrong {
-	background-color: #e9635f;
-	color: #fff;
-}
-
-td .right {
-	background-color: #4ca84c;
-	color: #000;
-}
-
-td .noneyet {
-	background-color: #fff;
-	color: #000;
 }
 
 </style>
@@ -458,11 +409,11 @@ function loadProgress()
 
 		var avg = 0.0;
 
-		$(data.progress).each(function() {
+		$(data).each(function() {
 			var p = Math.round(parseFloat(this.status) * 100);
 			$("#progressbar-" + this.RNDID + " .progress-bar").css("width", p + "%").html(p + "%");
 
-			avg += p / data.round_info.length;
+			avg += p / data.length;
 		});
 
 		avg = Math.round(avg);
@@ -482,27 +433,6 @@ function loadProgress()
 		$("#progressbar-team").css("width", tm + "%").html(tm + "%");*/
 
 		$("#progressbar-total").css("width", avg + "%").html(avg + "%");
-
-		$("#more-progress-list .panswer p").removeClass().addClass("noneyet");
-
-		$(data.student_info_and_answers).each(function() {
-			var sinfo = this.student_info;
-
-			$(this.answers).each(function() {
-				//console.log("here");
-
-				$("#more-progress-list").find("#" + sinfo.SID + "a" + this.RNDID + "a" + this.problem_number + " .panswer").html("<p class='" + (this.points === 0 ? "wrong" : "right") + "'>'" + this.answer + "'</p>");
-			});
-		});
-
-/*		 $(data.team_info_and_answers).each(function() {
-                        var tinfo = this.team_info;
-
-                        $(this.answers).each(function() {
-                                $("#more-progress-list").append("<tr><td>" + this.round_name + "</td><td>" + this.problem_number + "</td><td>" + tinfo.team_name + "</td><td><p class='" + (this.points === 0 ? "wrong" : "right") + "'>'" + this.answer + "'</p></td></tr>");
-                        });
-                });
-*/
 	});
 
 	request.fail(function(jqXHR, textStatus, errorThrown) {
@@ -1182,8 +1112,6 @@ function init()
 
 	loadProgress();
 	$("#progress-cont").css("display", "block");
-
-	$("#more-progress-toggle").click(function() { $(".more-progress").toggleClass("hidden"); });
 }
 
 </script>
@@ -1393,44 +1321,21 @@ function init()
 								<div class="progress-label" style="font-size: 25px;text-align: center;">Total grading progress</div>
 								<div id="progress-bars">
 									<div class="more-progress-wrap">
-										<div class="progress-wrap" style="margin-bottom: 0px">
+										<div class="progress-wrap">
 											<div class="progress" style="height: 35px">
 												<div class="progress-bar progress-bar-info" style="width: 0%;line-height: 35px;font-size:18px" id="progressbar-total">0%</div>
 											</div>
 											<button id="more-progress-toggle" type="button" class="progress-button btn btn-default"><span class="caret"></span></button>
 										</div>
-										<div class="more-progress hidden">
-											<table class="more-progress-table">
-												<thead>
-													<tr>
-														<th>Round</th>
-														<th>Problem Number</th>
-														<th>Student Name</th>
-														<th>Answer</th>
-													</tr>
-												</thead>
-												<tbody id="more-progress-list">
-													<?php foreach($students as $student): ?>
-														<?php foreach($compstatus as $round): ?>
-															<?php if($round["indiv"] == 1): ?>
-																<?php for($i = 1; $i <= $round["num_questions"]; $i++): ?>
-																	<tr id="<?= $student['SID'] . 'a' . $round['RNDID'] . 'a' . $i ?>">
-																		<td><?php echo clean($round["round_name"]); ?></td>
-																		<td><?= $i ?></td>
-																		<td><?php echo clean($student["first_name"] . " " . $student["last_name"]); ?></td>
-																		<td class="panswer"><p class="noneyet">None yet</p></td>
-																	</tr>
-																<?php endfor; ?>
-															<?php endif; ?>
-														<?php endforeach; ?>
-													<?php endforeach; ?>
-												</tbody>
-											</table>
+										<div class="more-progress">
+											<ul class="more-progress-list">
+												
+											</ul>
 										</div>
 									</div>
 									<?php if($compstatus === 0): ?>
 										<div class="well">
-											<p>Looks like there aren't any round in this competition type</p>
+											<p>Looks like there aren't any rounds in this competition type</p>
 										</div>
 									<?php else: ?>
 										<?php foreach($compstatus as $round): ?>
