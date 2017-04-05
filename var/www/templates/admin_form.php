@@ -382,6 +382,7 @@
 
 .more-progress-table {
 	width: 100%;
+	height: 100%;
 	table-layout: fixed;
 }
 
@@ -393,10 +394,73 @@
 	//height: 280px;
 	//overflow-x: hidden;
 	//overflow-y: auto;
+	height: 100%;
 }
 
-#more-progress-list td, #more-progress-head th {
-	//width: 25%;
+#more-progress-list tr {
+	height: 100%;
+}
+
+#more-progress-list td {
+	height: 100%;
+}
+
+.panswer {
+	height: 100%;
+	position: relative;
+}
+
+.edit-wrap {
+	position: absolute;
+	width: 200px;
+	height: 200px;
+	background-color: #eee;
+	right: -200px;
+	top: 0px;
+}
+
+td p, .answer-edit input {
+	display: inline-block;
+	padding: 4px 15px;
+	width: 55%;
+	border-radius: 0px;
+}
+
+.answer-edit input {
+	padding: 5px 8px;
+	margin-bottom: 10px;
+}
+
+.edit-select {
+	display: inline-block;
+	width: 55%;
+	margin-bottom: 10px;
+}
+
+.panswer .btn-group, .answer-edit button {
+	margin-left: 5%;
+	width: 35% !important;
+	display: inline-block;
+}
+
+.answer-edit button {
+	padding: 5px !important;
+	font-size: 13px !important;
+}
+
+.panswer .btn-group button {
+	padding: 5px !important;
+	font-size: 13px !important;
+	width: 100% !important;
+}
+
+.panswer .dropdown-menu {
+	left: -100px;
+	width: 120px !important;
+}
+
+.panswer .dropdown-menu a {
+	cursor: pointer;
 }
 
 td .wrong {
@@ -504,13 +568,13 @@ function loadProgress()
 		var avg = 0.0;
 
 		$(data.progress).each(function() {
-			var p = Math.round(parseFloat(this.status) * 100);
+			var p = Math.floor(parseFloat(this.status) * 100);
 			$("#progressbar-" + this.RNDID + " .progress-bar").css("width", p + "%").html(p + "%");
 
 			avg += p / data.round_info.length;
 		});
 
-		avg = Math.round(avg);
+		avg = Math.floor(avg);
 
 		/*var s = parseFloat(data["status_sprint"]) * 100;
 		var t1 = parseFloat(data["status_target1"]) * 100;
@@ -530,20 +594,53 @@ function loadProgress()
 
 		$("#more-progress-list tr").each(function() {
 			this.dataset.answer = "3";
-		}).find(".panswer p").removeClass().addClass("noneyet");
+		}).find(".panswer p").removeClass().addClass("noneyet").html("None yet");
+
+		/*$("#more-progress-list .answer-edit-parser").each(function() {
+			if(this.style.display == "none")
+				this.children[0].children[0].value = "0";
+		});
+
+		$("#more-progress-list .answer-edit-answer input").each(function() {
+			if(this.style.display == "none")
+				this.children[0].value = "";
+		});*/
 
 		$(data.student_info_and_answers).each(function() {
 			var sinfo = this.student_info;
 
 			$(this.answers).each(function() {
 				var points = this.points;
+				var answer = this.answer;
 
 				$("#more-progress-list").find("#" + sinfo.SID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
+					//console.log(this);
 					if(points === 0)
+					{
 						this.dataset.answer = "1";
+						/*var wrap = $(this).find(".answer-edit-parser")[0];
+						var wrap2 = wrap.previousSibling;
+
+						if(wrap.style.display == "none")
+							wrap.children[0].children[0].value = "1";
+
+						if(wrap2.style.display == "none")
+							wrap2.children[0].value = answer;*/
+					}
 					else
+					{
 						this.dataset.answer = "2";
-				}).find(".panswer").html("<p class='" + (points === 0 ? "wrong" : "right") + "'>'" + this.answer + "'</p>");
+						/*var wrap = $(this).find(".answer-edit-parser")[0];
+						var wrap2 = wrap.previousSibling;
+
+                                                if(wrap.style.display == "none")
+                                                        wrap.children[0].children[0].value = "2";
+
+						if(wrap2.style.display == "none")
+							wrap2.children[0].value = answer;*/
+					}
+
+				}).find(".panswer p").removeClass().addClass(points === 0 ? "wrong" : "right").html("'" + answer + "'");
 			});
 		});
 
@@ -558,7 +655,7 @@ function loadProgress()
                                                 this.dataset.answer = "1";
                                         else
                                                 this.dataset.answer = "2";
-                                }).find(".panswer").html("<p class='" + (points === 0 ? "wrong" : "right") + "'>'" + this.answer + "'</p>");
+                                }).find(".panswer p").removeClass().addClass(points === 0 ? "wrong" : "right").html("'" + this.answer + "'");
                 	});
 		});
 
@@ -590,11 +687,11 @@ function filterMoreProgress()
 	$("#more-progress-list tr").each(function() {
 		this.style.display = "none";
 
-		var isschool = (this.id.substr(0, 1) === "s");
+		//var isschool = (this.id.substr(0, 1) === "s");
 
-		if(school == isschool)
-		{
-			if(id == "0" || (isschool && (this.dataset.scid == id)) || this.dataset.sid == id)
+		//if(school == isschool)
+		//{
+			if(id == "0" || (school && (this.dataset.scid == id)) || this.dataset.sid == id)
 			{
 				if(rndid == "0" || this.dataset.rndid == rndid)
 				{
@@ -608,7 +705,7 @@ function filterMoreProgress()
 					}
 				}
 			}
-		}
+		//}
 	});
 
 	if(!shown)
@@ -1172,6 +1269,8 @@ function loadStandings()
 	});
 
 	request.done(function(response, textStatus, jqXHR) {
+		console.log(response);
+
 		if(response === "")
 			return;
 		else
@@ -1250,7 +1349,7 @@ function loadStandings()
                         	                "<li class='standings-li'>" +
                                 	                "<span>" + (i+1) + "</span>" +
                                         	        "<span>" + array["teams"][i]["team_name"] + "</span>" +
-                                            		"<span>" + array["teams"][i]["team_raw"] + "</span>" +
+                                            		"<span>" + array["teams"][i]["score"] + "</span>" +
                                         	"</li>"
                                 	);
 				}
@@ -1317,6 +1416,50 @@ function init()
 
 		filterMoreProgress();
 	});
+
+	$(".edit-opt-answer").click(function(e) {
+		e.preventDefault();
+
+		$(this.parentNode.parentNode.parentNode.parentNode.parentNode).find(".answer-normal").css("display", "none").parent().find(".answer-edit-answer").css("display", "block").parent().find(".answer-edit-parser").css("display", "none");
+	});
+
+	$(".edit-opt-parser").click(function(e) {
+                e.preventDefault();
+
+                $(this.parentNode.parentNode.parentNode.parentNode.parentNode).find(".answer-normal").css("display", "none").parent().find(".answer-edit-parser").css("display", "block").parent().find(".answer-edit-answer").css("display", "none");
+        });
+
+	$(".edit-answer-submit").click(function() {
+		var info = this.parentNode.parentNode.parentNode;
+
+		var av = $(this.parentNode).find("input").val();
+
+		$.post("/change_answer.php", { scid: info.dataset.scid, sid: info.dataset.sid, round: info.dataset.rndid, pnum: info.dataset.pnum, answer: av }, function(response) {
+			console.log(response);
+			if(response == "error")
+				alert("Whoops! There was an error");
+			else
+				alert("Your responses have been saved");
+		});
+
+		$(this.parentNode.parentNode).find(".answer-normal").css("display", "block").parent().find(".answer-edit-answer").css("display", "none");
+	});
+
+	$(".edit-parser-submit").click(function() {
+                var info = this.parentNode.parentNode.parentNode;
+
+                var av = $(this.parentNode).find(".select2").val();
+
+                $.post("/change_parser_answer.php", { scid: info.dataset.scid, sid: info.dataset.sid, round: info.dataset.rndid, pnum: info.dataset.pnum, answer: av }, function(response) {
+                        console.log(response);
+                        if(response == "error")
+                                alert("Whoops! There was an error");
+                        else
+                                alert("Your responses have been saved");
+                });
+
+                $(this.parentNode.parentNode).find(".answer-normal").css("display", "block").parent().find(".answer-edit-parser").css("display", "none");
+        });
 }
 
 </script>
@@ -1556,19 +1699,18 @@ function init()
 															<div id="filter_number" style="display:none;">0</div>
 														</th>
 														<th>
-															<h3 class="filter-title" id="filter_student_title">Student</h3>
+															<h3 class="filter-title" id="filter_student_title">Student/School</h3>
 															<select id="filter_student" class="select2 filter-select">
-																<option value="0">All Students</option>
-																<option value="s0">All Schools</option>
+																<option value="0">All</option>
+																<optgroup label="Schools">
+                                                                                                                                        <?php foreach($schools as $school): ?>
+                                                                                                                                                <option value="s<?= $school['SCID'] ?>"><?php echo clean($school["team_name"]); ?></option>
+                                                                                                                                        <?php endforeach; ?>
+                                                                                                                                </optgroup>
 																<optgroup label="Students">
 																	<?php foreach($students as $student): ?>
 																		<option value="<?= $student['SID'] ?>"><?php echo clean($student["first_name"] . " " . $student["last_name"]); ?></option>
 																	<?php endforeach; ?>
-																</optgroup>
-																<optgroup label="Schools">
-																	<?php foreach($schools as $school): ?>
-                                                                                                                                	        <option value="s<?= $school['SCID'] ?>"><?php echo clean($school["team_name"]); ?></option>
-                                                                                                                                	<?php endforeach; ?>
 																</optgroup>
 															</select>
 														</th>
@@ -1585,41 +1727,95 @@ function init()
 												</thead>
 												<tbody id="more-progress-list">
 													<tr style="display: none;" id="no-progress-results"><td colspan="4">There are no results for that filter</td></tr>
+													<?php foreach($schools as $school): ?>
+                                                                                                                <?php foreach($compstatus as $round): ?>
+                                                                                                                        <?php if($round["indiv"] == 0): ?>
+                                                                                                                                <?php for($i = 1; $i <= $round["num_questions"]; $i++): ?>
+                                                                                                                                        <tr id="s<?= $school['SCID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-scid="<?= $school['SCID'] ?>" data-sid="0" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-answer="3">
+                                                                                                                                                <td><?php echo clean($round["round_name"]); ?></td>
+                                                                                                                                                <td><?= $i ?></td>
+                                                                                                                                                <td><b><?php echo clean($school["team_name"]); ?></b></td>
+                                                                                                                                                <td class="panswer">
+																			<div class="answer-normal">
+																				<p class="noneyet">None yet</p>
+																				<div class="btn-group">
+																					<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																						Edit <span class="caret"></span>
+																					</button>
+																					<ul class="dropdown-menu">
+							    															<li><a class="edit-opt-answer">Answer</a></li>
+    																						<li><a class="edit-opt-parser">Parser Result</a></li>
+  																					</ul>
+																				</div>
+																			</div>
+																			<div class="answer-edit answer-edit-answer" style="display: none;">
+																				<input type="text" class="form-control"></input>
+																				<button class="btn btn-success edit-answer-submit">Save</button>
+																			</div>
+																			<div class="answer-edit answer-edit-parser" style="display: none;">
+                                                                                                                                                                <div class="edit-select">
+																					<select class="select2" style="width:100%;">
+																						<option value="1">Wrong</option>
+																						<option value="2">Right</option>
+																						<option value="3">None (delete answer)</option>
+																					</select>
+																				</div>
+                                                                                                                                                                <button class="btn btn-success edit-parser-submit">Save</button>
+                                                                                                                                                        </div>
+																		</td>
+																	</tr>
+                                                                                                                                <?php endfor; ?>
+                                                                                                                        <?php endif; ?>
+                                                                                                                <?php endforeach; ?>
+                                                                                                        <?php endforeach; ?>
 													<?php foreach($students as $student): ?>
 														<?php foreach($compstatus as $round): ?>
 															<?php if($round["indiv"] == 1): ?>
 																<?php for($i = 1; $i <= $round["num_questions"]; $i++): ?>
-																	<tr id="<?= $student['SID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-sid="<?= $student['SID'] ?>" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-answer="3">
+																	<tr id="<?= $student['SID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-sid="<?= $student['SID'] ?>" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-scid="<?= $student['SCID'] ?>" data-answer="3">
 																		<td><?php echo clean($round["round_name"]); ?></td>
 																		<td><?= $i ?></td>
 																		<td><?php echo clean($student["first_name"] . " " . $student["last_name"]); ?></td>
-																		<td class="panswer"><p class="noneyet">None yet</p></td>
+																		<td class="panswer">
+																			<div class="answer-normal">
+                                                                                                                                                                <p class="noneyet">None yet</p>
+                                                                                                                                                                <div class="btn-group">
+                                                                                                                                                                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                                                                                                                Edit <span class="caret"></span>
+                                                                                                                                                                        </button>
+                                                                                                                                                                        <ul class="dropdown-menu">
+                                                                                                                                                                                <li><a class="edit-opt-answer">Answer</a></li>
+                                                                                                                                                                                <li><a class="edit-opt-parser">Parser Result</a></li>
+                                                                                                                                                                        </ul>
+                                                                                                                                                                </div>
+                                                                                                                                                        </div>
+                                                                                                                                                        <div class="answer-edit answer-edit-answer" style="display: none;">
+                                                                                                                                                                <input type="text" class="form-control"></input>
+                                                                                                                                                                <button class="btn btn-success edit-answer-submit">Save</button>
+                                                                                                                                                        </div>
+                                                                                                                                                        <div class="answer-edit answer-edit-parser" style="display: none;">
+                                                                                                                                                                <div class="edit-select">
+                                                                                                                                                                        <select class="select2" style="width:100%;">
+                                                                                                                                                                                <option value="1">Wrong</option>
+                                                                                                                                                                                <option value="2">Right</option>
+                                                                                                                                                                                <option value="3">None (delete answer)</option>
+                                                                                                                                                                        </select>
+                                                                                                                                                                </div>
+                                                                                                                                                                <button class="btn btn-success edit-parser-submit">Save</button>
+                                                                                                                                                        </div>
+                                                                                                                                                </td>
 																	</tr>
 																<?php endfor; ?>
 															<?php endif; ?>
 														<?php endforeach; ?>
 													<?php endforeach; ?>
-													<?php foreach($schools as $school): ?>
-                                                                                                                <?php foreach($compstatus as $round): ?>
-                                                                                                                        <?php if($round["indiv"] == 0): ?>
-                                                                                                                                <?php for($i = 1; $i <= $round["num_questions"]; $i++): ?>
-                                                                                                                                        <tr id="s<?= $school['SCID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-scid="<?= $school['SCID'] ?>" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-answer="3" style="display:none;">
-                                                                                                                                                <td><?php echo clean($round["round_name"]); ?></td>
-                                                                                                                                                <td><?= $i ?></td>
-                                                                                                                                                <td><?php echo clean($school["team_name"]); ?></td>
-                                                                                                                                                <td class="panswer"><p class="noneyet">None yet</p></td>
-                                                                                                                                        </tr>
-                                                                                                                                <?php endfor; ?>
-                                                                                                                        <?php endif; ?>
-                                                                                                                <?php endforeach; ?>
-                                                                                                        <?php endforeach; ?>
 												</tbody>
 											</table>
 										</div>
 									</div>
 									<?php if($compstatus === 0): ?>
 										<div class="well">
-											<p>Looks like there aren't any round in this competition type</p>
+											<p>Looks like there aren't any rounds in this competition type</p>
 										</div>
 									<?php else: ?>
 										<?php foreach($compstatus as $round): ?>

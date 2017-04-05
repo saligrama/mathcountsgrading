@@ -107,6 +107,8 @@
                                 ]
             );
 
+	    dbQuery_new($conn, "DELETE FROM student_participants WHERE CID=:cid AND SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid)", ["cid" => $_POST["cid"], "scid" => $i]);
+
         }
 
 	foreach($set_regulars as $i) {
@@ -159,6 +161,21 @@
                                 ]
             );
 
+        }
+
+	if(!empty($set_schools) || !empty($unset_schools))
+        {
+                $rounds = dbQuery_new($conn, "SELECT RNDID FROM round WHERE CTID IN (SELECT CTID FROM competition WHERE CID=:cid)", ["cid" => $_POST["cid"]]);
+
+                foreach($rounds as $round)
+                        updateCompStatus($conn, $_POST["cid"], $round["RNDID"]);
+        }
+	else if(!empty($set_regulars) || !empty($unset_regulars) || !empty($set_alternates) || !empty($unset_alternates))
+        {
+                $rounds = dbQuery_new($conn, "SELECT RNDID FROM round WHERE indiv=true AND CTID IN (SELECT CTID FROM competition WHERE CID=:cid)", ["cid" => $_POST["cid"]]);
+
+                foreach($rounds as $round)
+                        updateCompStatus($conn, $_POST["cid"], $round["RNDID"]);
         }
 
 	redirectTo("/admin.php");

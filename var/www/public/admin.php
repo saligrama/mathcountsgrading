@@ -18,6 +18,29 @@
     $students = 0;
     $schools = 0;
 
+    if(isset($_GET["setComp"]))
+    {
+        if($_GET["setComp"] == 0)
+        {
+            $comprow = 0;
+            dbQuery_new($conn, "DELETE FROM current_competition;");
+        }
+        else
+        {
+            $exists = dbQuery_new($conn, "SELECT * FROM competition WHERE CID = :CID;", ["CID" => $_GET["setComp"]]);
+
+            if(!empty($exists))
+            {
+		if(empty($comprow))
+		    dbQuery_new($conn, "INSERT INTO current_competition SET CID=:cid", ["cid" => $_GET["setComp"]]);
+		else
+                    dbQuery_new($conn, "UPDATE current_competition SET CID = :CID;", ["CID" => $_GET["setComp"]]);
+
+		$comprow = $exists;
+	    }
+        }
+    }
+
     if(empty($comprow))
     {
         $comprow = 0;
@@ -39,26 +62,6 @@
 	    $comprow = 0;
 	else
 	    $comprow = $comprow[0];
-    }
-
-    if(isset($_GET["setComp"]))
-    {
-	if($_GET["setComp"] == 0)
-	{
-	    $comprow = 0;
-	    dbQuery_new($conn, "DELETE FROM current_competition;");
-	}
-	else
-	{
-            $exists = dbQuery_new($conn, "SELECT * FROM competition WHERE CID = :CID;", ["CID" => $_GET["setComp"]]);
-
-            if(!empty($exists))
-	    {
-                $comprow = $exists[0];
-
-		dbQuery_new($conn, "UPDATE current_competition SET CID = :CID;", ["CID" => $_GET["setComp"]]);
-	    }
-	}
     }
 
     render("admin_form.php", ["result" => $result, "comprow" => $comprow, "compstatus" => $compstatus, "fullname" => getFullName($conn), "students" => $students, "schools" => $schools]);
