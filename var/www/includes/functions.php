@@ -150,11 +150,16 @@ function compareAnswers($in1, $in2)
 	else if(sempty($a) || sempty($b))
 		return 0;
 
-	$e1_tok = tokenize($a);
-	$e2_tok = tokenize($b);
+
+	// if there are no operators, compare as strings only without any lexing or parsing
+	$operators_rgx = "(\+|\-|\*|\/|\^|OR)";
+	if (empty(preg_match($operators_rgx, $a))
+		return ($in1 == $in2);
 
 	$result = 0;
 	try {
+		$e1_tok = tokenize($a);
+		$e2_tok = tokenize($b);
 		$result = compare(
 				shunting_yard($e1_tok[0], $e1_tok[1]),
 				shunting_yard($e2_tok[0], $e2_tok[1])
