@@ -7,6 +7,9 @@
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
 
+<link rel="stylesheet" type="text/css" href="./styles/select2.css">
+<script src="./scripts/select2.full.js"></script>
+
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
 
@@ -368,8 +371,8 @@
 	border-bottom-right-radius: 5px;
 	background-color: #eee;
 	padding: 6px 12px 12px 12px;
-	height: 300px;
 	transition: height 1s;
+	height: 300px;
 	overflow: auto;
 }
 
@@ -382,10 +385,18 @@
 	table-layout: fixed;
 }
 
-.more-progress-table th {
-	font-size: 18px;
-	padding: 10px 5px 7px 5px;
-	text-align: center;
+#more-progress-head, #more-progress-list {
+	//display: block;
+}
+
+#more-progress-list {
+	//height: 280px;
+	//overflow-x: hidden;
+	//overflow-y: auto;
+}
+
+#more-progress-list td, #more-progress-head th {
+	//width: 25%;
 }
 
 td .wrong {
@@ -401,6 +412,40 @@ td .right {
 td .noneyet {
 	background-color: #fff;
 	color: #000;
+}
+
+.filter-select {
+	width: 100%;
+}
+
+.more-progress th {
+	padding: 8px;
+}
+
+.filter-title {
+	display: block;
+	width: 100%;
+	padding: 5px;
+	font-size: 17px;
+	margin: 0;
+        padding: 5px;
+	font-weight: 600;
+        text-align: center;
+}
+
+.select2-selection__rendered {
+	font-weight: 500;
+}
+
+#filter_number_enter {
+	font-weight: 400;
+}
+
+#no-progress-results td {
+	font-size: 15px;
+	font-weight: 400;
+	text-align: center;
+	padding: 15px;
 }
 
 </style>
@@ -483,31 +528,93 @@ function loadProgress()
 
 		$("#progressbar-total").css("width", avg + "%").html(avg + "%");
 
-		$("#more-progress-list .panswer p").removeClass().addClass("noneyet");
+		$("#more-progress-list tr").each(function() {
+			this.dataset.answer = "3";
+		}).find(".panswer p").removeClass().addClass("noneyet");
 
 		$(data.student_info_and_answers).each(function() {
 			var sinfo = this.student_info;
 
 			$(this.answers).each(function() {
-				//console.log("here");
+				var points = this.points;
 
-				$("#more-progress-list").find("#" + sinfo.SID + "a" + this.RNDID + "a" + this.problem_number + " .panswer").html("<p class='" + (this.points === 0 ? "wrong" : "right") + "'>'" + this.answer + "'</p>");
+				$("#more-progress-list").find("#" + sinfo.SID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
+					if(points === 0)
+						this.dataset.answer = "1";
+					else
+						this.dataset.answer = "2";
+				}).find(".panswer").html("<p class='" + (points === 0 ? "wrong" : "right") + "'>'" + this.answer + "'</p>");
 			});
 		});
 
-/*		 $(data.team_info_and_answers).each(function() {
-                        var tinfo = this.team_info;
+		$(data.team_info_and_answers).each(function() {
+			var tinfo = this.team_info;
 
-                        $(this.answers).each(function() {
-                                $("#more-progress-list").append("<tr><td>" + this.round_name + "</td><td>" + this.problem_number + "</td><td>" + tinfo.team_name + "</td><td><p class='" + (this.points === 0 ? "wrong" : "right") + "'>'" + this.answer + "'</p></td></tr>");
-                        });
-                });
-*/
+			$(this.answers).each(function() {
+				var points = this.points;
+
+                                $("#more-progress-list").find("#s" + tinfo.SCID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
+                                        if(points === 0)
+                                                this.dataset.answer = "1";
+                                        else
+                                                this.dataset.answer = "2";
+                                }).find(".panswer").html("<p class='" + (points === 0 ? "wrong" : "right") + "'>'" + this.answer + "'</p>");
+                	});
+		});
+
+		setTimeout(filterMoreProgress, 50);
 	});
 
 	request.fail(function(jqXHR, textStatus, errorThrown) {
 
         });
+}
+
+function filterMoreProgress()
+{
+	var school = false;
+	var id = $("#filter_student").val();
+
+	if(id.substr(0, 1) === "s")
+	{
+		school = true;
+		id = id.substr(1);
+	}
+
+	var rndid = $("#filter_round").val();
+	var answer = $("#filter_answer").val();
+	var number = $("#filter_number").html();
+
+	var shown = 0;
+
+	$("#more-progress-list tr").each(function() {
+		this.style.display = "none";
+
+		var isschool = (this.id.substr(0, 1) === "s");
+
+		if(school == isschool)
+		{
+			if(id == "0" || (isschool && (this.dataset.scid == id)) || this.dataset.sid == id)
+			{
+				if(rndid == "0" || this.dataset.rndid == rndid)
+				{
+					if(answer == "0" || this.dataset.answer == answer)
+					{
+						if(number == "0" || this.dataset.pnum == number)
+						{
+							this.style.display = "table-row";
+							shown++;
+						}
+					}
+				}
+			}
+		}
+	});
+
+	if(!shown)
+		$("#no-progress-results").css("display", "table-row");
+	else
+		$("#no-progress-results").css("display", "none");
 }
 
 function loadConflicts()
@@ -1180,10 +1287,36 @@ function init()
 
 	setInterval(function() { intervalFunc(); }, 2000);
 
+	$(".select2").select2({
+		minimumResultsForSearch: 6
+	});
+
 	loadProgress();
 	$("#progress-cont").css("display", "block");
 
 	$("#more-progress-toggle").click(function() { $(".more-progress").toggleClass("hidden"); });
+
+	$("#filter_student").change(filterMoreProgress);
+        $("#filter_round").change(filterMoreProgress);
+        $("#filter_answer").change(filterMoreProgress);
+
+	$("#filter_number_all").click(function() {
+		$("#filter_number").html("0");
+		$("#filter_number_enter").val("");
+
+		filterMoreProgress();
+	});
+
+	$("#filter_number_enter").change(function() {
+		var v = parseInt(this.value);
+
+		if(isNaN(v))
+			$("#filter_number").html("0");
+		else
+			$("#filter_number").html(v);
+
+		filterMoreProgress();
+	});
 }
 
 </script>
@@ -1401,20 +1534,62 @@ function init()
 										</div>
 										<div class="more-progress hidden">
 											<table class="more-progress-table">
-												<thead>
+												<thead id="more-progress-head">
 													<tr>
-														<th>Round</th>
-														<th>Problem Number</th>
-														<th>Student Name</th>
-														<th>Answer</th>
+														<th>
+															<h3 class="filter-title">Round</h3>
+															<select id="filter_round" class="select2 filter-select">
+																<option value="0">All Rounds</option>
+																<?php foreach($compstatus as $round): ?>
+																	<option value="<?= $round['RNDID'] ?>"><?php echo clean($round["round_name"]); ?></option>
+																<?php endforeach; ?>
+															</select>
+														</th>
+														<th>
+															<h3 class="filter-title">Problem #</h3>
+															<div class="input-group" id="filter_problemnumber">
+      																<span class="input-group-btn">
+        																<button id="filter_number_all" class="btn btn-default" type="button">All</button>
+      																</span>
+      																<input id="filter_number_enter" type="text" class="form-control" placeholder="Number">
+    															</div>
+															<div id="filter_number" style="display:none;">0</div>
+														</th>
+														<th>
+															<h3 class="filter-title" id="filter_student_title">Student</h3>
+															<select id="filter_student" class="select2 filter-select">
+																<option value="0">All Students</option>
+																<option value="s0">All Schools</option>
+																<optgroup label="Students">
+																	<?php foreach($students as $student): ?>
+																		<option value="<?= $student['SID'] ?>"><?php echo clean($student["first_name"] . " " . $student["last_name"]); ?></option>
+																	<?php endforeach; ?>
+																</optgroup>
+																<optgroup label="Schools">
+																	<?php foreach($schools as $school): ?>
+                                                                                                                                	        <option value="s<?= $school['SCID'] ?>"><?php echo clean($school["team_name"]); ?></option>
+                                                                                                                                	<?php endforeach; ?>
+																</optgroup>
+															</select>
+														</th>
+														<th>
+															<h3 class="filter-title">Answer</h3>
+															<select id="filter_answer" class="select2 filter-select">
+																<option value="0">All Answers</option>
+																<option value="1">Wrong Answers</option>
+																<option value="2">Right Answers</option>
+																<option value="3">No answers yet</option>
+															</select>
+														</th>
 													</tr>
 												</thead>
 												<tbody id="more-progress-list">
+													<tr style="display: none;" id="no-progress-results"><td colspan="4">There are no results for that filter</td></tr>
 													<?php foreach($students as $student): ?>
 														<?php foreach($compstatus as $round): ?>
 															<?php if($round["indiv"] == 1): ?>
 																<?php for($i = 1; $i <= $round["num_questions"]; $i++): ?>
-																	<tr id="<?= $student['SID'] . 'a' . $round['RNDID'] . 'a' . $i ?>">
+																	<tr id="<?= $student['SID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-sid="<?= $student['SID'] ?>" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-answer="3">
 																		<td><?php echo clean($round["round_name"]); ?></td>
 																		<td><?= $i ?></td>
 																		<td><?php echo clean($student["first_name"] . " " . $student["last_name"]); ?></td>
@@ -1424,6 +1599,20 @@ function init()
 															<?php endif; ?>
 														<?php endforeach; ?>
 													<?php endforeach; ?>
+													<?php foreach($schools as $school): ?>
+                                                                                                                <?php foreach($compstatus as $round): ?>
+                                                                                                                        <?php if($round["indiv"] == 0): ?>
+                                                                                                                                <?php for($i = 1; $i <= $round["num_questions"]; $i++): ?>
+                                                                                                                                        <tr id="s<?= $school['SCID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-scid="<?= $school['SCID'] ?>" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-answer="3" style="display:none;">
+                                                                                                                                                <td><?php echo clean($round["round_name"]); ?></td>
+                                                                                                                                                <td><?= $i ?></td>
+                                                                                                                                                <td><?php echo clean($school["team_name"]); ?></td>
+                                                                                                                                                <td class="panswer"><p class="noneyet">None yet</p></td>
+                                                                                                                                        </tr>
+                                                                                                                                <?php endfor; ?>
+                                                                                                                        <?php endif; ?>
+                                                                                                                <?php endforeach; ?>
+                                                                                                        <?php endforeach; ?>
 												</tbody>
 											</table>
 										</div>
