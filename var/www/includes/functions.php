@@ -153,7 +153,7 @@ function compareAnswers($in1, $in2)
 
 	// if there are no operators, compare as strings only without any lexing or parsing
 	$operators_rgx = "(\+|\-|\*|\/|\^|OR)";
-	if (empty(preg_match($operators_rgx, $a))
+	if (empty(preg_match($operators_rgx, $a)))
 		return ($in1 == $in2);
 
 	$result = 0;
