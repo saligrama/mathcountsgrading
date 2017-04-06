@@ -251,8 +251,7 @@ CREATE TABLE `round` (
 
 LOCK TABLES `round` WRITE;
 /*!40000 ALTER TABLE `round` DISABLE KEYS */;
-INSERT INTO `round` VALUES (1,1,30,1,'Sprint Round',1),(1,2,2,2,'Target, Round 1',1),(1,3,2,2,'Target, Round 2',1),(1,4,2,2,'Target, Round 3',1),(1,5,2,2,'Target, Round 
-4',1),(1,6,10,2,'Team Ro$
+INSERT INTO `round` VALUES (1,1,30,1,'Sprint Round',1),(1,2,2,2,'Target, Round 1',1),(1,3,2,2,'Target, Round 2',1),(1,4,2,2,'Target, Round 3',1),(1,5,2,2,'Target, Round 4',1),(1,6,10,2,'Team Round',0),(2,7,3,2,'Individual 1',1),(2,8,3,2,'Individual 2',1),(2,9,3,2,'Individual 3',1),(2,10,3,2,'Individual 4',1),(2,11,3,2,'Individual 5',1),(2,12,9,4,'Team',0);
 /*!40000 ALTER TABLE `round` ENABLE KEYS */;
 UNLOCK TABLES;
 
