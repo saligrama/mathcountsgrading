@@ -94,6 +94,16 @@ CREATE TABLE `competition_type` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `competition_type`
+--
+
+LOCK TABLES `competition_type` WRITE;
+/*!40000 ALTER TABLE `competition_type` DISABLE KEYS */;
+INSERT INTO `competition_type` VALUES (1,'Mathcounts',10,5,2,1),(2,'IMLEM',10,15,2,0);
+/*!40000 ALTER TABLE `competition_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `current_competition`
 --
 
@@ -234,6 +244,17 @@ CREATE TABLE `round` (
   PRIMARY KEY (`RNDID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `round`
+--
+
+LOCK TABLES `round` WRITE;
+/*!40000 ALTER TABLE `round` DISABLE KEYS */;
+INSERT INTO `round` VALUES (1,1,30,1,'Sprint Round',1),(1,2,2,2,'Target, Round 1',1),(1,3,2,2,'Target, Round 2',1),(1,4,2,2,'Target, Round 3',1),(1,5,2,2,'Target, Round 
+4',1),(1,6,10,2,'Team Ro$
+/*!40000 ALTER TABLE `round` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `school_info`
