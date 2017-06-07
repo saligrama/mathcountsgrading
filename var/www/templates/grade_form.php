@@ -38,6 +38,14 @@
 	font-size: 18px;
 }
 
+button.disabled {
+	background-color: #AAA;
+}
+
+button.disabled:hover {
+	background-color: #AAA;
+}
+
 @media (max-width: 991px) {
 
 	.panel {
@@ -55,6 +63,9 @@
 
 <script type="text/javascript">
 
+var student_answers = {};
+var previous_sid = 0;
+
 $(document).ready(function() {
         $(".js-select").select2({
                 minimumResultsForSearch: 6,
@@ -64,7 +75,58 @@ $(document).ready(function() {
 			text: "Select a student"
 		}
         });
+
+	$("#studentlist").change(function() {
+		var sid = parseInt($(this).val());
+
+		if(previous_sid != sid)
+		{
+			student_answers[previous_sid] = {};
+
+			$("#answers .answer-input").each(function() {
+				student_answers[previous_sid][parseInt(this.name)] = this.value;
+				this.value = "";
+			});
+
+			previous_sid = sid;
+
+			if(sid > 0 && student_answers[sid])
+			{
+				$("#answers .answer-input").each(function() {
+					var num = parseInt(this.name);
+
+					if(student_answers[sid][num])
+						this.value = student_answers[sid][num];
+				});
+			}
+
+			$("#gradesubmit").removeClass("btn-success").addClass("btn-primary").html("submit");
+		}
+
+		if(sid == 0)
+			$("#gradesubmit").addClass("disabled");
+		else
+			$("#gradesubmit").removeClass("disabled");
+	});
+
+	$("#gradesubmit").on("click", function(e) {
+		e.preventDefault();
+
+		if($(this).hasClass("btn-primary") && parseInt($("#studentlist").val()) > 0)
+		{
+			checkSubmit();
+
+			$(this).removeClass("btn-primary").addClass("btn-success").html("saved!");
+
+			$(this).trigger("focus");
+		}
+	});
 });
+
+function inputChange()
+{
+	$("#gradesubmit").removeClass("btn-success").addClass("btn-primary").html("submit");
+}
 
 function checkSubmit()
 {
@@ -100,10 +162,38 @@ function checkSubmit()
 		else
 			smes = "The following questions were left blank:\n";
 
-                return confirm(smes + mes.slice(0, -2) + "\n\n" + "Would you like to proceed?");
-        }
+                //if(confirm(smes + mes.slice(0, -2) + "\n\n" + "Would you like to proceed?"))
+		{
+			submit();
+        		return false;
+		}
+	}
 
-	return confirm("Are you sure you want to submit?");
+	//if(confirm("Are you sure you want to submit?"))
+	{
+		submit();
+		return false;
+	}
+
+	function submit()
+	{
+		var inputs = $("#answers :input");
+
+    		var values = {};
+	    	inputs.each(function() {
+        		values[this.name] = $(this).val();
+			console.log(this.name);
+    		});
+
+		values["gradesubmit"] = "y";
+		values["SID"] = $("#studentlist").val();
+
+		$.post("/grade.php", values, function(r) {
+			console.log(r);
+		});
+	}
+
+	return false;
 }
 
 </script>
@@ -180,7 +270,7 @@ function checkSubmit()
 							<?php endif; ?>
                         			</div>
 					</div><br>
-					<form id="answers" method="post" onsubmit="return checkSubmit();" action="">
+					<form id="answers">
 						<input type="hidden" name="round" value="<?= $roundrow['RNDID'] ?>"></input>
 						<input type="hidden" name="SCID" value="<?= $schoolrow['SCID'] ?>"></input>
 						<input type="hidden" name="indiv" value="<?= $roundrow['indiv'] ?>"></input>
@@ -198,7 +288,7 @@ function checkSubmit()
 											<?php for($k = 0; $k < ($roundrow["num_questions"] - 30 * $i - 10 * $j) && $k < 10; $k++): ?>
 												<div class="input-group">
                                 	                					<span class="input-group-addon"><?php echo (30 * $i + 10 * $j + $k + 1); ?> </span>
-               	                         	        					<input type="text" form="answers" class="form-control" name=<?= (30 * $i + 10 * $j + $k + 1)  . "question"?>></input>
+               	                         	        					<input oninput="inputChange()" type="text" form="answers" class="form-control answer-input" name=<?= (30 * $i + 10 * $j + $k + 1)  . "question"?>></input>
                	                         						</div><br>
 											<?php endfor; ?>
 										</div>
@@ -211,7 +301,8 @@ function checkSubmit()
 				</div>
 				<div class="panel-footer">
 					<div class="row">
-						<button type="submit" class="btn btn-primary col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4" name="gradesubmit" form="answers">Submit</button>
+						<a type="submit" class="btn btn-danger col-xs-offset-1 col-xs-4" href="/grader.php">Back</a>
+						<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-4 disabled" name="gradesubmit" form="answers" id="gradesubmit">Submit</button>
 					</div>
 				</div>
 			</div>

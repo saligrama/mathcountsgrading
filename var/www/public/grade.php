@@ -15,7 +15,8 @@
 				internalErrorRedirect("/grader.php");
 
         		$studentrows = dbQuery_new($conn, "SELECT * FROM mathlete_info WHERE SCID = :school AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid);", ["school" => $_POST["School"], "cid" => getCurrentComp($conn)]);
-			if(empty($studentrows)) {
+			if(empty($studentrows))
+			{
 				popupAlert("This school doesn't have any students yet.");
 				redirectTo("/grader.php");
 			}
@@ -27,6 +28,7 @@
 			$roundrow = dbQuery_new($conn, "SELECT * FROM round WHERE RNDID=:id", ["id" => $_POST["Round"]]);
 			if(empty($roundrow))
 				internalErrorRedirect("/grader.php");
+
 			$roundrow = $roundrow[0];
 
 			render("grade_form.php", ["studentrows" => $studentrows, "schoolrow" => $school[0], "roundrow" => $roundrow, "fullname" => getFullName($conn)]);
@@ -240,8 +242,10 @@
 
 			updateCompStatus($conn, $cid, $roundrow["RNDID"]);
 
-			popupAlert("Your input has been scored successfully!");
-			redirectTo("/grader.php");
+			//popupAlert("Your input has been scored successfully!");
+			//redirectTo("/grader.php");
+
+			echo "done";
 		}
 		else
 			redirectTo("/grader.php");

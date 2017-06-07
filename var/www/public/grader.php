@@ -33,6 +33,15 @@
 		$gschool = $result[0]["SCID"];
 
 
-	render("grader_form.php", ["schoolinfo" => $schoolinfo, "currentcomp" => $currentcomp, "gschool" => $gschool, "fullname" => getFullName($conn), "roundtypes" => $rtypes]);
+	$school = 0;
+	$round = 0;
+
+	if(isset($_SESSION["grader_school"]))
+		$school = $_SESSION["grader_school"];
+
+	if(isset($_SESSION["grader_round"]))
+		$round = $_SESSION["grader_round"];
+
+	render("grader_form.php", ["schoolinfo" => $schoolinfo, "currentcomp" => $currentcomp, "gschool" => $gschool, "fullname" => getFullName($conn), "roundtypes" => $rtypes, "school" => $school, "round" => $round]);
 
 ?>

@@ -41,6 +41,14 @@ $(document).ready(function() {
                         text: "Select a school"
                 }
         });
+
+	$("#school_list").change(function() {
+		$.post("/set_grader_vars.php", { school: this.value }, function(r) { console.log(r); });
+	});
+
+	$("#round").change(function() {
+		$.post("/set_grader_vars.php", { round: this.value}, function(r) { console.log(r); });
+	});
 });
 
 </script>
@@ -118,7 +126,7 @@ function checkSubmit()
 								<select name="School" id="school_list" class="js-select form-control" required>
                								<option value="0"></option>
 									<?php foreach($schoolinfo as $row): ?>
-       	        	    							<option value="<?= $row['SCID'] ?>"><?php echo clean($row["team_name"]); ?></option>
+       	        	    							<option value="<?= $row['SCID'] ?>" <?php if($row["SCID"] == $school) echo "selected";?>><?php echo clean($row["team_name"]); ?></option>
       									<?php endforeach; ?>
 								</select>
 							</div>
@@ -128,7 +136,7 @@ function checkSubmit()
 								<label for="round">Round</label>
 								<select name="Round" id="round" class="js-select form-control" required>
 									<?php foreach($roundtypes as $type): ?>
-										<option value="<?= $type['RNDID'] ?>"><?php echo clean($type["round_name"]); ?></option>
+										<option value="<?= $type['RNDID'] ?>" <?php if($type["RNDID"] == $round) echo "selected";?>><?php echo clean($type["round_name"]); ?></option>
 									<?php endforeach; ?>
 								</select>
 							</div>
