@@ -437,7 +437,7 @@ td p, .answer-edit input {
 	margin-bottom: 10px;
 }
 
-.panswer .btn-group {
+.panswer .btn-group, .answer-edit button {
 	margin-left: 5%;
 	width: 35% !important;
 	display: inline-block;
@@ -446,8 +446,6 @@ td p, .answer-edit input {
 .answer-edit button {
 	padding: 5px !important;
 	font-size: 13px !important;
-	width: 16% !important;
-	margin-left: 1% !important;
 }
 
 .panswer .btn-group button {
@@ -1422,24 +1420,13 @@ function init()
 	$(".edit-opt-answer").click(function(e) {
 		e.preventDefault();
 
-		//console.log(this.parentNode.parentNode.parentNode.previousSibling);
-		var a = $(this.parentNode.parentNode.parentNode.parentNode).find("p").html();
-		if(a.substr(0, 1) == "'")
-			a = a.substr(1, a.length-2);
-		else
-			a = "";
-
-		$(this.parentNode.parentNode.parentNode.parentNode.parentNode).find(".answer-normal").css("display", "none").parent().find(".answer-edit-parser").css("display", "none").parent().find(".answer-edit-answer").css("display", "block").find("input").val(a);
+		$(this.parentNode.parentNode.parentNode.parentNode.parentNode).find(".answer-normal").css("display", "none").parent().find(".answer-edit-answer").css("display", "block").parent().find(".answer-edit-parser").css("display", "none");
 	});
 
 	$(".edit-opt-parser").click(function(e) {
                 e.preventDefault();
 
-		var v = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.dataset.answer;
-
-		//console.log(v);
-
-                $(this.parentNode.parentNode.parentNode.parentNode.parentNode).find(".answer-normal").css("display", "none").parent().find(".answer-edit-answer").css("display", "none").parent().find(".answer-edit-parser").css("display", "block").find(".select2").val(v).trigger("change");
+                $(this.parentNode.parentNode.parentNode.parentNode.parentNode).find(".answer-normal").css("display", "none").parent().find(".answer-edit-parser").css("display", "block").parent().find(".answer-edit-answer").css("display", "none");
         });
 
 	$(".edit-answer-submit").click(function() {
@@ -1451,18 +1438,11 @@ function init()
 			console.log(response);
 			if(response == "error")
 				alert("Whoops! There was an error");
-		//	else
-		//		alert("Your responses have been saved");
+			else
+				alert("Your responses have been saved");
 		});
 
 		$(this.parentNode.parentNode).find(".answer-normal").css("display", "block").parent().find(".answer-edit-answer").css("display", "none");
-	});
-
-	$(".edit-cancel").click(function() {
-		var $p = $(this.parentNode.parentNode);
-
-		$p.children().css("display", "none");
-		$p.find(".answer-normal").css("display", "block");
 	});
 
 	$(".edit-parser-submit").click(function() {
@@ -1474,8 +1454,8 @@ function init()
                         console.log(response);
                         if(response == "error")
                                 alert("Whoops! There was an error");
-                  //      else
-                  //              alert("Your responses have been saved");
+                        else
+                                alert("Your responses have been saved");
                 });
 
                 $(this.parentNode.parentNode).find(".answer-normal").css("display", "block").parent().find(".answer-edit-parser").css("display", "none");
@@ -1501,7 +1481,7 @@ function init()
 			</li>
 			<li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
 			<li class="mnav-right"><a href="/register.php">New User</a></li>
-			<li class="mnav-right"><a href="/grader.php">Grade Participants</a></li>
+			<li class="mnav-right"><a href="/grade.php">Grade Participants</a></li>
 		</ul>
 	</div>
 </nav>
@@ -1770,8 +1750,7 @@ function init()
 																			</div>
 																			<div class="answer-edit answer-edit-answer" style="display: none;">
 																				<input type="text" class="form-control"></input>
-																				<button class="btn btn-success edit-answer-submit"><span class="glyphicon glyphicon-ok"></span></button>
-																				<button class="btn btn-danger edit-cancel"><span class="glyphicon glyphicon-remove"></span></button>
+																				<button class="btn btn-success edit-answer-submit">Save</button>
 																			</div>
 																			<div class="answer-edit answer-edit-parser" style="display: none;">
                                                                                                                                                                 <div class="edit-select">
@@ -1781,8 +1760,7 @@ function init()
 																						<option value="3">None (delete answer)</option>
 																					</select>
 																				</div>
-																				<button class="btn btn-success edit-parser-submit"><span class="glyphicon glyphicon-ok"></span></button>
-                                                                                                                                                                <button class="btn btn-danger edit-cancel"><span class="glyphicon glyphicon-remove"></span></button>
+                                                                                                                                                                <button class="btn btn-success edit-parser-submit">Save</button>
                                                                                                                                                         </div>
 																		</td>
 																	</tr>
@@ -1813,8 +1791,7 @@ function init()
                                                                                                                                                         </div>
                                                                                                                                                         <div class="answer-edit answer-edit-answer" style="display: none;">
                                                                                                                                                                 <input type="text" class="form-control"></input>
-																				<button class="btn btn-success edit-answer-submit"><span class="glyphicon glyphicon-ok"></span></button>
-                                                                                                                                                                <button class="btn btn-danger edit-cancel"><span class="glyphicon glyphicon-remove"></span></button>
+                                                                                                                                                                <button class="btn btn-success edit-answer-submit">Save</button>
                                                                                                                                                         </div>
                                                                                                                                                         <div class="answer-edit answer-edit-parser" style="display: none;">
                                                                                                                                                                 <div class="edit-select">
@@ -1824,8 +1801,7 @@ function init()
                                                                                                                                                                                 <option value="3">None (delete answer)</option>
                                                                                                                                                                         </select>
                                                                                                                                                                 </div>
-																				<button class="btn btn-success edit-parser-submit"><span class="glyphicon glyphicon-ok"></span></button>
-                                                                                                                                                                <button class="btn btn-danger edit-cancel"><span class="glyphicon glyphicon-remove"></span></button>
+                                                                                                                                                                <button class="btn btn-success edit-parser-submit">Save</button>
                                                                                                                                                         </div>
                                                                                                                                                 </td>
 																	</tr>

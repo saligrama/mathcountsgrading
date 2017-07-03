@@ -10,6 +10,8 @@
 <link rel="stylesheet" type="text/css" href="./styles/select2.css">
 <script src="./scripts/select2.full.js"></script>
 
+<link rel="stylesheet" type="text/css" href="./styles/custom-checkbox.css">
+
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
 
@@ -18,6 +20,10 @@
 <title>Grading school</title>
 
 <style>
+
+* {
+	box-sizing: border-box;
+}
 
 .panel {
 	max-width: none;
@@ -46,6 +52,157 @@ button.disabled:hover {
 	background-color: #AAA;
 }
 
+.answers-table {
+	width: 100%;
+	display: flex;
+}
+
+.answers-subtable-wrap {
+	display: inline-block;
+}
+
+.answers-subtable-fixed {
+	flex: 0;
+}
+
+.answers-subtable-fluid {
+	flex: 1;
+	overflow: auto;
+}
+
+.answers-subtable {
+}
+
+.answers-row {
+	display: block;
+	height: 40px;
+}
+
+.answers-header-row {
+	display: block;
+	height: 24px;
+	margin-bottom: 5px;
+	white-space: nowrap;
+}
+
+#numbers-header {
+	position: relative;
+}
+
+.answers-header {
+	background-color: #eee;
+	-webkit-box-shadow: 0px 4px 5px 0px rgba(200,200,200,200.75);
+	-moz-box-shadow: 0px 4px 5px 0px rgba(200,200,200,200.75);
+	box-shadow: 0px 4px 5px 0px rgba(200,200,200,0.75);
+	display: inline-block;
+	width: 60px;
+	text-align: center;
+	font-size: 16px;
+	margin: 2px 3px;
+	vertical-align: middle;
+}
+
+.answers-input-student, .answers-input-regular, .answer-input-list-wrap, .answers-input-school {
+	display: block;
+}
+
+.answer-input-list {
+	white-space: nowrap;
+}
+
+.answer-input-list-wrap {
+	width: 100%;
+}
+
+.answers-input-student, .answers-input-school {
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	padding: 2px 6px;
+	line-height: 30px;
+	background-color: #eee;
+        -webkit-box-shadow: 4px 0px 5px 0px rgba(200,200,200,200.75);
+        -moz-box-shadow: 4px 0px 5px 0px rgba(200,200,200,200.75);
+        box-shadow: 4px 0px 5px 0px rgba(200,200,200,0.75);
+}
+
+#table-names .answers-subtable {
+	margin-right: 6px;
+}
+
+#table-names {
+	margin-right: 10px;
+}
+
+#table-names .answers-row {
+	height: 40px;
+	padding: 3px 0px;
+}
+
+#table-scroll .answers-row {
+	padding: 1px;
+}
+
+.answers-input-student.highlight, .answers-input-school.highlight, .answers-header.highlight {
+	background-color: #999;
+	color: white;
+}
+
+.answer-input-span {
+	display: inline-block;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.answers-input-school {
+}
+
+.answers-input-regular {
+	width: 40px;
+	height: 40px;
+	line-height: 30px;
+}
+
+.answer-input {
+	display: inline-block;
+	width: 60px;
+	margin: 2px 3px;
+	vertical-align: middle;
+}
+
+.answer-input-input {
+	border-radius: 0px;
+}
+
+.answers-wrap {
+	display: inline-block;
+	max-width: 66.666%;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.all-wrap {
+	text-align: left;
+}
+
+#answers {
+	overflow-y: auto;
+	overflow-x: hidden;
+	max-height: 500px;
+}
+
+.relative-panel {
+	position: relative;
+}
+
+#subtable-regulars {
+	width: 40px;
+}
+
+.checkbox-custom + .checkbox-custom-label:before, .radio-custom + .radio-custom-label:before {
+	margin: auto;
+}
+
 @media (max-width: 991px) {
 
 	.panel {
@@ -54,8 +211,21 @@ button.disabled:hover {
 		max-width: 400px;
 	}
 
+	.all-wrap {
+		text-align: center;
+	}
+
+	.answers-wrap {
+		max-width: none;
+		display: block;
+	}
+
 	.form-group {
 		margin: 0;
+	}
+
+	.answer-input {
+		margin: 2px 3px;
 	}
 }
 
@@ -66,71 +236,182 @@ button.disabled:hover {
 var student_answers = {};
 var previous_sid = 0;
 
+var round_problems = [];
+
+<?php foreach($roundrows as $round): ?>
+round_problems[<?= $round["RNDID"] ?>] = {};
+round_problems[<?= $round["RNDID"] ?>]["pnum"] = <?php echo clean($round["num_questions"]); ?>;
+round_problems[<?= $round["RNDID"] ?>]["indiv"] = <?= $round["indiv"] == "1" ? "true" : "false" ?>;
+<?php endforeach; ?>
+
+function selectChange()
+{
+		var scid = parseInt($("#schoollist").val());
+		var rndid = parseInt($("#roundlist").val());
+
+			$("#answers .answers-row").each(function() {
+				if((!scid || this.dataset.scid == scid) && (!!this.dataset.sid == round_problems[rndid]["indiv"]))
+				{
+					this.style.display = "block";
+
+					if(this.dataset.haslist == "y")
+					{
+						var list = $(this).find(".answer-input-list").empty();
+
+						for(var i = 0; i < round_problems[rndid]["pnum"]; i++)
+							list.append("<div class='form-group answer-input'><input type='text' class='form-control answer-input-input' form='answers' name='" + i + "answer" + this.dataset.scid + "|" + this.dataset.sid + "'></input></div>");
+                			}
+				}
+				else
+					this.style.display = "none";
+			});
+
+		$("#answers #answers-header-list").empty().each(function() {
+			for(var i = 0; i < round_problems[rndid]["pnum"]; i++)
+				$(this).append("<div class='answers-header'>" + (i+1) + "</div>");
+		});
+}
+
 $(document).ready(function() {
         $(".js-select").select2({
                 minimumResultsForSearch: 6,
-		allowClear: true,
-		placeholder: {
-			id: "0",
-			text: "Select a student"
-		}
         });
 
-	$("#studentlist").change(function() {
-		var sid = parseInt($(this).val());
+	$("#schoollist").change(selectChange);
+	$("#roundlist").change(selectChange);
 
-		if(previous_sid != sid)
-		{
-			student_answers[previous_sid] = {};
+	selectChange();
 
-			$("#answers .answer-input").each(function() {
-				student_answers[previous_sid][parseInt(this.name)] = this.value;
-				this.value = "";
-			});
+	$("#table-scroll").on("focus", ".answer-input-input", function() {
+		var rect = this.getBoundingClientRect();
+		var scroll = document.getElementById("table-scroll");
+		var brect = scroll.getBoundingClientRect();
 
-			previous_sid = sid;
+		var form = document.getElementById("answers");
+		var frect = form.getBoundingClientRect();
 
-			if(sid > 0 && student_answers[sid])
+		var pad = 4;
+		var topStuff = 29;
+
+		if(rect.right > brect.right - pad)
+			scroll.scrollLeft = scroll.scrollLeft + (rect.right - brect.right) + pad;
+		else if(rect.left < brect.left + pad)
+			scroll.scrollLeft = scroll.scrollLeft - (brect.left - rect.left) - pad;
+
+		if(rect.bottom > frect.bottom - pad)
+                        form.scrollTop = form.scrollTop + (rect.bottom - frect.bottom) + pad;
+                else if(rect.top < frect.top + pad + topStuff)
+                        form.scrollTop = form.scrollTop - (frect.top - rect.top) - pad - topStuff;
+
+		var row = this.parentNode.parentNode.parentNode.parentNode;
+		var sid = row.dataset.sid;
+		var scid = row.dataset.scid;
+
+		$("#table-names .answers-row").each(function() {
+			if(this.dataset.scid == scid && (!sid || this.dataset.sid == sid))
 			{
-				$("#answers .answer-input").each(function() {
-					var num = parseInt(this.name);
+				console.log("highlight");
 
-					if(student_answers[sid][num])
-						this.value = student_answers[sid][num];
-				});
+				$(this).children().addClass("highlight");
+				return false;
 			}
+		});
 
-			$("#gradesubmit").removeClass("btn-success").addClass("btn-primary").html("submit");
+		var idx = $(this.parentNode).index();
+		$("#answers-header-list .answers-header").get(idx).classList.add("highlight");
+
+		var ridx = $(row).index();
+
+		var rows = row.parentNode.children;
+
+		var first = true;
+
+		for(var i = ridx-1; i >= 0; i--)
+		{
+			if(rows[i].style.display == "block")
+			{
+				first = false;
+				break;
+			}
 		}
 
-		if(sid == 0)
-			$("#gradesubmit").addClass("disabled");
-		else
-			$("#gradesubmit").removeClass("disabled");
+		if(first)
+			$("#answers").scrollTop(0);
 	});
 
-	$("#gradesubmit").on("click", function(e) {
-		e.preventDefault();
+	$("#table-scroll").on("blur", ".answer-input-input", function(event) {
+		$("#table-names .answers-input-school, #table-names .answers-input-student, #answers-header-list .answers-header").removeClass("highlight");
+	});
 
-		if($(this).hasClass("btn-primary") && parseInt($("#studentlist").val()) > 0)
+	$("#table-scroll").on("keydown", ".answer-input-input", function(event) {
+		// left
+		if(event.which == 37)
 		{
-			checkSubmit();
-
-			$(this).removeClass("btn-primary").addClass("btn-success").html("saved!");
-
-			$(this).trigger("focus");
+			if(this.parentNode.previousSibling && this.selectionStart == this.selectionEnd && this.selectionStart == 0)
+			{
+				event.preventDefault();
+				$(this).blur();
+				$(this.parentNode.previousSibling.children[0]).focus();
+			}
 		}
+		// right
+		else if(event.which == 39)
+		{
+			if(this.parentNode.nextSibling && this.selectionStart == this.selectionEnd && this.selectionStart == this.value.length)
+			{
+				event.preventDefault();
+				$(this).blur();
+				$(this.parentNode.nextSibling.children[0]).focus();
+			}
+		}
+		// top
+		else if(event.which == 38)
+		{
+			var row = this.parentNode.parentNode.parentNode.parentNode;
+			var prev = $(row).prev();
+
+			if(prev.length && prev.hasClass("answers-row") && prev.css("display") == "block")
+			{
+				var idx = $(this.parentNode).index();
+
+				//console.log(idx);
+
+				if(idx > -1)
+				{
+					event.preventDefault();
+                                	$(this).blur();
+					prev.find(".answer-input-input").get(idx).focus();
+				}
+			}
+		}
+		// bottom
+                else if(event.which == 40)
+                {
+                        var row = this.parentNode.parentNode.parentNode.parentNode;
+			var next = $(row).next();
+
+                        if(next.length && next.hasClass("answers-row") && next.css("display") == "block")
+                        {
+                                var idx = $(this.parentNode).index();
+
+                                if(idx > -1)
+                                {
+                                        event.preventDefault();
+                                        $(this).blur();
+					next.find(".answer-input-input").get(idx).focus()
+                                }
+                        }
+                }
+	});
+
+	$("#answers").scroll(function() {
+		$("#numbers-header").css("top", this.scrollTop + "px");
 	});
 });
 
-function inputChange()
-{
-	$("#gradesubmit").removeClass("btn-success").addClass("btn-primary").html("submit");
-}
-
 function checkSubmit()
 {
-	var se = document.getElementById("studentlist");
+	/*var se = document.getElementById("studentlist");
 
 	if(se.options[se.selectedIndex].value == "0")
 	{
@@ -191,9 +472,9 @@ function checkSubmit()
 		$.post("/grade.php", values, function(r) {
 			console.log(r);
 		});
-	}
+	}*/
 
-	return false;
+	return confirm("Are you sure you want to submit?");
 }
 
 </script>
@@ -217,92 +498,107 @@ function checkSubmit()
         </div>
 </nav>
 <div class="container-fluid main">
-	<div class="row text-center">
-		<?php if ($roundrow["indiv"] == "1"): ?>
+	<div class="row text-center all-wrap">
                 <div class="col-md-4">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h4>Choose a student</h4>
+					<h4>Filters</h4>
 				</div>
 				<div class="panel-body">
 					<div class="row">
 						<div class="form-group col-xs-12">
-							<p class="schoolname">From school '<b><?php echo clean($schoolrow["team_name"]); ?></b>':</p>
-							<select form="answers" name="SID" class="form-control js-select" id="studentlist">
-								<option value="0"></option>
-								<?php foreach($studentrows as $row): ?>
-									<option value=<?= $row['SID']?>> <?php echo clean(getStudentFullName($row)); ?></option>
+							<label>School</label>
+							<select form="answers" name="SCID" class="form-control js-select" id="schoollist">
+								<option value="0" selected>All schools</option>
+								<?php foreach($schoolrows as $row): ?>
+									<option value="<?= $row['SCID']?>"> <?php echo clean($row["team_name"]); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
 					</div>
+					<div class="row">
+                                                <div class="form-group col-xs-12">
+                                                        <label>Round</label>
+                                                        <select form="answers" name="RNDID" class="form-control js-select" id="roundlist">
+                                                                <?php foreach($roundrows as $row): ?>
+                                                                        <option value="<?= $row['RNDID']?>"> <?php echo clean($row["round_name"]); ?></option>
+                                                                <?php endforeach; ?>
+                                                        </select>
+                                                </div>
+                                        </div>
 				</div>
 			</div>
 		</div>
-		<?php endif; ?>
-		<?php if($roundrow["num_questions"] < 11): ?>
-			<?php if($roundrow["indiv"] == "0"): ?>
-			<div class="col-md-4 col-md-offset-4 col-xs-offset-1 col-xs-10">
-			<?php else: ?>
-			<div class="col-md-4 col-md-offset-0 col-xs-offset-1 col-xs-10">
-			<?php endif; ?>
-		<?php elseif($roundrow["num_questions"] < 21): ?>
-			<?php if($roundrow["indiv"] == "0"): ?>
-                        <div class="col-md-3 col-md-offset-6 col-xs-offset-1 col-xs-10">
-                        <?php else: ?>
-                        <div class="col-md-6 col-md-offset-0 col-xs-offset-1 col-xs-10">
-                        <?php endif; ?>
-		<?php else: ?>
-		<?php if($roundrow["indiv"] == "0"): ?>
-                        <div class="col-md-8 col-md-offset-2 col-xs-offset-1 col-xs-10">
-                        <?php else: ?>
-                        <div class="col-md-8 col-md-offset-0 col-xs-offset-1 col-xs-10">
-                        <?php endif; ?>
-		<?php endif; ?>
+                <div class="answers-wrap">
 			<div class="panel panel-primary">
                			<div class="panel-heading"><h4>Fill out answers</h4></div>
-                		<div class="panel-body">
-					<div class="row">
-						<div class="col-xs-12">
-                        				<label style="font-size:21px;" for="answers"><?php echo clean($roundrow["round_name"]); ?></label>
-							<?php if($roundrow["indiv"] == "0"): ?>
-								<p class="schoolname">For school '<?php echo clean($schoolrow["team_name"]); ?>':</p>
-							<?php endif; ?>
-                        			</div>
-					</div><br>
-					<form id="answers">
-						<input type="hidden" name="round" value="<?= $roundrow['RNDID'] ?>"></input>
-						<input type="hidden" name="SCID" value="<?= $schoolrow['SCID'] ?>"></input>
-						<input type="hidden" name="indiv" value="<?= $roundrow['indiv'] ?>"></input>
-						<?php for($i = 0; $i < $roundrow["num_questions"] / 30; $i++): ?>
-							<div class="row">
-		                               			<?php for($j = 0; $j < ($roundrow["num_questions"] - 30 * $i) / 10 && $j < 3; $j++): ?>
-        		                               			<?php if($roundrow["num_questions"] < 11): ?>
-									<div class="col-xs-offset-1 col-xs-10">
-									<?php elseif($roundrow["num_questions"] < 21): ?>
-									<div class="col-md-offset-1 col-md-5 col-xs-offset-1 col-xs-10">
-									<?php else: ?>
-									<div class="col-md-4 col-md-offset-0 col-xs-offset-1 col-xs-10">
-									<?php endif; ?>
-										<div class="form-group">
-											<?php for($k = 0; $k < ($roundrow["num_questions"] - 30 * $i - 10 * $j) && $k < 10; $k++): ?>
-												<div class="input-group">
-                                	                					<span class="input-group-addon"><?php echo (30 * $i + 10 * $j + $k + 1); ?> </span>
-               	                         	        					<input oninput="inputChange()" type="text" form="answers" class="form-control answer-input" name=<?= (30 * $i + 10 * $j + $k + 1)  . "question"?>></input>
-               	                         						</div><br>
-											<?php endfor; ?>
+                		<div class="panel-body relative-panel">
+					<form id="answers" method="post" action="" onsubmit="return checkSubmit()">
+						<div class="answers-table">
+							<div id="table-names" class="answers-subtable-wrap answers-subtable-fixed">
+								<div class="answers-header-row">
+                                                                        <div class="answers-header"></div>
+                                                                </div>
+								<div class="answers-subtable">
+									<?php foreach($studentrows as $student): ?>
+										<div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
+											<div class="answers-input-student">
+												<span class="answer-input-span"><?php echo clean(getStudentFullName($student)); ?></span>
+											</div>
 										</div>
-        	                	        			</div>
-								<?php endfor; ?>
+									<?php endforeach; ?>
+									<?php foreach($schoolrows as $school): ?>
+                                                                		<div class="answers-row" data-scid="<?= $school['SCID'] ?>" style="display: none">
+                                                                        		<div class="answers-input-school">
+                                                                                		<span class="answer-input-span"><?php echo clean($school["team_name"]); ?></span>
+                                                                        		</div>
+                                                                		</div>
+                                                        		<?php endforeach; ?>
+								</div>
 							</div>
-						<?php endfor; ?>
-						<input type="hidden" name="numquestions" value="<?= $roundrow['num_questions'] ?>">
+							<div id="table-scroll" class="answers-subtable-wrap answers-subtable-fluid">
+								<div class="answers-header-row" id="numbers-header">
+                                                                        <div class="answers-header-wrap" id="answers-header-list"></div>
+                                                                </div>
+								<div class="answers-subtable">
+									<?php foreach($studentrows as $student): ?>
+               	                                                        	<div class="answers-row" data-haslist="y" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
+               	                                	                      		<div class="answer-input-list-wrap">
+												<div class="answer-input-list"></div>
+											</div>
+										</div>
+                                                                	<?php endforeach; ?>
+                                                                	<?php foreach($schoolrows as $school): ?>
+                                                                        	<div class="answers-row" data-haslist="y" data-scid="<?= $school['SCID'] ?>" style="display: none">
+                                                                        		<div class="answer-input-list-wrap">
+                                                                                                <div class="answer-input-list"></div>
+                                                                                        </div>
+										</div>
+                                                                	<?php endforeach; ?>
+								</div>
+							</div>
+							<div class="answers-subtable-wrap answers-subtable-fixed" id="subtable-regulars">
+								<div class="answers-subtable">
+									<div class="answers-header-row">
+                                                                                <div class="answers-header"></div>
+                                                                        </div>
+									<?php foreach($studentrows as $student): ?>
+                                                                        	<div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
+                                                                                	<div class="answers-input-regular">
+                                                                                        	<input type="checkbox" value="yes" class="checkbox-custom"></span>
+												<label class="checkbox-custom-label"></label>
+                                                                                	</div>
+                                                                        	</div>
+                                                                	<?php endforeach; ?>
+								</div>
+							</div>
+						</div>
 					</form>
 				</div>
 				<div class="panel-footer">
 					<div class="row">
 						<a type="submit" class="btn btn-danger col-xs-offset-1 col-xs-4" href="/grader.php">Back</a>
-						<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-4 disabled" name="gradesubmit" form="answers" id="gradesubmit">Submit</button>
+						<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-4" name="gradesubmit" form="answers" id="gradesubmit">Submit</button>
 					</div>
 				</div>
 			</div>

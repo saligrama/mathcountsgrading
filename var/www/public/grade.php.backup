@@ -12,11 +12,50 @@
 	{
 		if(isset($_POST["gradesubmit"]))
 		{
+			// sanity check
+			if(!isset($_POST["numquestions"]) || !isset($_POST["round"]) || !isset($_POST["SCID"]))
+				internalErrorRedirect("/grader.php");
+
+			// Get round info
+			$roundrow = dbQuery_new($conn, "SELECT * FROM round WHERE RNDID=:id", ["id" => $_POST["round"]]);
+			if(empty($roundrow))
+				internalErrorRedirect("/grader.php");
+			$roundrow = $roundrow[0];
+
+			if($roundrow["indiv"] == "1" && !isset($_POST["SID"]))
+				internalErrorRedirect("/grader.php");
+
+			// Get competition type info
+			$typerow = dbQuery_new($conn, "SELECT * FROM competition_type WHERE CTID=:id", ["id" => $roundrow["CTID"]]);
+			if(empty($typerow))
+				internalErrorRedirect("/grader.php");
+			$typerow = $typerow[0];
+
+			// more sanity checks
+			for($i = 1; $i <= intval($roundrow["num_questions"]); $i++)
+				if(!isset($_POST[$i . "question"]))
+					internalErrorRedirect("/grader.php");
+
+			// user type
+			$ut = dbQuery_new($conn, "SELECT type FROM user WHERE UID=:uid", ["uid" => $_SESSION["UID"]]);
+			if(empty($ut))
+				internalErrorRedirect("/grader.php");
+			else
+				$ut = $ut[0]["type"];
+
 			$cid = getCurrentComp($conn);
 			if($cid === 0)
 				internalErrorRedirect("/grader.php");
 
-			//$participants = dbQuery_new($conn, "SELECT * FROM 
+			$valid = dbQuery_new($conn, "SELECT SCID FROM competition_participants WHERE CID=:cid AND SCID=:scid", ["cid" => $cid, "scid" => $_POST["SCID"]]);
+			if(empty($valid))
+				internalErrorRedirect("/grader.php");
+			else if($roundrow["indiv"] == "1")
+			{
+				$valid = dbQuery_new($conn, "SELECT SID FROM student_participants WHERE CID=:cid AND SID=:sid", ["cid" => $cid, "sid" => $_POST["SID"]]);
+				if(empty($valid))
+					internalErrorRedirect("/grader.php");
+			}
 
 			// insert responses
 			for($i = 1; $i <= intval($roundrow["num_questions"]); $i++)
