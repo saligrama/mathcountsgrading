@@ -37,7 +37,7 @@
 
         );
 
-	popupAlert("Success! school created");
+	//popupAlert("Success! school created");
 	redirectTo("/create.php");
 
     }
@@ -51,3 +51,4 @@
     }
 
 ?>
+

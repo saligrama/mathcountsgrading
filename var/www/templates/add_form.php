@@ -77,13 +77,15 @@ function checkSubmit()
                 return false;
         }
 
+	/*
 	var mes = "Are you sure you want to create a school with team name '";
 	mes += document.getElementById("teamname").value;
 	mes += "' from the town '";
 	mes += document.getElementById("town").value;
 	mes += "'?";
+	*/
 
-	return confirm(mes);
+	//return confirm(mes);
 }
 
 </script>
