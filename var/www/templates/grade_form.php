@@ -8,7 +8,7 @@
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
 
 <link rel="stylesheet" type="text/css" href="./styles/select2.css">
-<script src="./scripts/select2.full.js"></script>
+<script src="./scripts/select2.js"></script>
 
 <link rel="stylesheet" type="text/css" href="./styles/custom-checkbox.css">
 
@@ -68,6 +68,7 @@ button.disabled:hover {
 .answers-subtable-fluid {
 	flex: 1;
 	overflow: auto;
+	will-change: transform;
 }
 
 .answers-subtable {
@@ -100,6 +101,22 @@ button.disabled:hover {
 	font-size: 16px;
 	margin: 2px 3px;
 	vertical-align: middle;
+}
+
+.answers-header-row-s {
+	padding: 2px;
+	white-space: nowrap;
+	background-color: #777;
+	color: white;
+	margin-top: 2px;
+	-webkit-box-shadow: 0px 4px 5px 0px rgba(200,200,200,200.75);
+        -moz-box-shadow: 0px 4px 5px 0px rgba(200,200,200,200.75);
+        box-shadow: 0px 4px 5px 0px rgba(200,200,200,0.75);
+	font-size: 15px;
+	line-height: 22px;
+	position: relative;
+	margin-right: 6px;
+	z-index: 20;
 }
 
 .answers-input-student, .answers-input-regular, .answer-input-list-wrap, .answers-input-school {
@@ -179,6 +196,7 @@ button.disabled:hover {
 	max-width: 66.666%;
 	padding-left: 15px;
 	padding-right: 15px;
+	text-align: center;
 }
 
 .all-wrap {
@@ -189,6 +207,7 @@ button.disabled:hover {
 	overflow-y: auto;
 	overflow-x: hidden;
 	max-height: 500px;
+	will-change: transform;
 }
 
 .relative-panel {
@@ -203,12 +222,39 @@ button.disabled:hover {
 	margin: auto;
 }
 
+#saved {
+	padding: 3px 15px;
+	font-size: 18px;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 2px;
+	text-align: center;
+	white-space: nowrap;
+}
+
+#saved.error {
+	border-color: red;
+}
+
+#saved.no {
+	border-color: orange;
+}
+
+#saved.yes {
+	border-color: green;
+}
+
 @media (max-width: 991px) {
+
+	.filters-wrap {
+		max-width: 400px;
+		margin: auto;
+	}
 
 	.panel {
 		margin-left: auto;
 		margin-right: auto;
-		max-width: 400px;
+		max-width: 700px;
 	}
 
 	.all-wrap {
@@ -217,11 +263,6 @@ button.disabled:hover {
 
 	.answers-wrap {
 		max-width: none;
-		display: block;
-	}
-
-	.form-group {
-		margin: 0;
 	}
 
 	.answer-input {
@@ -237,6 +278,10 @@ var student_answers = {};
 var previous_sid = 0;
 
 var round_problems = [];
+
+var all_answers = [];
+var all_team_answers = [];
+var all_regulars = [];
 
 <?php foreach($roundrows as $round): ?>
 round_problems[<?= $round["RNDID"] ?>] = {};
@@ -259,20 +304,98 @@ function selectChange()
 						var list = $(this).find(".answer-input-list").empty();
 
 						for(var i = 0; i < round_problems[rndid]["pnum"]; i++)
-							list.append("<div class='form-group answer-input'><input type='text' class='form-control answer-input-input' form='answers' name='" + i + "answer" + this.dataset.scid + "|" + this.dataset.sid + "'></input></div>");
-                			}
+						{
+							var value = "";
+							if(this.dataset.sid)
+							{
+								if(all_answers[this.dataset.sid] && all_answers[this.dataset.sid][rndid] && all_answers[this.dataset.sid][rndid][i+1])
+									value = all_answers[this.dataset.sid][rndid][i+1];
+							}
+							else
+							{
+								if(all_team_answers[scid] && all_team_answers[scid][rndid] && all_team_answers[scid][rndid][i+1])
+									value = all_team_answers[scid][rndid][i+1];
+							}
+
+							list.append("<div class='form-group answer-input'><input type='text' class='form-control answer-input-input' form='answers' data-lastsent='' name='" + (i+1) + "answer" + this.dataset.scid + "|" + (this.dataset.sid ? this.dataset.sid : "0") + "' value='" + value + "'></input></div>");
+                				}
+					}
 				}
 				else
 					this.style.display = "none";
 			});
 
+		$("#subtable-regulars .answers-row").each(function() {
+			$(this).find(".checkbox-custom").prop("checked", all_regulars[this.dataset.sid][rndid] === 1 ? true : false);
+		});
+
 		$("#answers #answers-header-list").empty().each(function() {
 			for(var i = 0; i < round_problems[rndid]["pnum"]; i++)
 				$(this).append("<div class='answers-header'>" + (i+1) + "</div>");
 		});
+
+		if(round_problems[rndid]["indiv"])
+		{
+			$("#student-header").html("Student");
+			$("#subtable-regulars").css("display", "inline-block");
+		}
+		else
+		{
+			$("#student-header").html("School");
+			$("#subtable-regulars").css("display", "none");
+		}
 }
 
 $(document).ready(function() {
+	$.post("/get_all_answers.php", function(r) {
+		var data = JSON.parse(r);
+
+		for(var i = 0; i < data.answers.length; i++)
+		{
+			var row = data.answers[i];
+
+			if(!all_answers[row.SID])
+				all_answers[row.SID] = [];
+
+			if(!all_answers[row.SID][row.RNDID])
+				all_answers[row.SID][row.RNDID] = [];
+
+			all_answers[row.SID][row.RNDID][row.problem_number] = row.answer;
+		}
+
+		for(var i = 0; i < data.team_answers.length; i++)
+		{
+			var row = data.team_answers[i];
+
+			if(!all_team_answers[row.SCID])
+				all_team_answers[row.SCID] = [];
+
+			if(!all_team_answers[row.SCID][row.RNDID])
+				all_team_answers[row.SCID][row.RNDID] = [];
+
+			all_team_answers[row.SCID][row.RNDID][row.problem_number] = row.answer;
+		}
+
+		for(var i = 0; i < data.parts.length; i++)
+		{
+			all_regulars[data.parts[i].SID] = [];
+
+			var t = (data.parts[i].type == "regular" ? 1 : 0);
+
+			for(var j = 0; j < data.rounds.length; j++)
+				all_regulars[data.parts[i].SID][data.rounds[j].RNDID] = t;
+		}
+
+		for(var i = 0; i < data.overrides.length; i++)
+		{
+			if(!all_regulars[data.overrides[i].SID])
+				all_regulars[data.overrides[i].SID] = [];
+
+			var t = (data.overrides[i].type == "regular" ? 1 : 0);
+
+			all_regulars[data.overrides[i].SID][data.overrides[i].RNDID] = t;
+		}
+
         $(".js-select").select2({
                 minimumResultsForSearch: 6,
         });
@@ -310,7 +433,7 @@ $(document).ready(function() {
 		$("#table-names .answers-row").each(function() {
 			if(this.dataset.scid == scid && (!sid || this.dataset.sid == sid))
 			{
-				console.log("highlight");
+				//console.log("highlight");
 
 				$(this).children().addClass("highlight");
 				return false;
@@ -341,6 +464,8 @@ $(document).ready(function() {
 
 	$("#table-scroll").on("blur", ".answer-input-input", function(event) {
 		$("#table-names .answers-input-school, #table-names .answers-input-student, #answers-header-list .answers-header").removeClass("highlight");
+
+		gradeProblem(this);
 	});
 
 	$("#table-scroll").on("keydown", ".answer-input-input", function(event) {
@@ -402,79 +527,96 @@ $(document).ready(function() {
                                 }
                         }
                 }
+		else
+			$("#saved").removeClass("no yes error").addClass("no").html("Saving...");
 	});
 
 	$("#answers").scroll(function() {
 		$("#numbers-header").css("top", this.scrollTop + "px");
+		$(".answers-header-row-s").css("top", this.scrollTop + "px");
+	});
+
+	setInterval(function() {
+		var e = document.activeElement;
+
+		if(e.classList == "form-control answer-input-input")
+			gradeProblem(e);
+	}, 2000);
+
+	$(".checkbox-custom-label").click(function() {
+		var prev = $(this).prev().prop("checked");
+
+		$(this).prev().prop("checked", !prev);
+
+		var rndid = $("#roundlist").val();
+		var sid = this.parentNode.parentNode.dataset.sid;
+
+		$.post("/set_regular_override.php", { rndid: rndid, sid: sid, yes: !prev }, function(r) {
+			if(r == "success")
+			{
+				all_regulars[sid][rndid] = prev ? 0 : 1;
+				console.log(sid + "  " + rndid + "   " + !prev);
+			}
+			else
+				$("#saved").removeClass("no yes error").addClass("error").html("Error Saving");
+		});
+	});
+
 	});
 });
 
-function checkSubmit()
+function gradeProblem(input)
 {
-	/*var se = document.getElementById("studentlist");
+	var pn = parseInt(input.name);
+	var pnl = Math.ceil(Math.log(pn + 1) / Math.LN10);
 
-	if(se.options[se.selectedIndex].value == "0")
+	var scid = parseInt(input.name.substr(pnl + 6));
+	var scidl = Math.ceil(Math.log(scid + 1) / Math.LN10);
+
+	var sid = parseInt(input.name.substr(pnl + scidl + 7));
+
+	var val = input.value;
+
+	var rndid = $("#roundlist").val();
+
+	if(input.dataset.lastsent != val)
 	{
-		alert("Please select a student to grade");
-		return false;
-	}
+		$.post("/grade_func.php", { pn: pn, answer: val, scid: scid, sid: sid, rndid: rndid }, function(r) {
+			if(r.indexOf("success") > -1)
+			{
+				$("#saved").removeClass("no yes error").addClass("yes").html("Saved");
 
-	var length = document.getElementById("answers").elements.length;
+				if(sid)
+				{
+					if(!all_answers[sid])
+						all_answers[sid] = [];
 
-        var mes = "";
+					if(!all_answers[sid][rndid])
+						all_answers[sid][rndid] = [];
 
-	var numb = 0;
-        for(i = 0; i < length-1; i++)
-        {
-		var e = document.getElementById("answers").elements[i];
+					all_answers[sid][rndid][pn] = val;
+				}
+				else
+				{
+					if(!all_team_answers[scid])
+                                                all_answers[scid] = [];
 
-                if(e.value === "")
-                {
-                        mes += parseInt(e.getAttribute("name")) + ", ";
-                	numb++;
-		}
-        }
+                                        if(!all_team_answers[scid][rndid])
+                                                all_answers[scid][rndid] = [];
 
-        if(mes != "")
-        {
-		var smes = "";
-		if(numb == 1)
-			smes = "The following question was left blank:\n";
-		else
-			smes = "The following questions were left blank:\n";
+					all_team_answers[scid][rndid][pn] = val;
+				}
+			}
+			else
+				$("#saved").removeClass("no yes error").addClass("error").html("Error Saving");
 
-                //if(confirm(smes + mes.slice(0, -2) + "\n\n" + "Would you like to proceed?"))
-		{
-			submit();
-        		return false;
-		}
-	}
-
-	//if(confirm("Are you sure you want to submit?"))
-	{
-		submit();
-		return false;
-	}
-
-	function submit()
-	{
-		var inputs = $("#answers :input");
-
-    		var values = {};
-	    	inputs.each(function() {
-        		values[this.name] = $(this).val();
-			console.log(this.name);
-    		});
-
-		values["gradesubmit"] = "y";
-		values["SID"] = $("#studentlist").val();
-
-		$.post("/grade.php", values, function(r) {
-			console.log(r);
+			//console.log(r);
 		});
-	}*/
 
-	return confirm("Are you sure you want to submit?");
+		input.dataset.lastsent = input.value;
+	}
+	else
+		$("#saved").removeClass("no yes error").addClass("yes").html("Saved");
 }
 
 </script>
@@ -499,7 +641,7 @@ function checkSubmit()
 </nav>
 <div class="container-fluid main">
 	<div class="row text-center all-wrap">
-                <div class="col-md-4">
+                <div class="col-md-4 filters-wrap">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h4>Filters</h4>
@@ -533,11 +675,11 @@ function checkSubmit()
 			<div class="panel panel-primary">
                			<div class="panel-heading"><h4>Fill out answers</h4></div>
                 		<div class="panel-body relative-panel">
-					<form id="answers" method="post" action="" onsubmit="return checkSubmit()">
+					<form id="answers">
 						<div class="answers-table">
 							<div id="table-names" class="answers-subtable-wrap answers-subtable-fixed">
-								<div class="answers-header-row">
-                                                                        <div class="answers-header"></div>
+								<div class="answers-header-row answers-header-row-s">
+                                                                        <div class="answers-header-s" id="student-header">Student</div>
                                                                 </div>
 								<div class="answers-subtable">
 									<?php foreach($studentrows as $student): ?>
@@ -579,13 +721,13 @@ function checkSubmit()
 							</div>
 							<div class="answers-subtable-wrap answers-subtable-fixed" id="subtable-regulars">
 								<div class="answers-subtable">
-									<div class="answers-header-row">
-                                                                                <div class="answers-header"></div>
+									<div style="margin-left: 3px" class="answers-header-row answers-header-row-s">
+                                                                                <div class="answers-header-s">R</div>
                                                                         </div>
 									<?php foreach($studentrows as $student): ?>
                                                                         	<div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
                                                                                 	<div class="answers-input-regular">
-                                                                                        	<input type="checkbox" value="yes" class="checkbox-custom"></span>
+												<input type="checkbox" class="checkbox-custom"></input>
 												<label class="checkbox-custom-label"></label>
                                                                                 	</div>
                                                                         	</div>
@@ -597,8 +739,8 @@ function checkSubmit()
 				</div>
 				<div class="panel-footer">
 					<div class="row">
-						<a type="submit" class="btn btn-danger col-xs-offset-1 col-xs-4" href="/grader.php">Back</a>
-						<button type="submit" class="btn btn-primary col-xs-offset-1 col-xs-4" name="gradesubmit" form="answers" id="gradesubmit">Submit</button>
+						<a type="submit" class="btn btn-danger col-xs-offset-1 col-xs-4" href="/admin.php">Back</a>
+						<div id="saved" class="col-xs-offset-1 col-xs-4 yes">Saved</div>
 					</div>
 				</div>
 			</div>

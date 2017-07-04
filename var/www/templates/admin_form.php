@@ -8,7 +8,7 @@
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
 
 <link rel="stylesheet" type="text/css" href="./styles/select2.css">
-<script src="./scripts/select2.full.js"></script>
+<script src="./scripts/select2.js"></script>
 
 <link rel="stylesheet" type="text/css" href="./styles/general.css">
 <script src="./scripts/general.js"></script>
@@ -510,6 +510,10 @@ td .noneyet {
 	font-weight: 400;
 	text-align: center;
 	padding: 15px;
+}
+
+.small-select {
+	padding: 4px;
 }
 
 </style>
@@ -1369,14 +1373,12 @@ function hideAll()
 
 function init()
 {
-	$("#navbar-list li a").each(function() {
-		$(this).click(function() {
-			$("#navbar-list li").removeClass("active");
-			$(this).parent().addClass("active");
+	$("#navbar-list li a").click(function() {
+		$("#navbar-list li").removeClass("active");
+		$(this).parent().addClass("active");
 
-			hideAll();
-			$("#" + $(this).data("describes")).css("display", "block");
-		});
+		hideAll();
+		$("#" + $(this).data("describes")).css("display", "block");
 	});
 
 	$("#navbar-progress").click(loadProgress);
@@ -1754,7 +1756,7 @@ function init()
 																			</div>
 																			<div class="answer-edit answer-edit-parser" style="display: none;">
                                                                                                                                                                 <div class="edit-select">
-																					<select class="select2" style="width:100%;">
+																					<select class="small-select" style="width:100%;">
 																						<option value="1">Wrong</option>
 																						<option value="2">Right</option>
 																						<option value="3">None (delete answer)</option>
@@ -1795,7 +1797,7 @@ function init()
                                                                                                                                                         </div>
                                                                                                                                                         <div class="answer-edit answer-edit-parser" style="display: none;">
                                                                                                                                                                 <div class="edit-select">
-                                                                                                                                                                        <select class="select2" style="width:100%;">
+                                                                                                                                                                        <select class="small-select" style="width:100%;">
                                                                                                                                                                                 <option value="1">Wrong</option>
                                                                                                                                                                                 <option value="2">Right</option>
                                                                                                                                                                                 <option value="3">None (delete answer)</option>
