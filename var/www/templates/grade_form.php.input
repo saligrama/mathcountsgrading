@@ -7,8 +7,6 @@
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
 
-<script src="./scripts/jquery.capslockstate.js"></script>
-
 <link rel="stylesheet" type="text/css" href="./styles/select2.css">
 <script src="./scripts/select2.js"></script>
 
@@ -86,7 +84,6 @@ button.disabled:hover {
 	height: 24px;
 	margin-bottom: 5px;
 	white-space: nowrap;
-	z-index: 20;
 }
 
 #numbers-header {
@@ -128,12 +125,10 @@ button.disabled:hover {
 
 .answer-input-list {
 	white-space: nowrap;
-	height: 38px;
 }
 
 .answer-input-list-wrap {
 	width: 100%;
-	height: 38px;
 }
 
 .answers-input-student, .answers-input-school {
@@ -143,8 +138,8 @@ button.disabled:hover {
 	padding: 2px 6px;
 	line-height: 30px;
 	background-color: #eee;
-        -webkit-box-shadow: 4px 0px 5px 0px rgba(200,200,200,0.75);
-        -moz-box-shadow: 4px 0px 5px 0px rgba(200,200,200,0.75);
+        -webkit-box-shadow: 4px 0px 5px 0px rgba(200,200,200,200.75);
+        -moz-box-shadow: 4px 0px 5px 0px rgba(200,200,200,200.75);
         box-shadow: 4px 0px 5px 0px rgba(200,200,200,0.75);
 }
 
@@ -188,38 +183,12 @@ button.disabled:hover {
 .answer-input {
 	display: inline-block;
 	width: 60px;
-	height: 34px;
 	margin: 2px 3px;
-	padding: 3px 5px;
 	vertical-align: middle;
-	background-color: #efefef;
 }
 
 .answer-input-input {
-	height: 28px;
 	border-radius: 0px;
-	overflow: hidden;
-}
-
-.answer-input:hover {
-	cursor: pointer;
-}
-
-.answer-input.highlight {
-	background-color: #ddd;
-}
-
-.answer-input.ehighlight {
-	border: 1px solid #666;
-	-webkit-box-shadow: 0px 0px 5px 0px rgba(150,150,150,0.85);
-        -moz-box-shadow: 0px 0px 5px 0px rgba(150,150,150,0.85);
-        box-shadow: 0px 0px 5px 0px rgba(150,150,150,0.85);
-}
-
-.answer-input-input span {
-	line-height: 28px;
-	height: 28px;
-	position: relative;
 }
 
 .answers-wrap {
@@ -232,20 +201,6 @@ button.disabled:hover {
 
 .all-wrap {
 	text-align: left;
-}
-
-.input-temp {
-	width: 100%;
-	text-align: center;
-	background-color: #ddd;
-	height: 28px;
-	border: none;
-	outline: 0;
-}
-
-.input-temp:focus {
-	border: none;
-	outline: 0;
 }
 
 #answers {
@@ -351,18 +306,18 @@ function selectChange()
 						for(var i = 0; i < round_problems[rndid]["pnum"]; i++)
 						{
 							var value = "";
-							if(round_problems[rndid]["indiv"] == "1")
+							if(this.dataset.sid)
 							{
 								if(all_answers[this.dataset.sid] && all_answers[this.dataset.sid][rndid] && all_answers[this.dataset.sid][rndid][i+1])
 									value = all_answers[this.dataset.sid][rndid][i+1];
 							}
 							else
 							{
-								if(all_team_answers[this.dataset.scid] && all_team_answers[this.dataset.scid][rndid] && all_team_answers[this.dataset.scid][rndid][i+1])
-									value = all_team_answers[this.dataset.scid][rndid][i+1];
+								if(all_team_answers[scid] && all_team_answers[scid][rndid] && all_team_answers[scid][rndid][i+1])
+									value = all_team_answers[scid][rndid][i+1];
 							}
 
-							list.append("<div class='answer-input'><div class='answer-input-input' data-lastsent='' id='" + (i+1) + "answer" + this.dataset.scid + "|" + (this.dataset.sid ? this.dataset.sid : "0") + "'><span>" + value + "</span></div></div>");
+							list.append("<div class='form-group answer-input'><input type='text' class='form-control answer-input-input' form='answers' data-lastsent='' name='" + (i+1) + "answer" + this.dataset.scid + "|" + (this.dataset.sid ? this.dataset.sid : "0") + "' value='" + value + "'></input></div>");
                 				}
 					}
 				}
@@ -391,16 +346,10 @@ function selectChange()
 		}
 }
 
-var current_cell = 0;
-var selection_start = 0;
-var firsttype = true;
-
 $(document).ready(function() {
 	$(".js-select").select2({
                 minimumResultsForSearch: 6,
         });
-
-	$(window).capslockstate();
 
 	$.post("/get_all_answers.php", function(r) {
 		var data = JSON.parse(r);
@@ -456,42 +405,8 @@ $(document).ready(function() {
 
 	selectChange();
 
-	$("#table-scroll").on("click", ".answer-input-input", function(event) {
-		if(this.id != current_cell.id)
-		{
-			exit(current_cell);
-			enter(this);
-		}
-		else if(this.children[0].nodeName != "INPUT")
-		{
-			var v = this.children[0].innerHTML;
-
-			var inp = document.createElement("INPUT");
-                        inp.type = "text";
-                        inp.classList = "input-temp";
-			inp.value = v;
-			inp.form = "";
-
-                        $(this).empty().append(inp);
-                        inp.focus();
-
-			$(this).parent().addClass("ehighlight");
-		}
-
-		event.stopPropagation();
-	});
-
-	$(document).click(function() {
-		if(current_cell !== 0)
-			exit(current_cell);
-	});
-
-	function enter(e)
-	{
-		if(current_cell !== 0)
-			exit(current_cell);
-
-		var rect = e.getBoundingClientRect();
+	$("#table-scroll").on("focus", ".answer-input-input", function() {
+		var rect = this.getBoundingClientRect();
 		var scroll = document.getElementById("table-scroll");
 		var brect = scroll.getBoundingClientRect();
 
@@ -511,23 +426,21 @@ $(document).ready(function() {
                 else if(rect.top < frect.top + pad + topStuff)
                         form.scrollTop = form.scrollTop - (frect.top - rect.top) - pad - topStuff;
 
-		var row = e.parentNode.parentNode.parentNode.parentNode;
+		var row = this.parentNode.parentNode.parentNode.parentNode;
 		var sid = row.dataset.sid;
 		var scid = row.dataset.scid;
 
 		$("#table-names .answers-row").each(function() {
 			if(this.dataset.scid == scid && (!sid || this.dataset.sid == sid))
 			{
-				console.log("highlight");
+				//console.log("highlight");
 
 				$(this).children().addClass("highlight");
 				return false;
 			}
 		});
 
-		$(e).parent().addClass("highlight");
-
-		var idx = $(e.parentNode).index();
+		var idx = $(this.parentNode).index();
 		$("#answers-header-list .answers-header").get(idx).classList.add("highlight");
 
 		var ridx = $(row).index();
@@ -547,204 +460,75 @@ $(document).ready(function() {
 
 		if(first)
 			$("#answers").scrollTop(0);
+	});
 
-		firsttype = true;
-		current_cell = e;
-	}
-
-	function exit(e)
-	{
+	$("#table-scroll").on("blur", ".answer-input-input", function(event) {
 		$("#table-names .answers-input-school, #table-names .answers-input-student, #answers-header-list .answers-header").removeClass("highlight");
 
-		if(e !== 0)
-		{
-			gradeProblem(e);
+		gradeProblem(this);
+	});
 
-			$(e).parent().removeClass("highlight ehighlight");
-
-			if(e.children[0].nodeName == "INPUT")
-			{
-				var v = e.children[0].value;
-
-				$(e).empty().append("<span>" + v + "</span>");
-			}
-		}
-
-		current_cell = 0;
-	}
-
-	$(window).on("keydown", function(event) {
-		console.log(selection_start);
-
-		if(current_cell === 0)
-			return;
-
-		var e = current_cell;
-
-		if(selection_start < 0)
-			selection_start = 0;
-
-		var v = e.children[0].innerHTML;
-
-		var ehigh = $(e).parent().hasClass("ehighlight");
-
-		// tab
-		if(event.which == 9)
-		{
-			event.preventDefault();
-
-			if(e.parentNode.nextSibling)
-                        {
-                                exit(e);
-                                enter(e.parentNode.nextSibling.children[0]);
-                        //      selection_start = 0;
-                        }
-			else
-			{
-				var row = e.parentNode.parentNode.parentNode.parentNode;
-                        	var next = $(row).next();
-
-                        	if(next.length && next.hasClass("answers-row") && next.css("display") == "block")
-                        	{
-                                       	exit(e);
-                                       	enter(next.find(".answer-input-input").get(0));
-                        //              selection_start = 0;
-                        	}
-			}
-		}
+	$("#table-scroll").on("keydown", ".answer-input-input", function(event) {
 		// left
-		else if(event.which == 37)
+		if(event.which == 37)
 		{
-			//if(selection_start === 0)
-			//{
-				if(!ehigh && e.parentNode.previousSibling)
-				{
-					event.preventDefault();
-					exit(e);
-					enter(e.parentNode.previousSibling.children[0]);
-			//		selection_start = current_cell.children[0].innerHTML.length;
-				}
-			//}
-			//else
-			//{
-			//	event.preventDefault();
-			//	selection_start--;
-			//}
+			if(this.parentNode.previousSibling && this.selectionStart == this.selectionEnd && this.selectionStart == 0)
+			{
+				event.preventDefault();
+				$(this).blur();
+				$(this.parentNode.previousSibling.children[0]).focus();
+			}
 		}
 		// right
 		else if(event.which == 39)
 		{
-			//if(selection_start == v.length)
-			//{
-				if(!ehigh && e.parentNode.nextSibling)
-				{
-					event.preventDefault();
-					exit(e);
-					enter(e.parentNode.nextSibling.children[0]);
-			//		selection_start = 0;
-				}
-			//}
-			//else
-			//{
-			//	event.preventDefault();
-			//	selection_start++;
-			//}
+			if(this.parentNode.nextSibling && this.selectionStart == this.selectionEnd && this.selectionStart == this.value.length)
+			{
+				event.preventDefault();
+				$(this).blur();
+				$(this.parentNode.nextSibling.children[0]).focus();
+			}
 		}
 		// top
 		else if(event.which == 38)
 		{
-			var row = e.parentNode.parentNode.parentNode.parentNode;
+			var row = this.parentNode.parentNode.parentNode.parentNode;
 			var prev = $(row).prev();
 
 			if(prev.length && prev.hasClass("answers-row") && prev.css("display") == "block")
 			{
-				var idx = $(e.parentNode).index();
+				var idx = $(this.parentNode).index();
 
 				//console.log(idx);
 
 				if(idx > -1)
 				{
 					event.preventDefault();
-                                	exit(e);
-					enter(prev.find(".answer-input-input").get(idx));
-			//		selection_start = Math.min(selection_start, current_cell.children[0].innerHTML.length);
+                                	$(this).blur();
+					prev.find(".answer-input-input").get(idx).focus();
 				}
 			}
 		}
 		// bottom
                 else if(event.which == 40)
                 {
-                        var row = e.parentNode.parentNode.parentNode.parentNode;
+                        var row = this.parentNode.parentNode.parentNode.parentNode;
 			var next = $(row).next();
 
                         if(next.length && next.hasClass("answers-row") && next.css("display") == "block")
                         {
-                                var idx = $(e.parentNode).index();
+                                var idx = $(this.parentNode).index();
 
                                 if(idx > -1)
                                 {
                                         event.preventDefault();
-                                        exit(e);
-					enter(next.find(".answer-input-input").get(idx));
-			//		selection_start = Math.min(selection_start, current_cell.children[0].innerHTML.length);
+                                        $(this).blur();
+					next.find(".answer-input-input").get(idx).focus()
                                 }
                         }
                 }
 		else
-		{
-			if(event.which == 13 || event.which == 27)
-				event.preventDefault();
-			else
-				$("#saved").removeClass("no yes error").addClass("no").html("Saving...");
-
-			if(e.children[0].nodeName != "INPUT")
-			{
-				if(event.which == 27)
-					exit(e);
-				else
-				{
-					var v = e.children[0].innerHTML;
-
-					var inp = document.createElement("INPUT");
-					inp.type = "text";
-					inp.classList = "input-temp";
-					inp.form = "";
-
-					if(event.which == 13)
-						inp.value = v;
-
-					$(e).empty().append(inp);
-					inp.focus();
-
-					$(e).parent().addClass("ehighlight");
-				}
-			}
-			else if(event.which == 13 || event.which == 27)
-			{
-				var v = e.children[0].value;
-
-                                $(e).empty().append("<span>" + v + "</span>").parent().removeClass("ehighlight");
-			}
-
-			/*var c = String.fromCharCode(event.which);
-
-			if(!!event.shiftKey == !!$(window).capslockstate("state"))
-				c = c.toLowerCase();
-
-			if(firsttype)
-			{
-				e.children[0].innerHTML = c;
-				firsttype = false;
-			}
-			else
-				e.children[0].innerHTML = e.children[0].innerHTML + c;
-
-			var sbox = e.children[0].getBoundingClientRect();
-			var pbox = e.getBoundingClientRect();
-
-			if(sbox.right > pbox.right)
-				e.children[0].style.left = "-" + 2*(sbox.right - pbox.right) + "px";*/
-		}
+			$("#saved").removeClass("no yes error").addClass("no").html("Saving...");
 	});
 
 	$("#answers").scroll(function() {
@@ -753,8 +537,10 @@ $(document).ready(function() {
 	});
 
 	setInterval(function() {
-		if(current_cell !== 0)
-			gradeProblem(current_cell);
+		var e = document.activeElement;
+
+		if(e.classList == "form-control answer-input-input")
+			gradeProblem(e);
 	}, 2000);
 
 	$(".checkbox-custom-label").click(function() {
@@ -781,20 +567,15 @@ $(document).ready(function() {
 
 function gradeProblem(input)
 {
-	var pn = parseInt(input.id);
+	var pn = parseInt(input.name);
 	var pnl = Math.ceil(Math.log(pn + 1) / Math.LN10);
 
-	var scid = parseInt(input.id.substr(pnl + 6));
+	var scid = parseInt(input.name.substr(pnl + 6));
 	var scidl = Math.ceil(Math.log(scid + 1) / Math.LN10);
 
-	var sid = parseInt(input.id.substr(pnl + scidl + 7));
+	var sid = parseInt(input.name.substr(pnl + scidl + 7));
 
-	var val = "";
-
-	if(input.children[0].nodeName == "INPUT")
-		val = input.children[0].value;
-	else
-		val = input.children[0].innerHTML;
+	var val = input.value;
 
 	var rndid = $("#roundlist").val();
 
@@ -832,7 +613,7 @@ function gradeProblem(input)
 			//console.log(r);
 		});
 
-		input.dataset.lastsent = val;
+		input.dataset.lastsent = input.value;
 	}
 	else
 		$("#saved").removeClass("no yes error").addClass("yes").html("Saved");

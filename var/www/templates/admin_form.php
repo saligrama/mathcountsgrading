@@ -1664,7 +1664,7 @@ function init()
                                                 </div>
                                         </div>
                                 </div>
-				<div class="options-wrap" id="progress-cont" style="overflow: auto;">
+				<div class="options-wrap" id="progress-cont" style="overflow: auto; will-change:transform">
 					<div class="container-fluid">
 						<div class="row">
 							<div class="col-xs-12">
