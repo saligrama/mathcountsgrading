@@ -905,7 +905,7 @@ function getConflict(c)
 								alert("There was an error recording your decision.");
 							else
 							{
-								console.log(response);
+								//console.log(response);
 								alert("Your decision has been recorded");
 
 								$("#conflict-info").css("display", "block");

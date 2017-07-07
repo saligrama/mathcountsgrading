@@ -4,6 +4,14 @@ require(dirname(__FILE__) . "/constants.php");
 require(dirname(__FILE__) . "/../lib/MCGExpression/MCGExpression/main.php");
 
 
+function updateCompStatusAll($conn, $cid)
+{
+	$rounds = dbQuery_new($conn, "SELECT RNDID FROM round WHERE CTID IN (SELECT CTID FROM competition WHERE CID=:cid)", ["cid" => $cid]);
+
+	foreach($rounds as $round)
+		updateCompStatus($conn, $cid, $round["RNDID"]);
+}
+
 function updateCompStatus($conn, $cid, $round)
 {
 	$snum = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_participants WHERE CID=:cid", ["cid" => $cid]);
@@ -68,6 +76,14 @@ function updateCompStatus($conn, $cid, $round)
 	}
 }
 
+function updateStudentScoreAll($conn, $SID, $cid)
+{
+        $rounds = dbQuery_new($conn, "SELECT RNDID FROM round WHERE CTID IN (SELECT CTID FROM competition WHERE CID=:cid)", ["cid" => $cid]);
+
+        foreach($rounds as $round)
+                updateStudentScore($conn, $SID, $cid, $round["RNDID"]);
+}
+
 function updateStudentScore($conn, $SID, $cid, $round)
 {
 	$sinfo = dbQuery_new($conn, "SELECT SID FROM mathlete_info WHERE SID=:sid", ["sid" => $SID]);
@@ -96,6 +112,14 @@ function updateStudentScore($conn, $SID, $cid, $round)
 		dbQuery_new($conn, "INSERT INTO student_cleaner SET CID=:cid, SID=:sid, RNDID=:round, raw=:raw", $arr);
 	else
 		dbQuery_new($conn, "UPDATE student_cleaner SET raw=:raw WHERE RNDID=:round AND CID=:cid AND SID=:sid", $arr);
+}
+
+function updateTeamScoreAll($conn, $SCID, $cid)
+{
+        $rounds = dbQuery_new($conn, "SELECT RNDID FROM round WHERE CTID IN (SELECT CTID FROM competition WHERE CID=:cid)", ["cid" => $cid]);
+
+        foreach($rounds as $round)
+                updateTeamScore($conn, $SCID, $cid, $round["RNDID"]);
 }
 
 function updateTeamScore($conn, $SCID, $cid, $round)
@@ -179,6 +203,9 @@ function getCurrentComp($conn)
                 $currentcomp = 0;
         else {
                 $currentcomp = $currentcomp[0]["CID"];
+
+		dbQuery_new($conn, "DELETE FROM current_competition");
+		dbQuery_new($conn, "INSERT INTO current_competition SET CID=:cid", ["cid" => $currentcomp]);
 
                 $exists = dbQuery_new($conn, "SELECT * FROM competition WHERE CID = :cid", ["cid" => $currentcomp]);
                 if(empty($exists))

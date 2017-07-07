@@ -4,6 +4,8 @@ require("../includes/functions.php");
 
 checkSession("admin");
 
+$conn = dbConnect_new();
+
 if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["nickname"]) ||
                            !isset($_POST["gender"]) || (sempty($_POST["firstname"]) && sempty($_POST["lastname"])))
 {
@@ -24,6 +26,11 @@ if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastn
                                 ]
                         );
 
-echo "success";
+echo $conn->lastInsertId();
+
+$cid = getCurrentComp($conn);
+
+if($cid)
+	updateCompStatusAll($conn, $cid);
 
 ?>

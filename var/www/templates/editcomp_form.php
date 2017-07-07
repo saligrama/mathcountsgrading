@@ -832,7 +832,7 @@ function checkSubmit()
 
 function deleteComp()
 {
-	return confirm("Are you sure you want to delete the competition?");
+	return confirm("Are you sure you want to delete the competition? All data associated with this competition will be deleted");
 }
 
 /*function showSchools()

@@ -57,14 +57,21 @@ if($cid !== 0)
 	if(empty($type))
 		exit;
 
-	$func = $type[0]["grade_average"] == "1" ? "AVG" : "SUM";
-
 	$schools = dbQuery_new($conn, "SELECT SUM(a.raw) as score, b.team_name, b.SCID FROM team_cleaner AS a RIGHT JOIN (school_info AS b) ON (a.CID=:cid AND a.SCID=b.SCID) WHERE b.SCID IN (SELECT SCID FROM competition_participants WHERE CID=:cid2) GROUP BY SCID", ["cid" => $cid, "cid2" => $cid]);
 
 	$h = 0;
 	foreach($schools as $school)
 	{
-		$student = dbQuery_new($conn, "SELECT $func(score) as total FROM (SELECT SUM(raw) AS score FROM student_cleaner WHERE CID=:cid AND SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid) AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid2 AND type='regular') AND (SID, RNDID) NOT IN (SELECT SID, RNDID FROM regular_overrides WHERE CID=:cid3 AND type='alternate') GROUP BY SID) AS T", ["scid" => $school["SCID"], "cid" => $cid, "cid2" => $cid, "cid3" => $cid]);
+		$before = "1";
+
+		if($type[0]["grade_average"] == "1")
+		{
+			$count = dbQuery_new($conn, "SELECT COUNT(*) as c FROM student_participants WHERE SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid) AND type='regular'", ["scid" => $school["SCID"]]);
+
+			$before = $count[0]["c"];
+		}
+
+		$student = dbQuery_new($conn, "SELECT (SUM(score) / $before) as total FROM (SELECT SUM(a.raw) AS score FROM student_cleaner AS a RIGHT JOIN (mathlete_info AS b) ON (a.CID=:cid AND a.SID = b.SID AND (b.SID, a.RNDID) NOT IN (SELECT SID, RNDID FROM regular_overrides WHERE CID=:cid3 AND type='alternate') AND b.SCID=:scid AND b.SID IN (SELECT SID FROM student_participants WHERE CID=:cid2 AND type='regular')) GROUP BY b.SID) AS T", ["scid" => $school["SCID"], "cid" => $cid, "cid2" => $cid, "cid3" => $cid]);
 		if(empty($student))
 			exit;
 

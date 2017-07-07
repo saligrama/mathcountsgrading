@@ -10,7 +10,7 @@
     if(empty($result))
 	$result = 0;
 
-    $comprow = dbQuery_new($conn, "SELECT * FROM competition WHERE CID IN (SELECT CID FROM current_competition)");
+    $comprow = getCurrentComp($conn);
 
     $compstatus = 0;
 
@@ -27,39 +27,38 @@
         }
         else
         {
-            $exists = dbQuery_new($conn, "SELECT * FROM competition WHERE CID = :CID;", ["CID" => $_GET["setComp"]]);
+	    $cid = intval($_GET["setComp"]);
+
+            $exists = dbQuery_new($conn, "SELECT * FROM competition WHERE CID=:cid;", ["cid" => $cid]);
 
             if(!empty($exists))
             {
-		if(empty($comprow))
-		    dbQuery_new($conn, "INSERT INTO current_competition SET CID=:cid", ["cid" => $_GET["setComp"]]);
+		if($comprow == 0)
+			dbQuery_new($conn, "INSERT INTO current_competition SET CID=:cid", ["cid" => $cid]);
 		else
-                    dbQuery_new($conn, "UPDATE current_competition SET CID = :CID;", ["CID" => $_GET["setComp"]]);
+                    dbQuery_new($conn, "UPDATE current_competition SET CID=:cid;", ["cid" => $cid]);
 
-		$comprow = $exists;
+		$comprow = $cid;
 	    }
         }
     }
 
-    if(empty($comprow))
+    if($comprow != 0)
     {
-        $comprow = 0;
-	dbQuery_new($conn, "INSERT INTO current_competition SET CID = 0;");
-    }
-    else
-    {
-	$comprow = dbQuery_new($conn, "SELECT * FROM competition WHERE CID = :CID;", ["CID" => $comprow[0]["CID"]]);
+	$comprow = dbQuery_new($conn, "SELECT * FROM competition WHERE CID = :CID;", ["CID" => $comprow]);
 
 	if (!empty($comprow))
 	{
-		$compstatus = dbQuery_new($conn, "SELECT * FROM round WHERE CTID=:ctid", ["ctid" => $comprow[0]["CTID"]]);
+		$comprow = $comprow[0];
+
+		$compstatus = dbQuery_new($conn, "SELECT * FROM round WHERE CTID=:ctid", ["ctid" => $comprow["CTID"]]);
 
 		if(empty($compstatus))
 		    $compstatus = 0;
 
-		$students = dbQuery_new($conn, "SELECT mathlete_info.*, student_participants.type FROM mathlete_info INNER JOIN student_participants ON mathlete_info.SID = student_participants.SID WHERE student_participants.CID=:cid ORDER BY SCID", ["cid" => $comprow[0]["CID"]]);
+		$students = dbQuery_new($conn, "SELECT mathlete_info.*, student_participants.type FROM mathlete_info INNER JOIN student_participants ON mathlete_info.SID = student_participants.SID WHERE student_participants.CID=:cid ORDER BY SCID", ["cid" => $comprow["CID"]]);
 
-		$schools = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID IN (SELECT SCID FROM competition_participants WHERE CID=:cid)", ["cid" => $comprow[0]["CID"]]);
+		$schools = dbQuery_new($conn, "SELECT * FROM school_info WHERE SCID IN (SELECT SCID FROM competition_participants WHERE CID=:cid)", ["cid" => $comprow["CID"]]);
 	}
 	else
 	{
@@ -68,7 +67,7 @@
 
     }
 
-    render("admin_form.php", ["result" => $result, "comprow" => $comprow[0], "compstatus" => $compstatus, "fullname" => getFullName($conn), "students" => $students, "schools" => $schools]);
+    render("admin_form.php", ["result" => $result, "comprow" => $comprow, "compstatus" => $compstatus, "fullname" => getFullName($conn), "students" => $students, "schools" => $schools]);
 
 ?>
 

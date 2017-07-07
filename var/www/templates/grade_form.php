@@ -405,51 +405,44 @@ $(document).ready(function() {
 	$.post("/get_all_answers.php", function(r) {
 		var data = JSON.parse(r);
 
-		for(var i = 0; i < data.answers.length; i++)
-		{
-			var row = data.answers[i];
-
-			if(!all_answers[row.SID])
-				all_answers[row.SID] = [];
-
-			if(!all_answers[row.SID][row.RNDID])
-				all_answers[row.SID][row.RNDID] = [];
-
-			all_answers[row.SID][row.RNDID][row.problem_number] = row.answer;
-		}
-
-		for(var i = 0; i < data.team_answers.length; i++)
-		{
-			var row = data.team_answers[i];
-
-			if(!all_team_answers[row.SCID])
-				all_team_answers[row.SCID] = [];
-
-			if(!all_team_answers[row.SCID][row.RNDID])
-				all_team_answers[row.SCID][row.RNDID] = [];
-
-			all_team_answers[row.SCID][row.RNDID][row.problem_number] = row.answer;
-		}
-
 		for(var i = 0; i < data.parts.length; i++)
 		{
-			all_regulars[data.parts[i].SID] = [];
+			all_answers[data.parts[i].SID] = [];
 
-			var t = (data.parts[i].type == "regular" ? 1 : 0);
+                        all_regulars[data.parts[i].SID] = [];
 
-			for(var j = 0; j < data.rounds.length; j++)
-				all_regulars[data.parts[i].SID][data.rounds[j].RNDID] = t;
+                        var t = (data.parts[i].type == "regular" ? 1 : 0);
+
+                        for(var j = 0; j < data.rounds.length; j++)
+			{
+                                all_regulars[data.parts[i].SID][data.rounds[j].RNDID] = t;
+                		all_answers[data.parts[i].SID][data.rounds[j].RNDID] = [];
+			}
 		}
 
-		for(var i = 0; i < data.overrides.length; i++)
-		{
-			if(!all_regulars[data.overrides[i].SID])
-				all_regulars[data.overrides[i].SID] = [];
+                for(var i = 0; i < data.overrides.length; i++)
+                {
+                        if(!all_regulars[data.overrides[i].SID])
+                                all_regulars[data.overrides[i].SID] = [];
 
-			var t = (data.overrides[i].type == "regular" ? 1 : 0);
+                        var t = (data.overrides[i].type == "regular" ? 1 : 0);
 
-			all_regulars[data.overrides[i].SID][data.overrides[i].RNDID] = t;
-		}
+                        all_regulars[data.overrides[i].SID][data.overrides[i].RNDID] = t;
+                }
+
+		for(var i = 0; i < data.schools.length; i++)
+                {
+                        all_team_answers[data.schools[i].SCID] = [];
+
+                        for(var j = 0; j < data.rounds.length; j++)
+                                all_team_answers[data.schools[i].SCID][data.rounds[j].RNDID] = [];
+                }
+
+		for(var i = 0; i < data.answers.length; i++)
+			all_answers[data.answers[i].SID][data.answers[i].RNDID][data.answers[i].problem_number] = data.answers[i].answer;
+
+		for(var i = 0; i < data.team_answers.length; i++)
+			all_team_answers[data.team_answers[i].SCID][data.team_answers[i].RNDID][data.team_answers[i].problem_number] = data.team_answers[i].answer;
 
 	$("#schoollist").change(selectChange);
 	$("#roundlist").change(selectChange);
@@ -518,7 +511,7 @@ $(document).ready(function() {
 		$("#table-names .answers-row").each(function() {
 			if(this.dataset.scid == scid && (!sid || this.dataset.sid == sid))
 			{
-				console.log("highlight");
+				//console.log("highlight");
 
 				$(this).children().addClass("highlight");
 				return false;
@@ -574,7 +567,7 @@ $(document).ready(function() {
 	}
 
 	$(window).on("keydown", function(event) {
-		console.log(selection_start);
+		//console.log(selection_start);
 
 		if(current_cell === 0)
 			return;
@@ -769,7 +762,7 @@ $(document).ready(function() {
 			if(r == "success")
 			{
 				all_regulars[sid][rndid] = prev ? 0 : 1;
-				console.log(sid + "  " + rndid + "   " + !prev);
+				//console.log(sid + "  " + rndid + "   " + !prev);
 			}
 			else
 				$("#saved").removeClass("no yes error").addClass("error").html("Error Saving");
@@ -938,6 +931,7 @@ function gradeProblem(input)
                                                                 	<?php endforeach; ?>
 								</div>
 							</div>
+							<?php if($typerow["fluid_regulars"] == "1"): ?>
 							<div class="answers-subtable-wrap answers-subtable-fixed" id="subtable-regulars">
 								<div class="answers-subtable">
 									<div style="margin-left: 3px" class="answers-header-row answers-header-row-s">
@@ -953,6 +947,7 @@ function gradeProblem(input)
                                                                 	<?php endforeach; ?>
 								</div>
 							</div>
+							<?php endif; ?>
 						</div>
 					</form>
 				</div>

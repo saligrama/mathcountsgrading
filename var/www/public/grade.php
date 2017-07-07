@@ -20,6 +20,10 @@
 		if(empty($roundrows))
 			$roundrows = 0;
 
-                render("grade_form.php", ["studentrows" => $studentrows, "schoolrows" => $schoolrows, "roundrows" => $roundrows, "fullname" => getFullName($conn)]);
+		$typerow = dbQuery_new($conn, "SELECT * FROM competition_type WHERE CTID IN (SELECT CTID FROM competition WHERE CID=:cid);", ["cid" => $cid]);
+		if(!empty($typerow))
+			$typerow = $typerow[0];
+
+                render("grade_form.php", ["typerow" => $typerow, "studentrows" => $studentrows, "schoolrows" => $schoolrows, "roundrows" => $roundrows, "fullname" => getFullName($conn)]);
 
 ?>

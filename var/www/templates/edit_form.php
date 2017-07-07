@@ -66,6 +66,8 @@ function reloadSelect2()
 
 $(document).ready(function() {
         reloadSelect2();
+
+	$("#addstudent").submit(checkSubmitAddStudent);
 });
 
 function studentSearch()
@@ -146,21 +148,48 @@ function checkSubmit()
         return confirm("Are you sure you want to finalize your changes?");
 }
 
-function checkSubmitAddStudent()
+function checkSubmitAddStudent(e)
 {
+	e.preventDefault();
+
 	var firstname = document.getElementById("firstname-add").value;
 	var lastname = document.getElementById("lastname-add").value;
+	var nickname = document.getElementById("nickname-add").value;
+	var gender = document.getElementById("gender-add").value;
+	var scid = document.getElementById("scid-add").value;
 
 	if(firstname === "" && lastname === "")
 	{
 		alert("Please enter a either a first name or a last name, or both");
-		return false;
+		return;
 	}
 
-	var fullname = firstname === "" ? "" : firstname;
-	fullname += lastname === "" ? "" : " " + lastname;
+	$.post("/addstudent.php", { firstname: firstname, lastname: lastname, nickname: nickname, gender: gender, scid: scid }, function(r) {
+		var sid = parseInt(r);
 
-	return confirm("Are you sure you want to create a student with the name '" + fullname + "'?");
+		if(!isNaN(sid) && sid > 0)
+		{
+			document.getElementById("lastname-add").value = "";
+			document.getElementById("firstname-add").value = "";
+			document.getElementById("nickname-add").value = "";
+			$("#gender-add").val("Male").change();
+			document.getElementById("firstname-add").focus();
+
+			studentinfo[sid] = [];
+			studentinfo[sid]["first_name"] = firstname;
+			studentinfo[sid]["last_name"] = lastname;
+			studentinfo[sid]["nickname"] = nickname;
+			studentinfo[sid]["gender"] = gender;
+
+			var n = document.getElementById("nostudentsatall");
+			if(n)
+				n.style.display = "none";
+
+			$("#stcont").append("<li class='slider-li'><p class='slider-text'>" + firstname + " " + lastname + "</p><button onclick='chooseStudentEdit(" + sid + ");' class='btn btn-primary slider-edit' form=''>Edit</button></li><li class='divider slider-divider'></li>");
+		}
+		else
+			alert("Error creating student!");
+	});
 }
 
 function checkSubmitEditStudent()
@@ -243,6 +272,8 @@ function chooseStudentEdit(sid)
 	document.getElementById("nickname-edit").value = studentinfo[sid]["nickname"];
 	document.getElementById("gender-edit").value = studentinfo[sid]["gender"];
 
+	document.getElementById("sid-delete").value = sid;
+
 	reloadSelect2();
 }
 
@@ -271,7 +302,12 @@ function chooseStudentEdit(sid)
 
 function deleteSchool()
 {
-	return confirm("Are you sure you want to delete the team/school '" + "<?php echo clean($schoolrow['team_name']); ?>" + "'?");
+	return confirm("Are you sure you want to delete the team/school '" + "<?php echo clean($schoolrow['team_name']); ?>" + "'? All data associated with this school in all competitions will be deleted");
+}
+
+function deleteStudent()
+{
+	return confirm("Are you sure you want to delete this student? All data associated with this student in all competitions will be deleted");
 }
 
 </script>
@@ -341,7 +377,7 @@ function deleteSchool()
                                                                 	</div>
                                                                 	<ul class="slider-container-fixed" id="stcont">
                                                                         	<?php if($studentinfo == 0): ?>
-                                                                                	<li class="nostudent" style="display:block;">Looks like there aren't any students in this school yet.</li>
+                                                                                	<li id="nostudentsatall" class="nostudent" style="display:block;">Looks like there aren't any students in this school yet.</li>
                                                                         	<?php else: ?>
                                                                                 	<li id="nostusearchres" class="nostudent" style="display:none;">No results found</li>
                                                                                 	<?php foreach($studentinfo as $row): ?>
@@ -376,7 +412,7 @@ function deleteSchool()
 		<div class="container-fluid panel panel-primary">
 			<div class="panel-heading">Add student</div>
 			<div class="panel-body">
-				<form id="addstudent" method="post" action="/editschool.php" onsubmit="return checkSubmitAddStudent();">
+				<form id="addstudent">
 					<div class="col-xs-offset-1 col-xs-10">
 						<div class="row">
                                                         <div class="form-group">
@@ -406,14 +442,14 @@ function deleteSchool()
 								</select>
 							</div>
 						</div>
-						<input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
+						<input type="hidden" id="scid-add" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
 					</div>
 				</form>
 			</div>
 			<div class="panel-footer">
 				<div class="row">
-					<button class="btn btn-danger col-xs-offset-1 col-xs-3" onclick="clearAddStudent();">Clear</button>
-					<button class="btn btn-success col-xs-offset-2 col-xs-5" type="submit" name="addstudent" form="addstudent">Add student</button>
+					<button class="btn btn-success col-xs-offset-1 col-xs-5" id="submit-add" type="submit" name="addstudent" form="addstudent">Add student</button>
+					<button class="btn btn-danger col-xs-offset-2 col-xs-3" onclick="clearAddStudent();">Clear</button>
 				</div>
 			</div>
 		</div>
@@ -462,8 +498,13 @@ function deleteSchool()
 			</div>
 			<div id="editstudentfooter" class="panel-footer" style="display:none">
                                 <div class="row">
+					<button class="btn btn-success col-xs-4" type="submit" name="editstudent" form="editstudent">Apply</button>
+					<form onsubmit="return deleteStudent();" method="post" action="">
+						<button class="btn btn-danger col-xs-offset-1 col-xs-3" name="deletestudent">Delete</button>
+						<input type="hidden" name="SID" id="sid-delete"></input>
+						<input type="hidden" name="SCID" value="<?php echo clean($_GET['SCID']); ?>">
+					</form>
                                         <button class="btn btn-danger col-xs-offset-1 col-xs-3" onclick="cancelEditStudent();">Cancel</button>
-                                        <button class="btn btn-success col-xs-offset-2 col-xs-5" type="submit" name="editstudent" form="editstudent">Finalize changes</button>
                                 </div>
                         </div>
 		</div>

@@ -6,6 +6,8 @@
 
     $conn = dbConnect_new();
 
+    $cid = getCurrentComp($conn);
+
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["createschool"])) {
 
 	if(!isset($_POST["teamname"]) || !isset($_POST["town"]) || !isset($_POST["coach"]) || !isset($_POST["address"]) || !isset($_POST["email"]) ||
@@ -36,6 +38,9 @@
              ]
 
         );
+
+	if($cid)
+        	updateCompStatusAll($conn, $cid);
 
 	//popupAlert("Success! school created");
 	redirectTo("/create.php");

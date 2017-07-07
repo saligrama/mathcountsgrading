@@ -163,20 +163,8 @@
 
         }
 
-	if(!empty($set_schools) || !empty($unset_schools))
-        {
-                $rounds = dbQuery_new($conn, "SELECT RNDID FROM round WHERE CTID IN (SELECT CTID FROM competition WHERE CID=:cid)", ["cid" => $_POST["cid"]]);
-
-                foreach($rounds as $round)
-                        updateCompStatus($conn, $_POST["cid"], $round["RNDID"]);
-        }
-	else if(!empty($set_regulars) || !empty($unset_regulars) || !empty($set_alternates) || !empty($unset_alternates))
-        {
-                $rounds = dbQuery_new($conn, "SELECT RNDID FROM round WHERE indiv=true AND CTID IN (SELECT CTID FROM competition WHERE CID=:cid)", ["cid" => $_POST["cid"]]);
-
-                foreach($rounds as $round)
-                        updateCompStatus($conn, $_POST["cid"], $round["RNDID"]);
-        }
+	if(!empty($set_schools) || !empty($unset_schools) || !empty($set_regulars) || !empty($unset_regulars) || !empty($set_alternates) || !empty($unset_alternates))
+        	updateCompStatusAll($conn, $_POST["cid"]);
 
 	redirectTo("/admin.php");
 
@@ -186,6 +174,20 @@
 	if(!isset($_POST["cid"]))
 		redirectTo("/admin.php");
 
+	dbQuery_new($conn, "DELETE FROM competition_answers WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM competition_participants WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM competition_status WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM current_competition WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM grader_responses WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM grader_responses_team WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM grading_conflicts WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM grading_conflicts_team WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM regular_overrides WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM student_answers WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM student_cleaner WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM student_participants WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM team_answers WHERE CID = :cid", ["cid" => $_POST["cid"]]);
+	dbQuery_new($conn, "DELETE FROM team_cleaner WHERE CID = :cid", ["cid" => $_POST["cid"]]);
 	dbQuery_new($conn, "DELETE FROM competition WHERE CID = :cid", ["cid" => $_POST["cid"]]);
 
 	popupAlert("Success! The competition has been deleted");

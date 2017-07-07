@@ -6,6 +6,8 @@
 
 	$conn = dbConnect_new();
 
+	$cid = getCurrentComp($conn);
+
 	if ($_SERVER["REQUEST_METHOD"] == "POST")
 	{
 		if(isset($_POST["finalize"]))
@@ -49,9 +51,49 @@
 				internalErrorRedirect("/admin.php");
 
 			dbQuery_new($conn, "DELETE FROM school_info WHERE SCID = :scid", ["scid" => $_POST["scid"]]);
+			dbQuery_new($conn, "DELETE FROM competition_participants WHERE SCID = :scid", ["scid" => $_POST["scid"]]);
+			dbQuery_new($conn, "DELETE FROM grader_responses_team WHERE SCID = :scid", ["scid" => $_POST["scid"]]);
+			dbQuery_new($conn, "DELETE FROM grading_conflicts_team WHERE SCID = :scid", ["scid" => $_POST["scid"]]);
+			dbQuery_new($conn, "DELETE FROM team_answers WHERE SCID = :scid", ["scid" => $_POST["scid"]]);
+			dbQuery_new($conn, "DELETE FROM team_cleaner WHERE SCID = :scid", ["scid" => $_POST["scid"]]);
+
+			$students = dbQuery_new($conn, "SELECT SID FROM mathlete_info WHERE SCID=:scid", ["scid" => $_POST["scid"]]);
+			foreach($students as $student)
+			{
+				dbQuery_new($conn, "DELETE FROM grader_responses WHERE SID = :sid", ["sid" => $student["SID"]]);
+                        	dbQuery_new($conn, "DELETE FROM grading_conflicts WHERE SID = :sid", ["sid" => $student["SID"]]);
+                        	dbQuery_new($conn, "DELETE FROM regular_overrides WHERE SID = :sid", ["sid" => $student["SID"]]);
+                        	dbQuery_new($conn, "DELETE FROM student_answers WHERE SID = :sid", ["sid" => $student["SID"]]);
+                        	dbQuery_new($conn, "DELETE FROM student_cleaner WHERE SID = :sid", ["sid" => $student["SID"]]);
+                        	dbQuery_new($conn, "DELETE FROM student_participants WHERE SID = :sid", ["sid" => $student["SID"]]);
+                        	dbQuery_new($conn, "DELETE FROM mathlete_info WHERE SID=:sid", ["sid" => $student["SID"]]);
+			}
+
+			dbQuery_new($conn, "DELETE FROM mathlete_info WHERE SCID = :scid", ["scid" => $_POST["scid"]]);
+
+			if($cid)
+                        	updateCompStatusAll($conn, $cid);
 
 			popupAlert("Success! school deleted");
 			redirectTo("/create.php");
+		}
+		else if(isset($_POST["deletestudent"]))
+		{
+			if(!isset($_POST["SID"]) || !isset($_POST["SCID"]))
+				internalErrorRedirect("/admin.php");
+
+			dbQuery_new($conn, "DELETE FROM grader_responses WHERE SID = :sid", ["sid" => $_POST["SID"]]);
+                        dbQuery_new($conn, "DELETE FROM grading_conflicts WHERE SID = :sid", ["sid" => $_POST["SID"]]);
+                        dbQuery_new($conn, "DELETE FROM regular_overrides WHERE SID = :sid", ["sid" => $_POST["SID"]]);
+                        dbQuery_new($conn, "DELETE FROM student_answers WHERE SID = :sid", ["sid" => $_POST["SID"]]);
+                        dbQuery_new($conn, "DELETE FROM student_cleaner WHERE SID = :sid", ["sid" => $_POST["SID"]]);
+                        dbQuery_new($conn, "DELETE FROM student_participants WHERE SID = :sid", ["sid" => $_POST["SID"]]);
+			dbQuery_new($conn, "DELETE FROM mathlete_info WHERE SID=:sid", ["sid" => $_POST["SID"]]);
+
+			if($cid)
+                        	updateCompStatusAll($conn, $cid);
+
+			redirectTo("/editschool.php?SCID=" . $_POST["SCID"]);
 		}
 		else if(isset($_POST["editstudent"]))
                 {
