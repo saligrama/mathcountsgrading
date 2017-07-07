@@ -114,7 +114,7 @@ function checkSubmit()
 	}
 
 	var mes = "Are you sure you want to register ";
-	mes += (document.getElementById("schaf").value > 0) ? "a grader" : "an admin";
+	mes += (document.getElementById("schaf").value != 0) ? "a grader" : "an admin";
 	mes += " account with the logname/email '";
 	mes += document.getElementById("logname").value;
 	mes += "'?";
@@ -160,7 +160,8 @@ function checkSubmit()
 
 				<label for="schaf">School Affiliation</label>
                                 <select id="schaf" name="schaf" class="js-select">
-                                        <option value="0">None (admin)</option>
+					<option value="-1">None (grader)</option>
+					<option value="0">None (admin)</option>
                                         <?php foreach($schoolrows as $row): ?>
                                                 <option value='<?= $row["SCID"] ?>'><?php echo clean($row["team_name"]); ?></option>
                                         <?php endforeach; ?>

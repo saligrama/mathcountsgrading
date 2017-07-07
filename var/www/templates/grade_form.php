@@ -840,14 +840,13 @@ function gradeProblem(input)
 <nav class="mnavbar">
         <div class="mnavcontainer container">
                 <ul class="mnavlist">
-                        <li class="mnav-left"><a href="/admin.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+                        <li class="mnav-left"><a href="/grade.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
                         <li class="mnav-left"><p class="mnav-text">Signed in as <strong><?php echo clean($fullname); ?></strong></p></li>
                         <li class="mnav-right">
                                 <form method="post" onsubmit="return checkLogout();" action="/login.php">
                                         <input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
                                 </form>
                         </li>
-                        <li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
                 </ul>
         </div>
 </nav>
@@ -865,7 +864,7 @@ function gradeProblem(input)
 							<select form="answers" name="SCID" class="form-control js-select" id="schoollist">
 								<option value="0" selected>All schools</option>
 								<?php foreach($schoolrows as $row): ?>
-									<option value="<?= $row['SCID']?>"> <?php echo clean($row["team_name"]); ?></option>
+									<option value="<?= $row['SCID']?>" <?php if($row["SCID"] == $scid) echo "disabled"; ?>> <?php echo clean($row["team_name"]); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>

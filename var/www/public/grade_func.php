@@ -16,6 +16,11 @@ if(isset($_POST["rndid"]) && isset($_POST["pn"]) && isset($_POST["answer"]) && i
 		exit;
 	$userrow = $userrow[0];
 
+	$uscid = intval($userrow["SCID"]);
+
+	if($uscid != 0 && $uscid == intval($_POST["scid"]))
+		exit;
+
 	$typerow = dbQuery_new($conn, "SELECT * FROM competition_type WHERE CTID IN (SELECT CTID FROM competition WHERE CID=:cid)", ["cid" => $cid]);
 	if(empty($typerow))
 		exit;

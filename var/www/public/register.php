@@ -34,6 +34,9 @@
  		}
 
 
+		$scid = $_POST["schaf"] == "-1" ? 0 : intval($_POST["schaf"]);
+		$type = $_POST["schaf"] == "0" ? "admin" : "grader";
+
                 $result = dbQuery_new($conn, "INSERT INTO user SET
                                       email=:name,
 				      last_name=:lastname,
@@ -43,8 +46,8 @@
                                       type=:type", [
                                               "name" => $logname,
                                               "ph" => password_hash($passwd, PASSWORD_DEFAULT),
-                                              "schaf" => $_POST["schaf"],
-                                              "type" => $_POST["schaf"] ? 'grader' : 'admin',
+                                              "schaf" => $scid,
+                                              "type" => $type,
                                       	      "lastname" => $lastname,
 					      "firstname" => $firstname
 					]

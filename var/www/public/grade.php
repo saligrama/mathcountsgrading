@@ -24,6 +24,12 @@
 		if(!empty($typerow))
 			$typerow = $typerow[0];
 
-                render("grade_form.php", ["typerow" => $typerow, "studentrows" => $studentrows, "schoolrows" => $schoolrows, "roundrows" => $roundrows, "fullname" => getFullName($conn)]);
+		$scid = dbQuery_new($conn, "SELECT SCID FROM user WHERE UID=:uid", ["uid" => $_SESSION["UID"]]);
+		if(empty($scid))
+			$scid = 0;
+		else
+			$scid = $scid[0]["SCID"];
+
+                render("grade_form.php", ["scid" => $scid, "typerow" => $typerow, "studentrows" => $studentrows, "schoolrows" => $schoolrows, "roundrows" => $roundrows, "fullname" => getFullName($conn)]);
 
 ?>

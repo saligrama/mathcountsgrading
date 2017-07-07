@@ -1481,7 +1481,6 @@ function init()
 					<input class="mnav-logout" type="submit" name="logoutsubmit" value="Logout"></input>
 				</form>
 			</li>
-			<li class="mnav-right"><a href="/editprofile.php">Edit Profile</a></li>
 			<li class="mnav-right"><a href="/register.php">New User</a></li>
 			<li class="mnav-right"><a href="/grade.php">Grade Participants</a></li>
 		</ul>

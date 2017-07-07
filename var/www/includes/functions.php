@@ -321,7 +321,7 @@ function checkSession($type) {
         }
 
         if($_SESSION['type'] != $type && $_SESSION['type'] == 'grader')
-            redirectTo('grader.php');
+            redirectTo('grade.php');
 
     }
     else

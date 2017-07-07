@@ -64,7 +64,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 				redirectTo('admin.php');
 				break;
 			case 'grader':
-				redirectTo('grader.php');
+				redirectTo('grade.php');
 				break;
 			default:
 				endLoginSession();
