@@ -436,6 +436,7 @@ function deleteStudent()
 							<div class="form-group">
 								<label for="gender-add">Gender</label>
 								<select id="gender-add" name="gender" class="js-select form-control">
+									<option value='None'>None</option>
 									<option value='Male'>Male</option>
 									<option value='Female'>Female</option>
 									<option value='Other'>Other</option>
@@ -485,7 +486,8 @@ function deleteStudent()
                                                         <div class="form-group">
                                                                 <label for="gender-edit">Gender</label>
                                                                 <select id="gender-edit" name="gender" class="js-select form-control">
-                                                                        <option value='Male'>Male</option>
+                                                                        <option value='None'>None</option>
+									<option value='Male'>Male</option>
                                                                         <option value='Female'>Female</option>
                                                                         <option value='Other'>Other</option>
                                                                 </select>

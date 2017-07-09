@@ -558,7 +558,7 @@ function loadProgress()
 
         request = $.ajax({
                 url: "/get_progress.php",
-                type: "post"
+                type: "get"
         });
 
         request.done(function(response, textStatus, jqXHR) {
@@ -617,33 +617,11 @@ function loadProgress()
 				var points = this.points;
 				var answer = this.answer;
 
-				$("#more-progress-list").find("#" + sinfo.SID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
-					//console.log(this);
+				$("#" + sinfo.SID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
 					if(points === 0)
-					{
 						this.dataset.answer = "1";
-						/*var wrap = $(this).find(".answer-edit-parser")[0];
-						var wrap2 = wrap.previousSibling;
-
-						if(wrap.style.display == "none")
-							wrap.children[0].children[0].value = "1";
-
-						if(wrap2.style.display == "none")
-							wrap2.children[0].value = answer;*/
-					}
 					else
-					{
 						this.dataset.answer = "2";
-						/*var wrap = $(this).find(".answer-edit-parser")[0];
-						var wrap2 = wrap.previousSibling;
-
-                                                if(wrap.style.display == "none")
-                                                        wrap.children[0].children[0].value = "2";
-
-						if(wrap2.style.display == "none")
-							wrap2.children[0].value = answer;*/
-					}
-
 				}).find(".panswer p").removeClass().addClass(points === 0 ? "wrong" : "right").html("'" + answer + "'");
 			});
 		});
@@ -654,7 +632,7 @@ function loadProgress()
 			$(this.answers).each(function() {
 				var points = this.points;
 
-                                $("#more-progress-list").find("#s" + tinfo.SCID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
+                                $("#s" + tinfo.SCID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
                                         if(points === 0)
                                                 this.dataset.answer = "1";
                                         else
@@ -727,7 +705,7 @@ function loadConflicts()
 
 	request = $.ajax({
 		url: "/get_conflicts.php",
-		type: "post"
+		type: "get"
 	});
 
 	request.done(function(response, textStatus, jqXHR) {
@@ -816,7 +794,7 @@ function getConflict(c)
 
         request = $.ajax({
                 url: "/get_conflicts.php",
-                type: "post",
+                type: "get",
 		data: { COID: c.dataset.coid }
 	});
 
@@ -896,7 +874,7 @@ function getConflict(c)
 					{
         					var request1 = $.ajax({
                 					url: "/get_conflicts.php",
-                					type: "post",
+                					type: "get",
                 					data: { RID: self.dataset.rid, COID: c.dataset.coid }
         					});
 
@@ -953,7 +931,7 @@ function getConflict(c)
 				{
 					var request1 = $.ajax({
                                                url: "/get_conflicts.php",
-                                               type: "post",
+                                               type: "get",
          	                               data: { RID: rid, COID: c.dataset.coid, ranswer: v }
                                         });
 
@@ -998,7 +976,7 @@ function loadTeamConflicts()
 
         request = $.ajax({
                 url: "/get_team_conflicts.php",
-                type: "post"
+                type: "get"
         });
 
         request.done(function(response, textStatus, jqXHR) {
@@ -1087,7 +1065,7 @@ function getTeamConflict(c)
 
         request = $.ajax({
                 url: "/get_team_conflicts.php",
-                type: "post",
+                type: "get",
                 data: { TCID: c.dataset.tcid }
         });
 
@@ -1165,7 +1143,7 @@ function getTeamConflict(c)
                                         {
                                                 var request1 = $.ajax({
                                                         url: "/get_team_conflicts.php",
-                                                        type: "post",
+                                                        type: "get",
                                                         data: { TRID: self.dataset.trid, TCID: c.dataset.tcid }
                                                 });
 
@@ -1222,7 +1200,7 @@ function getTeamConflict(c)
                                 {
                                         var request1 = $.ajax({
                                                url: "/get_team_conflicts.php",
-                                               type: "post",
+                                               type: "get",
                                                data: { TRID: trid, TCID: c.dataset.tcid, ranswer: v }
                                         });
 
@@ -1269,7 +1247,7 @@ function loadStandings()
 
 	request = $.ajax({
 		url: "/get_standings.php",
-		type: "post"
+		type: "get"
 	});
 
 	request.done(function(response, textStatus, jqXHR) {
@@ -1436,7 +1414,7 @@ function init()
 
 		var av = $(this.parentNode).find("input").val();
 
-		$.post("/change_answer.php", { scid: info.dataset.scid, sid: info.dataset.sid, round: info.dataset.rndid, pnum: info.dataset.pnum, answer: av }, function(response) {
+		$.get("/change_answer.php", { scid: info.dataset.scid, sid: info.dataset.sid, round: info.dataset.rndid, pnum: info.dataset.pnum, answer: av }, function(response) {
 			console.log(response);
 			if(response == "error")
 				alert("Whoops! There was an error");
@@ -1450,9 +1428,9 @@ function init()
 	$(".edit-parser-submit").click(function() {
                 var info = this.parentNode.parentNode.parentNode;
 
-                var av = $(this.parentNode).find(".select2").val();
+                var av = $(this.parentNode).find(".small-select").val();
 
-                $.post("/change_parser_answer.php", { scid: info.dataset.scid, sid: info.dataset.sid, round: info.dataset.rndid, pnum: info.dataset.pnum, answer: av }, function(response) {
+                $.get("/change_parser_answer.php", { scid: info.dataset.scid, sid: info.dataset.sid, round: info.dataset.rndid, pnum: info.dataset.pnum, answer: av }, function(response) {
                         console.log(response);
                         if(response == "error")
                                 alert("Whoops! There was an error");

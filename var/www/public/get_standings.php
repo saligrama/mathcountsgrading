@@ -66,7 +66,7 @@ if($cid !== 0)
 
 		if($type[0]["grade_average"] == "1")
 		{
-			$count = dbQuery_new($conn, "SELECT COUNT(*) as c FROM student_participants WHERE SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid) AND type='regular'", ["scid" => $school["SCID"]]);
+			$count = dbQuery_new($conn, "SELECT COUNT(*) as c FROM student_participants WHERE SID IN (SELECT SID FROM mathlete_info WHERE SCID=:scid) AND type='regular' AND CID=:cid", ["cid" => $cid, "scid" => $school["SCID"]]);
 
 			$before = $count[0]["c"];
 		}

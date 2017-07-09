@@ -7,15 +7,15 @@ checkSession('admin');
 $conn = dbConnect_new();
 
 // Resolves a conflict
-if(isset($_POST["TRID"]) && isset($_POST["TCID"]))
+if(isset($_GET["TRID"]) && isset($_GET["TCID"]))
 {
-	$conflict = dbQuery_new($conn, "SELECT * FROM grading_conflicts_team WHERE TCID=:tcid", ["tcid" => $_POST["TCID"]]);
+	$conflict = dbQuery_new($conn, "SELECT * FROM grading_conflicts_team WHERE TCID=:tcid", ["tcid" => $_GET["TCID"]]);
 	if(empty($conflict))
 		echo "error";
 	else
 	{
 		$conflict = $conflict[0];
-		$response = dbQuery_new($conn, "SELECT * FROM grader_responses_team WHERE TRID=:trid", ["trid" => $_POST["TRID"]]);
+		$response = dbQuery_new($conn, "SELECT * FROM grader_responses_team WHERE TRID=:trid", ["trid" => $_GET["TRID"]]);
 		if(empty($response))
 		{
 			echo "error";
@@ -34,21 +34,21 @@ if(isset($_POST["TRID"]) && isset($_POST["TCID"]))
 
 		$roundinfo = $roundinfo[0];
 
-		if(isset($_POST["ranswer"]))
+		if(isset($_GET["ranswer"]))
 		{
 			$arr = [
                                                 "cid" => $response["CID"],
                                                 "uid" => $_SESSION["UID"],
                                                 "pn" => $response["problem_number"],
                                                 "round" => $response["RNDID"],
-                                                "answer" => $_POST["ranswer"]
+                                                "answer" => $_GET["ranswer"]
                         ];
 
 			$exists = dbQuery_new($conn, "SELECT CID FROM grader_responses_team WHERE CID=:cid AND UID=:uid AND problem_number=:pn AND RNDID=:round AND answer=:answer", $arr);
 			if(empty($exists))
 				dbQuery_new($conn, "INSERT INTO grader_responses_team SET CID=:cid, UID=:uid, problem_number=:pn, RNDID=:round, answer=:answer", $arr);
 
-			$answer = $_POST["ranswer"];
+			$answer = $_GET["ranswer"];
 		}
 
                 $key = dbQuery_new($conn, "SELECT answer FROM competition_answers WHERE CID=:cid AND problem_number=:pn AND RNDID=:round", [
@@ -98,7 +98,7 @@ if(isset($_POST["TRID"]) && isset($_POST["TCID"]))
                         ]);
 		}
 
-		dbQuery_new($conn, "DELETE FROM grading_conflicts_team WHERE TCID=:tcid", ["tcid" => $_POST["TCID"]]);
+		dbQuery_new($conn, "DELETE FROM grading_conflicts_team WHERE TCID=:tcid", ["tcid" => $_GET["TCID"]]);
 
 
                 updateTeamScore($conn, $response["SCID"], $response["CID"], $response["RNDID"]);
@@ -107,9 +107,9 @@ if(isset($_POST["TRID"]) && isset($_POST["TCID"]))
 	}
 }
 // Get more info about one conflict
-else if(isset($_POST["TCID"]))
+else if(isset($_GET["TCID"]))
 {
-	$info = dbQuery_new($conn, "SELECT * FROM grading_conflicts_team WHERE TCID=:tcid", ["tcid" => $_POST["TCID"]]);
+	$info = dbQuery_new($conn, "SELECT * FROM grading_conflicts_team WHERE TCID=:tcid", ["tcid" => $_GET["TCID"]]);
 	if(empty($info))
 		exit;
 	$info = $info[0];
