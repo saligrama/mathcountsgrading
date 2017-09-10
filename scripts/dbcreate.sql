@@ -29,7 +29,7 @@ CREATE TABLE `competition` (
   `competition_name` varchar(100) DEFAULT NULL,
   `CTID` int(11) NOT NULL,
   PRIMARY KEY (`CID`)
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,19 +89,10 @@ CREATE TABLE `competition_type` (
   `num_regulars` int(11) NOT NULL,
   `num_graders_to_confirm` int(11) NOT NULL,
   `grade_average` tinyint(1) DEFAULT NULL,
+  `fluid_regulars` tinyint(1) NOT NULL,
   PRIMARY KEY (`CTID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `competition_type`
---
-
-LOCK TABLES `competition_type` WRITE;
-/*!40000 ALTER TABLE `competition_type` DISABLE KEYS */;
-INSERT INTO `competition_type` VALUES (1,'Mathcounts',10,5,2,1),(2,'IMLEM',10,15,2,0);
-/*!40000 ALTER TABLE `competition_type` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `current_competition`
@@ -131,7 +122,7 @@ CREATE TABLE `grader_responses` (
   `answer` varchar(100) DEFAULT NULL,
   `RID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`RID`)
-) ENGINE=InnoDB AUTO_INCREMENT=424 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1305 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -151,7 +142,7 @@ CREATE TABLE `grader_responses_team` (
   `points` int(11) NOT NULL,
   `TRID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`TRID`)
-) ENGINE=InnoDB AUTO_INCREMENT=244 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -168,7 +159,7 @@ CREATE TABLE `grading_conflicts` (
   `RNDID` int(11) NOT NULL,
   `COID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`COID`)
-) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,7 +176,7 @@ CREATE TABLE `grading_conflicts_team` (
   `RNDID` int(11) NOT NULL,
   `TCID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`TCID`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -201,29 +192,23 @@ CREATE TABLE `mathlete_info` (
   `last_name` varchar(100) NOT NULL,
   `first_name` varchar(100) NOT NULL,
   `nickname` varchar(100) DEFAULT NULL,
-  `gender` enum('Male','Female','Other') DEFAULT NULL,
+  `gender` enum('None','Male','Female','Other') DEFAULT NULL,
   PRIMARY KEY (`SID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11196 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11243 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `mathlete_scores`
+-- Table structure for table `regular_overrides`
 --
 
-DROP TABLE IF EXISTS `mathlete_scores`;
+DROP TABLE IF EXISTS `regular_overrides`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `mathlete_scores` (
-  `SID` int(11) NOT NULL,
+CREATE TABLE `regular_overrides` (
   `CID` int(11) NOT NULL,
-  `sprint_raw` int(11) NOT NULL,
-  `target_raw1` int(11) NOT NULL,
-  `target_raw2` int(11) NOT NULL,
-  `target_raw3` int(11) NOT NULL,
-  `target_raw4` int(11) NOT NULL,
-  `target_raw_total` int(11) NOT NULL,
-  `main_total` int(11) NOT NULL,
-  `mathlete_rank` int(11) NOT NULL
+  `SID` int(11) NOT NULL,
+  `RNDID` int(11) NOT NULL,
+  `type` enum('regular','alternate') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -246,16 +231,6 @@ CREATE TABLE `round` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `round`
---
-
-LOCK TABLES `round` WRITE;
-/*!40000 ALTER TABLE `round` DISABLE KEYS */;
-INSERT INTO `round` VALUES (1,1,30,1,'Sprint Round',1),(1,2,2,2,'Target, Round 1',1),(1,3,2,2,'Target, Round 2',1),(1,4,2,2,'Target, Round 3',1),(1,5,2,2,'Target, Round 4',1),(1,6,10,2,'Team Round',0),(2,7,3,2,'Individual 1',1),(2,8,3,2,'Individual 2',1),(2,9,3,2,'Individual 3',1),(2,10,3,2,'Individual 4',1),(2,11,3,2,'Individual 5',1),(2,12,9,4,'Team',0);
-/*!40000 ALTER TABLE `round` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `school_info`
 --
 
@@ -270,7 +245,7 @@ CREATE TABLE `school_info` (
   `address` varchar(100) NOT NULL,
   `contact_email` varchar(100) NOT NULL,
   PRIMARY KEY (`SCID`)
-) ENGINE=InnoDB AUTO_INCREMENT=744 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=745 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -367,9 +342,8 @@ CREATE TABLE `user` (
   `SCID` int(11) DEFAULT NULL,
   `type` enum('admin','grader') DEFAULT NULL,
   PRIMARY KEY (`UID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -380,4 +354,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-06  0:01:17
+-- Dump completed on 2017-09-10 12:09:37
