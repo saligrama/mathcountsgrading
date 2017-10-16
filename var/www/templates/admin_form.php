@@ -551,7 +551,7 @@ var intervalFunc;
 
 function loadProgress()
 {
-	intervalFunc = loadProgress;
+	intervalFunc = updateProgress;
 
 	if(request)
                 request.abort();
@@ -647,6 +647,42 @@ function loadProgress()
 	request.fail(function(jqXHR, textStatus, errorThrown) {
 
         });
+}
+
+function updateProgress()
+{
+	if(request)
+                request.abort();
+
+        request = $.ajax({
+                url: "/get_progress.php",
+                type: "get"
+        });
+
+        request.done(function(response, textStatus, jqXHR) {
+                if(response === "")
+                        return;
+
+                var data = JSON.parse(response);
+
+		$(data.team_answers).each(function() {
+			$("#s" + this.SCID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
+                                if(this.points === 0)
+                                        this.dataset.answer = "1";
+                                else
+                                        this.dataset.answer = "2";
+                        }).find(".panswer p").removeClass().addClass(this.points === 0 ? "wrong" : "right").html("'" + this.answer + "'");
+		});
+
+		$(data.team_answers).each(function() {
+                        $("#s" + this.SCID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
+                                if(this.points === 0)
+                                        this.dataset.answer = "1";
+                                else
+                                        this.dataset.answer = "2";
+                        }).find(".panswer p").removeClass().addClass(this.points === 0 ? "wrong" : "right").html("'" + this.answer + "'");
+                });
+	});
 }
 
 function filterMoreProgress()
