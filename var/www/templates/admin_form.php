@@ -596,6 +596,8 @@ function loadProgress()
 
 		$("#progressbar-total").css("width", avg + "%").html(avg + "%");
 
+		filterMoreProgress();
+
 		$("#more-progress-list tr").each(function() {
 			this.dataset.answer = "3";
 		}).find(".panswer p").removeClass().addClass("noneyet").html("None yet");
@@ -640,8 +642,6 @@ function loadProgress()
                                 }).find(".panswer p").removeClass().addClass(points === 0 ? "wrong" : "right").html("'" + this.answer + "'");
                 	});
 		});
-
-		setTimeout(filterMoreProgress, 50);
 	});
 
 	request.fail(function(jqXHR, textStatus, errorThrown) {
@@ -664,9 +664,52 @@ function filterMoreProgress()
 	var answer = $("#filter_answer").val();
 	var number = $("#filter_number").html();
 
-	var shown = 0;
+	if(request)
+                request.abort();
 
-	$("#more-progress-list tr").each(function() {
+        request = $.ajax({
+                url: "/get_more_progress.php",
+                type: "get"
+        });
+
+        request.done(function(response, textStatus, jqXHR) {
+		$(data.student_info_and_answers).each(function() {
+                        var sinfo = this.student_info;
+
+                        $(this.answers).each(function() {
+                                var points = this.points;
+                                var answer = this.answer;
+
+                                $("#" + sinfo.SID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
+                                        if(points === 0)
+                                                this.dataset.answer = "1";
+                                        else
+                                                this.dataset.answer = "2";
+                                }).find(".panswer p").removeClass().addClass(points === 0 ? "wrong" : "right").html("'" + answer + "'");
+                        });
+                });
+
+                $(data.team_info_and_answers).each(function() {
+                        var tinfo = this.team_info;
+
+                        $(this.answers).each(function() {
+                                var points = this.points;
+
+                                $("#s" + tinfo.SCID + "a" + this.RNDID + "a" + this.problem_number).each(function() {
+                                        if(points === 0)
+                                                this.dataset.answer = "1";
+                                        else
+                                                this.dataset.answer = "2";
+                                }).find(".panswer p").removeClass().addClass(points === 0 ? "wrong" : "right").html("'" + this.answer + "'");
+                        });
+                });
+	});
+
+	request.fail(function(jqXHR, textStatus, errorThrown) {
+
+	});
+
+	/*$("#more-progress-list tr").each(function() {
 		this.style.display = "none";
 
 		//var isschool = (this.id.substr(0, 1) === "s");
@@ -688,12 +731,7 @@ function filterMoreProgress()
 				}
 			}
 		//}
-	});
-
-	if(!shown)
-		$("#no-progress-results").css("display", "table-row");
-	else
-		$("#no-progress-results").css("display", "none");
+	});*/
 }
 
 function loadConflicts()
@@ -1375,15 +1413,15 @@ function init()
 
 	$("#more-progress-toggle").click(function() { $(".more-progress").toggleClass("hidden"); });
 
-	$("#filter_student").change(filterMoreProgress);
-        $("#filter_round").change(filterMoreProgress);
-        $("#filter_answer").change(filterMoreProgress);
+	$("#filter_student").change(function() { filterMoreProgress(1) });
+        $("#filter_round").change(function() { filterMoreProgress(1) });
+        $("#filter_answer").change(function() { filterMoreProgress(1) });
 
 	$("#filter_number_all").click(function() {
 		$("#filter_number").html("0");
 		$("#filter_number_enter").val("");
 
-		filterMoreProgress();
+		filterMoreProgress(1);
 	});
 
 	$("#filter_number_enter").change(function() {
@@ -1394,7 +1432,7 @@ function init()
 		else
 			$("#filter_number").html(v);
 
-		filterMoreProgress();
+		filterMoreProgress(1);
 	});
 
 	$(".edit-opt-answer").click(function(e) {
