@@ -26,15 +26,17 @@ if($cid !== 0 && isset($_GET["scid"]) && isset($_GET["sid"]) && isset($_GET["rou
         ]);
         if(empty($key))
         {
-		echo "error";
-		exit;
+		$key = 0;
 	}
         else
         	$key = $key[0]["answer"];
 
 
-        $correct = compareAnswers($key, $_GET["answer"]);
-        $points = $correct * $roundinfo["points_per_question"];
+	$correct = 0;
+	if($key !== 0)
+        	$correct = compareAnswers($key, $_GET["answer"]);
+
+	$points = $correct * $roundinfo["points_per_question"];
 
 
 	if($_GET["sid"] == "0")

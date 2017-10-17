@@ -26,7 +26,7 @@
 	    $student_update = [];
 	    $team_update = [];
 
-	    echo "<script type='text/javascript'>window.location.replace('/editcompetition.php?CID=" . $_POST["CID"] . "');</script>";
+	    echo "<script type='text/javascript'>window.location.replace('/editanswers.php?CID=" . $_POST["CID"] . "');</script>";
 
 	    for($i = 1; $i <= $roundinfo["num_questions"]; $i++)
 	    {

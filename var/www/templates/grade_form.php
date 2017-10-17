@@ -893,20 +893,24 @@ function gradeProblem(input)
                                                                         <div class="answers-header-s" id="student-header">Student</div>
                                                                 </div>
 								<div class="answers-subtable">
-									<?php foreach($studentrows as $student): ?>
-										<div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
-											<div class="answers-input-student">
-												<span class="answer-input-span"><?php echo clean(getStudentFullName($student)); ?></span>
+									<?php if($studentrows !== 0): ?>
+										<?php foreach($studentrows as $student): ?>
+											<div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
+												<div class="answers-input-student">
+													<span class="answer-input-span"><?php echo clean(getStudentFullName($student)); ?></span>
+												</div>
 											</div>
-										</div>
-									<?php endforeach; ?>
-									<?php foreach($schoolrows as $school): ?>
-                                                                		<div class="answers-row" data-scid="<?= $school['SCID'] ?>" style="display: none">
-                                                                        		<div class="answers-input-school">
-                                                                                		<span class="answer-input-span"><?php echo clean($school["team_name"]); ?></span>
-                                                                        		</div>
-                                                                		</div>
-                                                        		<?php endforeach; ?>
+										<?php endforeach; ?>
+									<?php endif; ?>
+									<?php if($schoolrows !== 0): ?>
+										<?php foreach($schoolrows as $school): ?>
+                                                                			<div class="answers-row" data-scid="<?= $school['SCID'] ?>" style="display: none">
+                                                                        			<div class="answers-input-school">
+                                                                                			<span class="answer-input-span"><?php echo clean($school["team_name"]); ?></span>
+                                                                        			</div>
+                                                                			</div>
+                                                        			<?php endforeach; ?>
+									<?php endif; ?>
 								</div>
 							</div>
 							<div id="table-scroll" class="answers-subtable-wrap answers-subtable-fluid">
@@ -914,20 +918,24 @@ function gradeProblem(input)
                                                                         <div class="answers-header-wrap" id="answers-header-list"></div>
                                                                 </div>
 								<div class="answers-subtable">
-									<?php foreach($studentrows as $student): ?>
-               	                                                        	<div class="answers-row" data-haslist="y" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
-               	                                	                      		<div class="answer-input-list-wrap">
-												<div class="answer-input-list"></div>
+									<?php if($studentrows !== 0): ?>
+										<?php foreach($studentrows as $student): ?>
+               	                                                        		<div class="answers-row" data-haslist="y" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
+               	                                	                      			<div class="answer-input-list-wrap">
+													<div class="answer-input-list"></div>
+												</div>
 											</div>
-										</div>
-                                                                	<?php endforeach; ?>
-                                                                	<?php foreach($schoolrows as $school): ?>
-                                                                        	<div class="answers-row" data-haslist="y" data-scid="<?= $school['SCID'] ?>" style="display: none">
-                                                                        		<div class="answer-input-list-wrap">
-                                                                                                <div class="answer-input-list"></div>
-                                                                                        </div>
-										</div>
-                                                                	<?php endforeach; ?>
+                                                                		<?php endforeach; ?>
+                                                                	<?php endif; ?>
+									<?php if($schoolrows !== 0): ?>
+										<?php foreach($schoolrows as $school): ?>
+                                                                       		 	<div class="answers-row" data-haslist="y" data-scid="<?= $school['SCID'] ?>" style="display: none">
+                                                                        			<div class="answer-input-list-wrap">
+                                                                                	                <div class="answer-input-list"></div>
+                                                                                	        </div>
+											</div>
+                                                                		<?php endforeach; ?>
+									<?php endif; ?>
 								</div>
 							</div>
 							<?php if($typerow["fluid_regulars"] == "1"): ?>
@@ -936,14 +944,16 @@ function gradeProblem(input)
 									<div style="margin-left: 3px" class="answers-header-row answers-header-row-s">
                                                                                 <div class="answers-header-s">R</div>
                                                                         </div>
-									<?php foreach($studentrows as $student): ?>
-                                                                        	<div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
-                                                                                	<div class="answers-input-regular">
-												<input type="checkbox" class="checkbox-custom"></input>
-												<label class="checkbox-custom-label"></label>
-                                                                                	</div>
-                                                                        	</div>
-                                                                	<?php endforeach; ?>
+									<?php if($studentrows !== 0): ?>
+										<?php foreach($studentrows as $student): ?>
+                                                                        		<div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
+                                                                                		<div class="answers-input-regular">
+													<input type="checkbox" class="checkbox-custom"></input>
+													<label class="checkbox-custom-label"></label>
+                                                                                		</div>
+                                                                        		</div>
+                                                                		<?php endforeach; ?>
+									<?php endif; ?>
 								</div>
 							</div>
 							<?php endif; ?>

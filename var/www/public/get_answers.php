@@ -36,8 +36,7 @@ echo "\n";
                         				<label style="font-size:21px;" for="answers"><?php echo clean($roundrow["round_name"]); ?></label>
                         			</div>
 					</div><br>
-					<form id="answers" method="post" onsubmit="return checkSubmit();" action="">
-						<input type="hidden" name="round" value="<?= $roundrow['RNDID'] ?>"></input>
+						<input form="answers" type="hidden" name="round" value="<?= $roundrow['RNDID'] ?>"></input>
 						<?php for($i = 0; $i < $roundrow["num_questions"] / 30; $i++): ?>
 							<div class="row">
 		                               			<?php for($j = 0; $j < ($roundrow["num_questions"] - 30 * $i) / 10 && $j < 3; $j++): ?>
@@ -60,8 +59,7 @@ echo "\n";
 								<?php endfor; ?>
 							</div>
 						<?php endfor; ?>
-						<input type="hidden" name="numquestions" value="<?= $roundrow['num_questions'] ?>">
-					</form>
+						<input form="answers" type="hidden" name="numquestions" value="<?= $roundrow['num_questions'] ?>">
 				</div>
 				<div class="panel-footer">
 					<div class="row">

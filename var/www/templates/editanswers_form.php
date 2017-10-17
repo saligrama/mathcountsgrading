@@ -149,7 +149,7 @@ function init()
 </nav>
 <div class="container-fluid main">
         <div class="row text-center">
-		<form id="answers" method="post" action="">
+		<form id="answers" method="post" onsubmit="return checkSubmit();" action="">
 			<input type="hidden" name="CID" value="<?php echo clean($_GET['CID']); ?>"></input>
                 </form>
 		<div class="col-md-4">

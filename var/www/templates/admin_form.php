@@ -399,6 +399,7 @@
 
 #more-progress-list tr {
 	height: 100%;
+	display: none;
 }
 
 #more-progress-list td {
@@ -512,6 +513,16 @@ td .noneyet {
 	padding: 15px;
 }
 
+#more-progress-show td {
+	color: #67E;
+}
+
+#more-progress-show td:hover {
+	color: #45C;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
 .small-select {
 	padding: 4px;
 }
@@ -596,7 +607,7 @@ function loadProgress()
 
 		$("#progressbar-total").css("width", avg + "%").html(avg + "%");
 
-		$("#more-progress-list tr").each(function() {
+		$("#more-progress-list .more-progress-tr").each(function() {
 			this.dataset.answer = "3";
 		}).find(".panswer p").removeClass().addClass("noneyet").html("None yet");
 
@@ -641,7 +652,7 @@ function loadProgress()
                 	});
 		});
 
-		setTimeout(filterMoreProgress, 50);
+		setTimeout(function() { filterMoreProgress(0); }, 50);
 	});
 
 	request.fail(function(jqXHR, textStatus, errorThrown) {
@@ -649,7 +660,18 @@ function loadProgress()
         });
 }
 
-function filterMoreProgress()
+var start_max_shown = 10;
+var max_shown_step = 10;
+var max_shown = start_max_shown;
+
+function clickShowMore()
+{
+	max_shown += max_shown_step;
+
+	filterMoreProgress(0);
+}
+
+function filterMoreProgress(resetShow)
 {
 	var school = false;
 	var id = $("#filter_student").val();
@@ -665,14 +687,18 @@ function filterMoreProgress()
 	var number = $("#filter_number").html();
 
 	var shown = 0;
+	var hide_rest = 0;
+	var checked_for_more = 0;
+	var should_show_more_option = 0;
 
-	$("#more-progress-list tr").each(function() {
+	if(resetShow)
+		max_shown = start_max_shown;
+
+	$("#more-progress-list .more-progress-tr").each(function() {
 		this.style.display = "none";
 
-		//var isschool = (this.id.substr(0, 1) === "s");
-
-		//if(school == isschool)
-		//{
+		if(!(hide_rest && checked_for_more))
+		{
 			if(id == "0" || (school && (this.dataset.scid == id)) || this.dataset.sid == id)
 			{
 				if(rndid == "0" || this.dataset.rndid == rndid)
@@ -681,19 +707,32 @@ function filterMoreProgress()
 					{
 						if(number == "0" || this.dataset.pnum == number)
 						{
-							this.style.display = "table-row";
-							shown++;
+							if(hide_rest) {
+								checked_for_more = 1;
+								should_show_more_option = 1;
+							}
+							else {
+								this.style.display = "table-row";
+								shown++;
+								if(shown >= max_shown)
+									hide_rest = 1;
+							}
 						}
 					}
 				}
 			}
-		//}
+		}
 	});
 
 	if(!shown)
 		$("#no-progress-results").css("display", "table-row");
 	else
 		$("#no-progress-results").css("display", "none");
+
+	if(should_show_more_option)
+		$("#more-progress-show").css("display", "table-row");
+	else
+		$("#more-progress-show").css("display", "none");
 }
 
 function loadConflicts()
@@ -1375,15 +1414,15 @@ function init()
 
 	$("#more-progress-toggle").click(function() { $(".more-progress").toggleClass("hidden"); });
 
-	$("#filter_student").change(filterMoreProgress);
-        $("#filter_round").change(filterMoreProgress);
-        $("#filter_answer").change(filterMoreProgress);
+	$("#filter_student").change(function() { filterMoreProgress(1); });
+        $("#filter_round").change(function() { filterMoreProgress(1); });
+        $("#filter_answer").change(function() { filterMoreProgress(1); });
 
 	$("#filter_number_all").click(function() {
 		$("#filter_number").html("0");
 		$("#filter_number_enter").val("");
 
-		filterMoreProgress();
+		filterMoreProgress(1);
 	});
 
 	$("#filter_number_enter").change(function() {
@@ -1394,8 +1433,14 @@ function init()
 		else
 			$("#filter_number").html(v);
 
-		filterMoreProgress();
+		filterMoreProgress(1);
 	});
+
+	$("#more-progress-show").click(clickShowMore);
+
+	if($("#more-progress-list .more-progress-tr").length > start_max_shown) {
+		$("#more-progress-show").css("display", "table-row");
+	}
 
 	$(".edit-opt-answer").click(function(e) {
 		e.preventDefault();
@@ -1705,12 +1750,12 @@ function init()
 													</tr>
 												</thead>
 												<tbody id="more-progress-list">
-													<tr style="display: none;" id="no-progress-results"><td colspan="4">There are no results for that filter</td></tr>
+													<tr id="no-progress-results"><td colspan="4">There are no results for that filter</td></tr>
 													<?php foreach($schools as $school): ?>
                                                                                                                 <?php foreach($compstatus as $round): ?>
                                                                                                                         <?php if($round["indiv"] == 0): ?>
                                                                                                                                 <?php for($i = 1; $i <= $round["num_questions"]; $i++): ?>
-                                                                                                                                        <tr id="s<?= $school['SCID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-scid="<?= $school['SCID'] ?>" data-sid="0" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-answer="3">
+                                                                                                                                        <tr class="more-progress-tr" id="s<?= $school['SCID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-scid="<?= $school['SCID'] ?>" data-sid="0" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-answer="3">
                                                                                                                                                 <td><?php echo clean($round["round_name"]); ?></td>
                                                                                                                                                 <td><?= $i ?></td>
                                                                                                                                                 <td><b><?php echo clean($school["team_name"]); ?></b></td>
@@ -1788,6 +1833,9 @@ function init()
 															<?php endif; ?>
 														<?php endforeach; ?>
 													<?php endforeach; ?>
+													<tr id="more-progress-show">
+                                                                                                               	<td colspan="4">Show more</td>
+                                                                                                        </tr>
 												</tbody>
 											</table>
 										</div>

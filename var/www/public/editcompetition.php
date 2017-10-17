@@ -216,22 +216,28 @@
 	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info");
 	if(empty($studentinfo))
 		$studentinfo = 0;
-
-	usort($studentinfo, 'studentSort');
+	else
+		usort($studentinfo, 'studentSort');
 
         $compinfo = dbQuery_new($conn, "SELECT * FROM competition WHERE CID=:cid", ["cid" => $_GET["CID"]]);
         if(empty($compinfo))
 		redirectTo("/admin.php");
 
 	$i = 0;
-	foreach($schinfo as $school)
+	if($schinfo !== 0)
 	{
-		$schinfo[$i++]["num_students"] = 0;
-
-		foreach($studentinfo as $student)
+		foreach($schinfo as $school)
 		{
-			if($student["SCID"] == $school["SCID"])
-				$schinfo[$i-1]["num_students"]++;
+			$schinfo[$i++]["num_students"] = 0;
+
+			if($studentinfo !== 0)
+			{
+				foreach($studentinfo as $student)
+				{
+					if($student["SCID"] == $school["SCID"])
+						$schinfo[$i-1]["num_students"]++;
+				}
+			}
 		}
 	}
 
