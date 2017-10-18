@@ -673,12 +673,12 @@ function clickShowMore()
 
 function filterMoreProgress(resetShow)
 {
-	var school = false;
+	var school = 0;
 	var id = $("#filter_student").val();
 
 	if(id.substr(0, 1) === "s")
 	{
-		school = true;
+		school = 1;
 		id = id.substr(1);
 	}
 
@@ -699,10 +699,11 @@ function filterMoreProgress(resetShow)
 
 		if(!(hide_rest && checked_for_more))
 		{
-			if(id == "0" || (school && (this.dataset.scid == id)) || this.dataset.sid == id)
+			if(id == "0" || this.dataset.scid == id || this.dataset.sid == id)
 			{
 				if(rndid == "0" || this.dataset.rndid == rndid)
 				{
+					console.log("after rndids");
 					if(answer == "0" || this.dataset.answer == answer)
 					{
 						if(number == "0" || this.dataset.pnum == number)
@@ -1796,7 +1797,7 @@ function init()
 														<?php foreach($compstatus as $round): ?>
 															<?php if($round["indiv"] == 1): ?>
 																<?php for($i = 1; $i <= $round["num_questions"]; $i++): ?>
-																	<tr id="<?= $student['SID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-sid="<?= $student['SID'] ?>" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-scid="<?= $student['SCID'] ?>" data-answer="3">
+																	<tr class="more-progress-tr" id="<?= $student['SID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-sid="<?= $student['SID'] ?>" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-scid="<?= $student['SCID'] ?>" data-answer="3">
 																		<td><?php echo clean($round["round_name"]); ?></td>
 																		<td><?= $i ?></td>
 																		<td><?php echo clean($student["first_name"] . " " . $student["last_name"]); ?></td>
