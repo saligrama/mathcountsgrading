@@ -42,10 +42,6 @@
 function checkSubmit()
 {
 	var name = document.getElementById("teamname").value;
-        var town = document.getElementById("town").value;
-        var address = document.getElementById("address").value;
-        var coach = document.getElementById("coach").value;
-        var email = document.getElementById("email").value;
 
         if(name === "")
         {
@@ -53,39 +49,7 @@ function checkSubmit()
                 return false;
         }
 
-        if(town === "")
-        {
-                malert("Please fill out the school town");
-                return false;
-        }
-
-        if(address === "")
-        {
-                malert("Please fill out the school address");
-                return false;
-        }
-
-        if(coach === "")
-        {
-                malert("Please fill out the school coach");
-                return false;
-        }
-
-        if(email === "")
-        {
-                malert("Please fill out the school email");
-                return false;
-        }
-
-	/*
-	var mes = "Are you sure you want to create a school with team name '";
-	mes += document.getElementById("teamname").value;
-	mes += "' from the town '";
-	mes += document.getElementById("town").value;
-	mes += "'?";
-	*/
-
-	//return confirm(mes);
+	return true;
 }
 
 </script>
@@ -122,30 +86,6 @@ function checkSubmit()
 							<input id="teamname" type="text" class="form-control" name="teamname" placeholder="School Name" required>
                 				</div>
 					</div>
-					<div class="row">
-						<div class="form-group">
-							<label for="town">Town</label>
-							<input id="town" type="text" class="form-control" name="town" placeholder="Town" required>
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group">
-							<label for="address">Address</label>
-							<input id="address" type="text" class="form-control" name="address" placeholder="School Address" required>
-                				</div>
-					</div>
-					<div class="row">
-						<div class="form-group">
-							<label for="coach">Coach</label>
-							<input id="coach" type="text" class="form-control" name="coach" placeholder="Coach Name" required>
-                				</div>
-					</div>
-					<div class="row">
-						<div class="form-group">
-							<label for="email">Email</label>
-							<input id="email" type="email" class="form-control" name="email" placeholder="Contact Email">
-                				</div>
-					</div><br>
 				</div>
 			</form>
 		</div>

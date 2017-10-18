@@ -21,7 +21,8 @@ if($cid !== 0)
 	];
 
 	//$students = dbQuery_new($conn, "SELECT AVG(score) FROM (SELECT SUM(raw) AS score FROM student_cleaner WHERE CID=:cid GROUP BY SID) AS T", ["cid" => $cid]);
-	$students = dbQuery_new($conn, "SELECT SUM(raw) as score, SID FROM student_cleaner WHERE CID=:cid AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid2) GROUP BY SID ORDER BY score DESC", ["cid" => $cid, "cid2" => $cid]);
+	//$students = dbQuery_new($conn, "SELECT SUM(raw) as score, SID FROM student_cleaner WHERE CID=:cid AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid2) GROUP BY SID ORDER BY score DESC", ["cid" => $cid, "cid2" => $cid]);
+	$students = dbQuery_new($conn, "SELECT SUM(IFNULL(a.raw, 0)) as score, b.SID FROM student_cleaner as a RIGHT JOIN student_participants as b ON (a.CID=:cid AND a.CID = b.CID AND a.SID=b.SID) GROUP BY SID ORDER BY score DESC", ["cid" => $cid]);
 	$r = 0;
 	$a = 0;
 	for($i = 0; $i < count($students); $i++)
@@ -71,7 +72,11 @@ if($cid !== 0)
 			$before = $count[0]["c"];
 		}
 
-		$student = dbQuery_new($conn, "SELECT (SUM(score) / $before) as total FROM (SELECT SUM(a.raw) AS score FROM student_cleaner AS a RIGHT JOIN (mathlete_info AS b) ON (a.CID=:cid AND a.SID = b.SID AND (b.SID, a.RNDID) NOT IN (SELECT SID, RNDID FROM regular_overrides WHERE CID=:cid3 AND type='alternate') AND b.SCID=:scid AND b.SID IN (SELECT SID FROM student_participants WHERE CID=:cid2 AND type='regular')) GROUP BY b.SID) AS T", ["scid" => $school["SCID"], "cid" => $cid, "cid2" => $cid, "cid3" => $cid]);
+		$student = dbQuery_new($conn, "SELECT (SUM(score) / $before) as total FROM " .
+					      "(SELECT SUM(a.raw) AS score FROM student_cleaner AS a RIGHT JOIN (mathlete_info AS b) ON (a.CID=:cid AND a.SID = b.SID AND (b.SID, a.RNDID) NOT IN " .
+					      "(SELECT SID, RNDID FROM regular_overrides WHERE CID=:cid3 AND type='alternate') AND b.SCID=:scid AND ".
+					      "((b.SID, a.RNDID) IN (SELECT SID, RNDID FROM regular_overrides WHERE CID=:cid4 AND type='regular') OR b.SID IN (SELECT SID FROM student_participants WHERE CID=:cid2 AND type='regular'))) ".
+					      "GROUP BY b.SID) AS T", ["scid" => $school["SCID"], "cid" => $cid, "cid2" => $cid, "cid3" => $cid, "cid4" => $cid]);
 		if(empty($student))
 			exit;
 

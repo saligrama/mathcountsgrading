@@ -131,15 +131,13 @@ function grade_func($conn, $roundrow, $pn, $answer, $scid, $sid, $userrow, $cid,
                                                                 "round" => $roundrow["RNDID"]
                                                 ]);
                                                 if(empty($key))
-                                                        $key = 0;
-                                                else
-                                                        $key = $key[0]["answer"];
+                                                        $key = "";
+						else
+                                                	$key = $key[0]["answer"];
 
 
                                                 // Check if the entered answer is right
-						$correct = 0;
-						if($key !== 0)
-                                                	$correct = compareAnswers($key, $answer);
+                                                $correct = compareAnswers($key, $answer);
                                                 $points = $correct * $roundrow["points_per_question"];
 
                                                 // Is there a final answer in the database already?

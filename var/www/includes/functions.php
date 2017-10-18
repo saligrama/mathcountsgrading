@@ -31,12 +31,18 @@ function updateCompStatus($conn, $cid, $round)
 	if($rinfo["indiv"] == "1")
 	{
 		$status = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND RNDID=:round AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid2)", ["cid" => $cid, "cid2" => $cid, "round" => $round]);
-		$status = $status[0]["val"] / ($snum * $rinfo["num_questions"]);
+		if($snum)
+			$status = $status[0]["val"] / ($snum * $rinfo["num_questions"]);
+		else
+			$status = 0.0;
 	}
 	else
 	{
 		$status = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM team_answers WHERE CID=:cid AND RNDID=:round AND SCID IN (SELECT SCID FROM competition_participants WHERE CID=:cid2)", ["cid" => $cid, "cid2" => $cid, "round" => $round]);
-                $status = $status[0]["val"] / ($scnum * $rinfo["num_questions"]);
+                if($scnum)
+			$status = $status[0]["val"] / ($scnum * $rinfo["num_questions"]);
+		else
+			$status = 0.0;
 	}
 
 	/*$target2 = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND problem_type='target2'", ["cid" => $cid]);

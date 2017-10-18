@@ -12,33 +12,23 @@
 	{
 		if(isset($_POST["finalize"]))
 		{
-			if(!isset($_POST["teamname"]) || !isset($_POST["town"]) || !isset($_POST["coach"]) || !isset($_POST["address"]) || !isset($_POST["email"]) || !isset($_POST["scid"]) ||
-			   sempty($_POST["teamname"]) || sempty($_POST["town"]) || sempty($_POST["coach"]) || sempty($_POST["address"]) || sempty($_POST["email"]))
+			if(!isset($_POST["teamname"]) || !isset($_POST["scid"]) || sempty($_POST["teamname"]))
 			{
 	               		internalErrorRedirect(isset($_POST["scid"]) ? "/editschool.php?SCID=" . $_POST["scid"] : "/admin.php");
 			}
 
-			$previous = dbQuery_new($conn, "SELECT * FROM school_info WHERE team_name = :teamname AND town = :town AND address = :address AND SCID != :scid;",
-                                ["teamname" => $_POST["teamname"], "town" => $_POST["town"], "address" => $_POST["address"], "scid" => $_POST["scid"]]);
+			$previous = dbQuery_new($conn, "SELECT * FROM school_info WHERE team_name = :teamname AND SCID != :scid;", ["teamname" => $_POST["teamname"], "scid" => $_POST["scid"]]);
         		if(!empty($previous)) {
-        		        popupAlert("Whoops! A school with the same team name, town, and address already exists.");
+        		        popupAlert("Whoops! A school with the same team name already exists.");
                 		redirectTo("/editschool.php?SCID=" . $_POST["scid"]);
         		}
 
         		dbQuery_new($conn,
         			"UPDATE school_info SET
-        			team_name=:team_name,
-    	        		town=:town,
-    	        		coach=:coach,
-                		address=:address,
-                		contact_email=:email
+        			team_name=:team_name
 	        		WHERE SCID=:scid", [
 					"scid" => $_POST["scid"],
-                			"team_name" => $_POST["teamname"],
-                			"town" => $_POST["town"],
-                			"coach" => $_POST["coach"],
-                			"address" => $_POST["address"],
-                			"email" => $_POST["email"]
+                			"team_name" => $_POST["teamname"]
                 		]
 
                 	);
@@ -97,8 +87,7 @@
 		}
 		else if(isset($_POST["editstudent"]))
                 {
-                        if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["nickname"]) ||
-                           !isset($_POST["gender"]) || !isset($_POST["sid"]) || (sempty($_POST["firstname"]) && sempty($_POST["lastname"])))
+                        if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["sid"]) || (sempty($_POST["firstname"]) && sempty($_POST["lastname"])))
                         {
                                 internalErrorRedirect(isset($_POST["scid"]) ? "/editschool.php?SCID=" . $_POST["scid"] : "/admin.php");
                         }
@@ -106,15 +95,11 @@
                         dbQuery_new($conn,
                                 "UPDATE mathlete_info SET
                                 first_name=:firstname,
-                                last_name=:lastname,
-                                nickname=:nickname,
-                                gender=:gender
+                                last_name=:lastname
 				WHERE SID=:sid", [
                                         "sid" => $_POST["sid"],
                                         "firstname" => $_POST["firstname"],
-                                        "lastname" => $_POST["lastname"],
-                                        "nickname" => $_POST["nickname"],
-                                        "gender" => $_POST["gender"]
+                                        "lastname" => $_POST["lastname"]
                                 ]
                         );
 

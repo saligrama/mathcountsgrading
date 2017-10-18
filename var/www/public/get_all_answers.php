@@ -9,8 +9,8 @@ $conn = dbConnect_new();
 $uid = $_SESSION["UID"];
 $cid = getCurrentComp($conn);
 
-$answers = dbQuery_new($conn, "SELECT * FROM grader_responses WHERE CID=:cid AND UID=:uid ORDER BY SID, RNDID, problem_number", ["uid" => $uid, "cid" => $cid]);
-$team_answers = dbQuery_new($conn, "SELECT * FROM grader_responses_team WHERE CID=:cid AND UID=:uid ORDER BY SCID, RNDID, problem_number", ["uid" => $uid, "cid" => $cid]);
+$answers = dbQuery_new($conn, "SELECT * FROM grader_responses WHERE CID=:cid AND UID=:uid AND RNDID IN (SELECT RNDID FROM round WHERE CTID IN (SELECT CTID FROM competition WHERE CID=:cid2)) ORDER BY SID, RNDID, problem_number", ["uid" => $uid, "cid" => $cid, "cid2" => $cid]);
+$team_answers = dbQuery_new($conn, "SELECT * FROM grader_responses_team WHERE CID=:cid AND UID=:uid AND RNDID IN (SELECT RNDID FROM round WHERE CTID IN (SELECT CTID FROM competition WHERE CID=:cid2)) ORDER BY SCID, RNDID, problem_number", ["uid" => $uid, "cid" => $cid, "cid2" => $cid]);
 
 $parts = dbQuery_new($conn, "SELECT type, SID FROM student_participants WHERE CID=:cid", ["cid" => $cid]);
 

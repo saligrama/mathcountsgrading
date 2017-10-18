@@ -403,6 +403,7 @@ $(document).ready(function() {
 	$(window).capslockstate();
 
 	$.post("/get_all_answers.php", function(r) {
+		console.log(r);
 		var data = JSON.parse(r);
 
 		for(var i = 0; i < data.parts.length; i++)

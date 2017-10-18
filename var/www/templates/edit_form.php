@@ -110,10 +110,6 @@ function studentSearch()
 function checkSubmit()
 {
         var name = document.getElementById("teamname").value;
-        var town = document.getElementById("town").value;
-        var address = document.getElementById("address").value;
-        var coach = document.getElementById("coach").value;
-        var email = document.getElementById("email").value;
 
         if(name === "")
         {
@@ -121,31 +117,7 @@ function checkSubmit()
                 return false;
         }
 
-        if(town === "")
-        {
-                malert("Please fill out the school town");
-                return false;
-        }
-
-        if(address === "")
-        {
-                malert("Please fill out the school address");
-                return false;
-        }
-
-        if(coach === "")
-        {
-                malert("Please fill out the school coach");
-                return false;
-        }
-
-        if(email === "")
-        {
-                malert("Please fill out the school email");
-                return false;
-        }
-
-        return confirm("Are you sure you want to finalize your changes?");
+        return true;
 }
 
 function checkSubmitAddStudent(e)
@@ -154,8 +126,6 @@ function checkSubmitAddStudent(e)
 
 	var firstname = document.getElementById("firstname-add").value;
 	var lastname = document.getElementById("lastname-add").value;
-	var nickname = document.getElementById("nickname-add").value;
-	var gender = document.getElementById("gender-add").value;
 	var scid = document.getElementById("scid-add").value;
 
 	if(firstname === "" && lastname === "")
@@ -164,22 +134,18 @@ function checkSubmitAddStudent(e)
 		return;
 	}
 
-	$.post("/addstudent.php", { firstname: firstname, lastname: lastname, nickname: nickname, gender: gender, scid: scid }, function(r) {
+	$.post("/addstudent.php", { firstname: firstname, lastname: lastname, scid: scid }, function(r) {
 		var sid = parseInt(r);
 
 		if(!isNaN(sid) && sid > 0)
 		{
 			document.getElementById("lastname-add").value = "";
 			document.getElementById("firstname-add").value = "";
-			document.getElementById("nickname-add").value = "";
-			$("#gender-add").val("Male").change();
 			document.getElementById("firstname-add").focus();
 
 			studentinfo[sid] = [];
 			studentinfo[sid]["first_name"] = firstname;
 			studentinfo[sid]["last_name"] = lastname;
-			studentinfo[sid]["nickname"] = nickname;
-			studentinfo[sid]["gender"] = gender;
 
 			var n = document.getElementById("nostudentsatall");
 			if(n)
@@ -203,16 +169,13 @@ function checkSubmitEditStudent()
                 return false;
         }
 
-        return confirm("Are you sure you want to finalize your changes?");
+        return true;
 }
 
 function clearAddStudent()
 {
 	document.getElementById("firstname-add").value = "";
 	document.getElementById("lastname-add").value = "";
-
-	document.getElementById("nickname-add").value = "";
-	document.getElementById("gender-add").selectedIndex = "0";
 
 	reloadSelect2();
 }
@@ -233,30 +196,8 @@ var studentinfo = [];
 		studentinfo[<?= $row["SID"] ?>] = [];
 		studentinfo[<?= $row["SID"] ?>]["first_name"] = "<?php echo clean($row['first_name']); ?>";
 		studentinfo[<?= $row["SID"] ?>]["last_name"] = "<?php echo clean($row['last_name']); ?>";
-		studentinfo[<?= $row["SID"] ?>]["nickname"] = "<?php echo clean($row['nickname']); ?>";
-		studentinfo[<?= $row["SID"] ?>]["gender"] = "<?php echo clean($row['gender']); ?>";
 	<?php endforeach; ?>
 <?php endif; ?>
-
-/*function setEditStudentHeading()
-{
-	var firstname = document.getElementById("firstname-edit").value;
-	var lastname = document.getElementById("lastname-edit").value
-
-	var heading = document.getElementById("editstudentheading");
-	heading.innerHTML = "Editing student '";
-
-	if(firstname === "")
-		heading.innerHTML += lastname;
-	else {
-		if(lastname === "")
-			heading.innerHTML += firstname;
-		else
-			heading.innerHTML += firstname + " " + lastname;
-	}
-
-	heading.innerHTML += "':";
-}*/
 
 function chooseStudentEdit(sid)
 {
@@ -269,8 +210,6 @@ function chooseStudentEdit(sid)
 
 	document.getElementById("firstname-edit").value = studentinfo[sid]["first_name"];
 	document.getElementById("lastname-edit").value = studentinfo[sid]["last_name"];
-	document.getElementById("nickname-edit").value = studentinfo[sid]["nickname"];
-	document.getElementById("gender-edit").value = studentinfo[sid]["gender"];
 
 	document.getElementById("sid-delete").value = sid;
 
@@ -282,23 +221,6 @@ function chooseStudentEdit(sid)
 		chooseStudentEdit(<?php echo clean($editsid); ?>);
 	}
 <?php endif; ?>
-
-/*function checkDiff()
-{
-	if(document.getElementById("teamname").value != "<?php echo clean($row['team_name']); ?>" ||
-	   document.getElementById("town").value != "<?php echo clean($row['town']); ?>" ||
-	   document.getElementById("address").value != "<?php echo clean($row['address']); ?>" ||
-	   document.getElementById("coach").value != "<?php echo clean($row['coach']); ?>" ||
-	   document.getElementById("email").value != "<?php echo clean($row['contact_email']); ?>" ||
-	   (document.getElementById("firstyear").checked ? 1 : 0) != "<?php echo clean($row['first_year']); ?>")
-	{
-		document.getElementById("finalizebtn").disabled = false;
-	}
-	else
-	{
-		document.getElementById("finalizebtn").disabled = true;
-	}
-}*/
 
 function deleteSchool()
 {
@@ -344,30 +266,6 @@ function deleteStudent()
                                                                 <input id="teamname" type="text" class="form-control" name="teamname" placeholder="School Name" value="<?php echo clean($schoolrow['team_name']); ?>" required>
                                                         </div>
                                                 </div>
-                                                <div class="row">
-                                                        <div class="form-group">
-                                                                <label for="town">Town</label>
-                                                                <input id="town" type="text" class="form-control" name="town" placeholder="Town" value="<?php echo clean($schoolrow['town']); ?>" required>
-                                                        </div>
-                                                </div>
-                                                <div class="row">
-                                                        <div class="form-group">
-                                                                <label for="address">Address</label>
-                                                                <input id="address" type="text" class="form-control" name="address" placeholder="School Address" value="<?php echo clean($schoolrow['address']); ?>" required>
-                                                        </div>
-                                                </div>
-                                                <div class="row">
-                                                        <div class="form-group">
-                                                                <label for="coach">Coach</label>
-                                                                <input id="coach" type="text" class="form-control" name="coach" placeholder="Coach Name" value="<?php echo clean($schoolrow['coach']); ?>" required>
-                                                        </div>
-                                                </div>
-                                                <div class="row">
-                                                        <div class="form-group">
-                                                                <label for="email">Email</label>
-                                                                <input id="email" type="email" class="form-control" name="email" placeholder="Contact Email" value="<?php echo clean($schoolrow['contact_email']); ?>" required>
-                                                        </div>
-                                                </div><br>
 						<div class="row">
                                                 	<div class="dropdown">
                                                         	<label for="stwell">Students</label>
@@ -426,23 +324,6 @@ function deleteStudent()
                                                                 <input id="lastname-add" type="text" class="form-control" name="lastname" placeholder="Last Name">
                                                         </div>
                                                 </div>
-						<div class="row">
-                                                        <div class="form-group">
-                                                                <label for="nickname-add">Nickname (optional)</label>
-                                                                <input id="nickname-add" type="text" class="form-control" name="nickname" placeholder="Nickname">
-                                                        </div>
-                                                </div>
-						<div class="row">
-							<div class="form-group">
-								<label for="gender-add">Gender</label>
-								<select id="gender-add" name="gender" class="js-select form-control">
-									<option value='None'>None</option>
-									<option value='Male'>Male</option>
-									<option value='Female'>Female</option>
-									<option value='Other'>Other</option>
-								</select>
-							</div>
-						</div>
 						<input type="hidden" id="scid-add" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
 					</div>
 				</form>
@@ -476,23 +357,6 @@ function deleteStudent()
                                                                	<input id="lastname-edit" type="text" class="form-control" name="lastname" placeholder="Last Name">
                                                        	</div>
                                                	</div>
-						<div class="row">
-                                                       <div class="form-group">
-                                                               <label for="nickname-edit">Nickname (optional)</label>
-                                                               <input id="nickname-edit" type="text" class="form-control" name="nickname" placeholder="Nickname">
-                                                       </div>
-                                               </div>
-                                               <div class="row">
-                                                        <div class="form-group">
-                                                                <label for="gender-edit">Gender</label>
-                                                                <select id="gender-edit" name="gender" class="js-select form-control">
-                                                                        <option value='None'>None</option>
-									<option value='Male'>Male</option>
-                                                                        <option value='Female'>Female</option>
-                                                                        <option value='Other'>Other</option>
-                                                                </select>
-                                                        </div>
-                                                </div>
 						<input id="sideditstudent" type="hidden" name="sid" value="0">
                                                 <input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
 					</div>
