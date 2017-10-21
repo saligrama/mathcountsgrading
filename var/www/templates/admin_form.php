@@ -527,6 +527,16 @@ td .noneyet {
 	padding: 4px;
 }
 
+
+#loading-more-progress {
+	display: table-row !important;
+}
+
+#loading-more-progress td {
+	text-align: center;
+	padding: 20px;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -1326,7 +1336,7 @@ function loadStandings()
 			}
 
 			$("#standings-alternate-list").empty();
-			$("#standings-label-alternates").html("Looks like there aren't any alternates that have been graded yet.");
+			$("#standings-label-alternates").html("Looks like there aren't any alternates in this competition.");
                         if(array["alternates"].length)
                         {
 				$("#standings-label-alternates").html("Top alternates");
@@ -1437,41 +1447,50 @@ function init()
 		filterMoreProgress(1);
 	});
 
-	$("#more-progress-show").click(clickShowMore);
+	setTimeout(function() {
+		$.get("/get_more_progress.php", function(res) {
+			if(res == "") {
+				$("#loading-more-progress").html("<td colspan='4'>Error loading!</td>");
+			}
+			else {
+				$("#more-progress-list").html(res);
+				$("#loading-more-progress").remove();
 
-	if($("#more-progress-list .more-progress-tr").length > start_max_shown) {
-		$("#more-progress-show").css("display", "table-row");
-	}
+				$("#more-progress-show").click(clickShowMore);
+
+        			if($("#more-progress-list .more-progress-tr").length > start_max_shown) {
+        			        $("#more-progress-show").css("display", "table-row");
+        			}
 
 	$(".edit-opt-answer").click(function(e) {
-		e.preventDefault();
+                e.preventDefault();
 
-		$(this.parentNode.parentNode.parentNode.parentNode.parentNode).find(".answer-normal").css("display", "none").parent().find(".answer-edit-answer").css("display", "block").parent().find(".answer-edit-parser").css("display", "none");
-	});
+                $(this.parentNode.parentNode.parentNode.parentNode.parentNode).find(".answer-normal").css("display", "none").parent().find(".answer-edit-answer").css("display", "block").parent().find(".answer-edit-parser").css("display", "none");
+        });
 
-	$(".edit-opt-parser").click(function(e) {
+        $(".edit-opt-parser").click(function(e) {
                 e.preventDefault();
 
                 $(this.parentNode.parentNode.parentNode.parentNode.parentNode).find(".answer-normal").css("display", "none").parent().find(".answer-edit-parser").css("display", "block").parent().find(".answer-edit-answer").css("display", "none");
         });
 
-	$(".edit-answer-submit").click(function() {
-		var info = this.parentNode.parentNode.parentNode;
+        $(".edit-answer-submit").click(function() {
+                var info = this.parentNode.parentNode.parentNode;
 
-		var av = $(this.parentNode).find("input").val();
+                var av = $(this.parentNode).find("input").val();
 
-		$.get("/change_answer.php", { scid: info.dataset.scid, sid: info.dataset.sid, round: info.dataset.rndid, pnum: info.dataset.pnum, answer: av }, function(response) {
-			console.log(response);
-			if(response == "error")
-				alert("Whoops! There was an error");
-			else
-				alert("Your responses have been saved");
-		});
+                $.get("/change_answer.php", { scid: info.dataset.scid, sid: info.dataset.sid, round: info.dataset.rndid, pnum: info.dataset.pnum, answer: av }, function(response) {
+                        console.log(response);
+                        if(response == "error")
+                                alert("Whoops! There was an error");
+                        else
+                                alert("Your responses have been saved");
+                });
 
-		$(this.parentNode.parentNode).find(".answer-normal").css("display", "block").parent().find(".answer-edit-answer").css("display", "none");
-	});
+                $(this.parentNode.parentNode).find(".answer-normal").css("display", "block").parent().find(".answer-edit-answer").css("display", "none");
+        });
 
-	$(".edit-parser-submit").click(function() {
+        $(".edit-parser-submit").click(function() {
                 var info = this.parentNode.parentNode.parentNode;
 
                 var av = $(this.parentNode).find(".small-select").val();
@@ -1486,6 +1505,9 @@ function init()
 
                 $(this.parentNode.parentNode).find(".answer-normal").css("display", "block").parent().find(".answer-edit-parser").css("display", "none");
         });
+			}
+		});
+	}, 500);
 }
 
 </script>
@@ -1751,92 +1773,7 @@ function init()
 													</tr>
 												</thead>
 												<tbody id="more-progress-list">
-													<tr id="no-progress-results"><td colspan="4">There are no results for that filter</td></tr>
-													<?php foreach($schools as $school): ?>
-                                                                                                                <?php foreach($compstatus as $round): ?>
-                                                                                                                        <?php if($round["indiv"] == 0): ?>
-                                                                                                                                <?php for($i = 1; $i <= $round["num_questions"]; $i++): ?>
-                                                                                                                                        <tr class="more-progress-tr" id="s<?= $school['SCID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-scid="<?= $school['SCID'] ?>" data-sid="0" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-answer="3">
-                                                                                                                                                <td><?php echo clean($round["round_name"]); ?></td>
-                                                                                                                                                <td><?= $i ?></td>
-                                                                                                                                                <td><b><?php echo clean($school["team_name"]); ?></b></td>
-                                                                                                                                                <td class="panswer">
-																			<div class="answer-normal">
-																				<p class="noneyet">None yet</p>
-																				<div class="btn-group">
-																					<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-																						Edit <span class="caret"></span>
-																					</button>
-																					<ul class="dropdown-menu">
-							    															<li><a class="edit-opt-answer">Answer</a></li>
-    																						<li><a class="edit-opt-parser">Parser Result</a></li>
-  																					</ul>
-																				</div>
-																			</div>
-																			<div class="answer-edit answer-edit-answer" style="display: none;">
-																				<input type="text" class="form-control"></input>
-																				<button class="btn btn-success edit-answer-submit">Save</button>
-																			</div>
-																			<div class="answer-edit answer-edit-parser" style="display: none;">
-                                                                                                                                                                <div class="edit-select">
-																					<select class="small-select" style="width:100%;">
-																						<option value="1">Wrong</option>
-																						<option value="2">Right</option>
-																						<option value="3">None (delete answer)</option>
-																					</select>
-																				</div>
-                                                                                                                                                                <button class="btn btn-success edit-parser-submit">Save</button>
-                                                                                                                                                        </div>
-																		</td>
-																	</tr>
-                                                                                                                                <?php endfor; ?>
-                                                                                                                        <?php endif; ?>
-                                                                                                                <?php endforeach; ?>
-                                                                                                        <?php endforeach; ?>
-													<?php foreach($students as $student): ?>
-														<?php foreach($compstatus as $round): ?>
-															<?php if($round["indiv"] == 1): ?>
-																<?php for($i = 1; $i <= $round["num_questions"]; $i++): ?>
-																	<tr class="more-progress-tr" id="<?= $student['SID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-sid="<?= $student['SID'] ?>" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-scid="<?= $student['SCID'] ?>" data-answer="3">
-																		<td><?php echo clean($round["round_name"]); ?></td>
-																		<td><?= $i ?></td>
-																		<td><?php echo clean($student["first_name"] . " " . $student["last_name"]); ?></td>
-																		<td class="panswer">
-																			<div class="answer-normal">
-                                                                                                                                                                <p class="noneyet">None yet</p>
-                                                                                                                                                                <div class="btn-group">
-                                                                                                                                                                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                                                                                                                                Edit <span class="caret"></span>
-                                                                                                                                                                        </button>
-                                                                                                                                                                        <ul class="dropdown-menu">
-                                                                                                                                                                                <li><a class="edit-opt-answer">Answer</a></li>
-                                                                                                                                                                                <li><a class="edit-opt-parser">Parser Result</a></li>
-                                                                                                                                                                        </ul>
-                                                                                                                                                                </div>
-                                                                                                                                                        </div>
-                                                                                                                                                        <div class="answer-edit answer-edit-answer" style="display: none;">
-                                                                                                                                                                <input type="text" class="form-control"></input>
-                                                                                                                                                                <button class="btn btn-success edit-answer-submit">Save</button>
-                                                                                                                                                        </div>
-                                                                                                                                                        <div class="answer-edit answer-edit-parser" style="display: none;">
-                                                                                                                                                                <div class="edit-select">
-                                                                                                                                                                        <select class="small-select" style="width:100%;">
-                                                                                                                                                                                <option value="1">Wrong</option>
-                                                                                                                                                                                <option value="2">Right</option>
-                                                                                                                                                                                <option value="3">None (delete answer)</option>
-                                                                                                                                                                        </select>
-                                                                                                                                                                </div>
-                                                                                                                                                                <button class="btn btn-success edit-parser-submit">Save</button>
-                                                                                                                                                        </div>
-                                                                                                                                                </td>
-																	</tr>
-																<?php endfor; ?>
-															<?php endif; ?>
-														<?php endforeach; ?>
-													<?php endforeach; ?>
-													<tr id="more-progress-show">
-                                                                                                               	<td colspan="4">Show more</td>
-                                                                                                        </tr>
+													<tr id="loading-more-progress"><td colspan="4">Loading...</td></tr>
 												</tbody>
 											</table>
 										</div>

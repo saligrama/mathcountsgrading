@@ -253,6 +253,7 @@ button.disabled:hover {
 	overflow-x: hidden;
 	max-height: 500px;
 	will-change: transform;
+	position: relative;
 }
 
 .relative-panel {
@@ -287,6 +288,26 @@ button.disabled:hover {
 
 #saved.yes {
 	border-color: green;
+}
+
+#searchBar {
+	border-radius: 0px;
+}
+
+.name-highlight {
+	padding: 0px;
+	margin: 0px;
+	background-color: #EE2;
+}
+
+#searchResults {
+	display: none;
+	color: #888;
+	font-size: 14px;
+	text-align: center;
+	padding: 4px;
+	margin-top: 4px;
+	margin-bottom: -20px;
 }
 
 @media (max-width: 991px) {
@@ -389,6 +410,62 @@ function selectChange()
 			$("#student-header").html("School");
 			$("#subtable-regulars").css("display", "none");
 		}
+}
+
+var firstHighlighted = -1;
+
+function search(str)
+{
+	str = str.toLowerCase().trim();
+
+        var scrolltop = $("#answers").scrollTop();
+        var scrollto = scrolltop;
+	var scrollPad = 100;
+
+	if(str === "") {
+		$("#table-names .answers-row").each(function() {
+			var e = this.children[0].children[0];
+			e.innerHTML = e.dataset.name;
+		});
+
+		firstHighlighted = -1;
+
+		$("#searchResults").css("display", "none");
+	}
+	else {
+		var shown = 0;
+
+		firstHighlighted = -1;
+
+        	$("#table-names .answers-row").each(function(idx) {
+        	        var e = this.children[0].children[0];
+			var l = e.dataset.name.toLowerCase().indexOf(str);
+			if(l == -1) {
+				e.innerHTML = e.dataset.name;
+			} else {
+				if(firstHighlighted == -1) {
+					scrollto = this.offsetTop - scrollPad;
+					firstHighlighted = idx;
+				}
+
+			//	console.log(this.offsetTop);
+
+				e.innerHTML = e.dataset.name.substr(0, l) + "<span class='name-highlight'>" + e.dataset.name.substr(l, str.length) + "</span>" + e.dataset.name.substr(l + str.length);
+				shown++;
+        	        }
+       		});
+
+		$("#searchResults").css("display", "block");
+		if(shown == 0)
+			$("#searchResults").html("No results");
+		else if(shown == 1)
+			$("#searchResults").html("1 result");
+		else
+			$("#searchResults").html(shown + " results");
+
+		console.log("final: " + scrollto);
+        	$("#answers").scrollTop(scrollto);
+	}
 }
 
 var current_cell = 0;
@@ -567,11 +644,43 @@ $(document).ready(function() {
 		current_cell = 0;
 	}
 
+	$("#searchBar").on("blur", function() {
+		search("");
+	});
+
+	$("#searchBar").on("focus", function() {
+		search(this.value);
+	});
+
 	$(window).on("keydown", function(event) {
 		//console.log(selection_start);
 
-		if(current_cell === 0)
+		if(current_cell == 0) {
+			console.log("current cell is 0");
+
+			if($("#searchBar").is(":focus")) {
+				if(firstHighlighted != -1 && (event.which == 13 || event.which == 9)) {
+					event.preventDefault();
+					$("#table-scroll .answers-row").eq(firstHighlighted).find(".answer-input-input").eq(0).trigger("click");
+					$("#searchBar").trigger("blur");
+				}
+			}
+			else {
+				console.log("searchbar is out of focus");
+				if(event.which > 47 && event.which < 91) {
+					event.preventDefault();
+					$("#searchBar").focus().val(event.key);
+					search(event.key);
+				}
+				else if(event.which == 83 && event.ctrlKey) {
+					event.preventDefault();
+					$("#searchBar").focus().val("");
+					search("");
+				}
+			}
+
 			return;
+		}
 
 		var e = current_cell;
 
@@ -582,8 +691,8 @@ $(document).ready(function() {
 
 		var ehigh = $(e).parent().hasClass("ehighlight");
 
-		// tab
-		if(event.which == 9)
+		// tab and right
+		if(event.which == 9 || event.which == 39)
 		{
 			event.preventDefault();
 
@@ -609,24 +718,29 @@ $(document).ready(function() {
 		// left
 		else if(event.which == 37)
 		{
-			//if(selection_start === 0)
-			//{
-				if(!ehigh && e.parentNode.previousSibling)
-				{
-					event.preventDefault();
-					exit(e);
-					enter(e.parentNode.previousSibling.children[0]);
-			//		selection_start = current_cell.children[0].innerHTML.length;
-				}
-			//}
-			//else
-			//{
-			//	event.preventDefault();
-			//	selection_start--;
-			//}
+			event.preventDefault();
+
+                        if(e.parentNode.previousSibling)
+                        {
+                                exit(e);
+                                enter(e.parentNode.previousSibling.children[0]);
+                        //      selection_start = 0;
+                        }
+                        else
+                        {
+                                var row = e.parentNode.parentNode.parentNode.parentNode;
+                                var prev = $(row).prev();
+
+                                if(prev.length && prev.hasClass("answers-row") && prev.css("display") == "block")
+                                {
+                                        exit(e);
+                                        enter(prev.find(".answer-input-input").get(-1));
+                        //              selection_start = 0;
+                                }
+                        }
 		}
 		// right
-		else if(event.which == 39)
+		/*else if(event.which == 39)
 		{
 			//if(selection_start == v.length)
 			//{
@@ -643,7 +757,7 @@ $(document).ready(function() {
 			//	event.preventDefault();
 			//	selection_start++;
 			//}
-		}
+		}*/
 		// top
 		else if(event.which == 38)
 		{
@@ -880,6 +994,13 @@ function gradeProblem(input)
                                                         </select>
                                                 </div>
                                         </div>
+					<div class="row">
+						<div class="form-group col-xs-12">
+							<label>Search students/schools</label>
+							<input id="searchBar" class="form-control" placeholder="Search" type="text" oninput="search(this.value)">
+							<div id="searchResults"></div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -898,7 +1019,7 @@ function gradeProblem(input)
 										<?php foreach($studentrows as $student): ?>
 											<div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
 												<div class="answers-input-student">
-													<span class="answer-input-span"><?php echo clean(getStudentFullName($student)); ?></span>
+													<div class="answer-input-span" data-name="<?php echo clean(getStudentFullName($student)); ?>"><?php echo clean(getStudentFullName($student)); ?></div>
 												</div>
 											</div>
 										<?php endforeach; ?>
@@ -907,7 +1028,7 @@ function gradeProblem(input)
 										<?php foreach($schoolrows as $school): ?>
                                                                 			<div class="answers-row" data-scid="<?= $school['SCID'] ?>" style="display: none">
                                                                         			<div class="answers-input-school">
-                                                                                			<span class="answer-input-span"><?php echo clean($school["team_name"]); ?></span>
+                                                                                			<div class="answer-input-span" data-name="<?php echo clean($school['team_name']); ?>"><?php echo clean($school["team_name"]); ?></div>
                                                                         			</div>
                                                                 			</div>
                                                         			<?php endforeach; ?>
