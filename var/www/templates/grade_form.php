@@ -653,7 +653,17 @@ $(document).ready(function() {
 	});
 
 	$(window).on("keydown", function(event) {
-		//console.log(selection_start);
+		console.log("key");
+
+		if(event.which == 83 && event.altKey) {
+                 	event.preventDefault();
+                        $("#searchBar").focus().val("");
+                        search("");
+			if(current_cell !== 0)
+				exit(current_cell);
+
+			return;
+                }
 
 		if(current_cell == 0) {
 			console.log("current cell is 0");
@@ -671,11 +681,6 @@ $(document).ready(function() {
 					event.preventDefault();
 					$("#searchBar").focus().val(event.key);
 					search(event.key);
-				}
-				else if(event.which == 83 && event.ctrlKey) {
-					event.preventDefault();
-					$("#searchBar").focus().val("");
-					search("");
 				}
 			}
 
@@ -800,14 +805,17 @@ $(document).ready(function() {
                 }
 		else
 		{
-			if(event.which == 13 || event.which == 27)
+			if((event.which > 16 && event.which < 21) || event.which == 45 || event.which == 93 || (event.which > 111 && event.which < 186))
+				return;
+
+			if(event.which == 13 || event.which == 27 || event.which == 35)
 				event.preventDefault();
 			else
 				$("#saved").removeClass("no yes error").addClass("no").html("Saving...");
 
 			if(e.children[0].nodeName != "INPUT")
 			{
-				if(event.which == 27)
+				if(event.which == 27 || event.which == 35)
 					exit(e);
 				else
 				{
@@ -827,7 +835,7 @@ $(document).ready(function() {
 					$(e).parent().addClass("ehighlight");
 				}
 			}
-			else if(event.which == 13 || event.which == 27)
+			else if(event.which == 13 || event.which == 27 || event.which == 35)
 			{
 				var v = e.children[0].value;
 
