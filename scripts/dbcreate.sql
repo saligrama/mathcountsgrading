@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.46, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.55, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: mathcountsgrading
 -- ------------------------------------------------------
--- Server version	5.5.46-0ubuntu0.14.04.2
+-- Server version	5.5.55-0ubuntu0.14.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,7 +29,7 @@ CREATE TABLE `competition` (
   `competition_name` varchar(100) DEFAULT NULL,
   `CTID` int(11) NOT NULL,
   PRIMARY KEY (`CID`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -122,7 +122,7 @@ CREATE TABLE `grader_responses` (
   `answer` varchar(100) DEFAULT NULL,
   `RID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`RID`)
-) ENGINE=InnoDB AUTO_INCREMENT=1305 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -142,7 +142,7 @@ CREATE TABLE `grader_responses_team` (
   `points` int(11) NOT NULL,
   `TRID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`TRID`)
-) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,7 +159,7 @@ CREATE TABLE `grading_conflicts` (
   `RNDID` int(11) NOT NULL,
   `COID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`COID`)
-) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -194,7 +194,7 @@ CREATE TABLE `mathlete_info` (
   `nickname` varchar(100) DEFAULT NULL,
   `gender` enum('None','Male','Female','Other') DEFAULT NULL,
   PRIMARY KEY (`SID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11243 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -239,13 +239,13 @@ DROP TABLE IF EXISTS `school_info`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `school_info` (
   `SCID` int(11) NOT NULL AUTO_INCREMENT,
-  `team_name` varchar(100) NOT NULL,
+  `team_name` varchar(200) DEFAULT NULL,
   `town` varchar(100) NOT NULL,
-  `coach` varchar(100) NOT NULL,
-  `address` varchar(100) NOT NULL,
-  `contact_email` varchar(100) NOT NULL,
+  `coach` varchar(100) DEFAULT NULL,
+  `address` varchar(400) DEFAULT NULL,
+  `contact_email` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`SCID`)
-) ENGINE=InnoDB AUTO_INCREMENT=745 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -335,14 +335,12 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
   `UID` int(11) NOT NULL AUTO_INCREMENT,
-  `last_name` varchar(100) DEFAULT NULL,
-  `first_name` varchar(100) DEFAULT NULL,
-  `email` varchar(100) NOT NULL,
+  `username` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
   `SCID` int(11) DEFAULT NULL,
   `type` enum('admin','grader') DEFAULT NULL,
   PRIMARY KEY (`UID`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -354,4 +352,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-09 14:25:56
+-- Dump completed on 2018-08-19 23:03:02
