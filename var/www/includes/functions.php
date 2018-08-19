@@ -3,6 +3,13 @@
 require(dirname(__FILE__) . "/constants.php");
 require(dirname(__FILE__) . "/../lib/MCGExpression/MCGExpression/main.php");
 
+function getSchoolName($row)
+{
+        if($row["team_name"] != "")
+                return $row["team_name"] . " (" . $row["town"] . ")";
+        else
+                return $row["town"];
+}
 
 function updateCompStatusAll($conn, $cid)
 {
@@ -30,10 +37,13 @@ function updateCompStatus($conn, $cid, $round)
 
 	if($rinfo["indiv"] == "1")
 	{
-		$status = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND RNDID=:round AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid2)", ["cid" => $cid, "cid2" => $cid, "round" => $round]);
-		$status = $status[0]["val"] / ($snum * $rinfo["num_questions"]);
-	}
-	else
+                if($snum != 0)
+                {
+                        $status = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM student_answers WHERE CID=:cid AND RNDID=:round AND SID IN (SELECT SID FROM student_participants WHERE CID=:cid2)", ["cid" => $cid, "cid2" => $cid, "round" => $round]);
+                        $status = $status[0]["val"] / ($snum * $rinfo["num_questions"]);
+	        }
+        }
+	else if($scnum != 0)
 	{
 		$status = dbQuery_new($conn, "SELECT COUNT(*) AS val FROM team_answers WHERE CID=:cid AND RNDID=:round AND SCID IN (SELECT SCID FROM competition_participants WHERE CID=:cid2)", ["cid" => $cid, "cid2" => $cid, "round" => $round]);
                 $status = $status[0]["val"] / ($scnum * $rinfo["num_questions"]);
@@ -384,7 +394,7 @@ function getFullName($conn)
     if(!isset($_SESSION["UID"]))
 	return 0;
 
-    $namerows = dbQuery_new($conn, "SELECT first_name, last_name, email FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
+    $namerows = dbQuery_new($conn, "SELECT username FROM user WHERE UID = :UID;", ["UID" => $_SESSION["UID"]]);
     if(empty($namerows)) {
 	popupAlert("Whoops! There was an interal error. Please press ok to log back in.");
 	endLoginSession();
@@ -392,24 +402,9 @@ function getFullName($conn)
 	return 1;
     }
 
-    $fullname = "";
-
     $name = $namerows[0];
 
-    if(sempty($name["first_name"])) {
-        if(sempty($name["last_name"]))
-            $fullname = $name["email"];
-        else
-            $fullname = $name["last_name"];
-    }
-    else {
-        if(sempty($name["last_name"]))
-            $fullname = $name["first_name"];
-        else
-            $fullname = $name["first_name"] . " " . $name["last_name"];
-    }
-
-    return $fullname;
+    return $name["username"];
 }
 
 function getCompFullName($comprow)

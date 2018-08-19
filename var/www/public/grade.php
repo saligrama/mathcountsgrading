@@ -30,6 +30,6 @@
 		else
 			$scid = $scid[0]["SCID"];
 
-                render("grade_form.php", ["scid" => $scid, "typerow" => $typerow, "studentrows" => $studentrows, "schoolrows" => $schoolrows, "roundrows" => $roundrows, "fullname" => getFullName($conn)]);
+                render("grade_form.php", ["cid" => $cid, "scid" => $scid, "typerow" => $typerow, "studentrows" => $studentrows, "schoolrows" => $schoolrows, "roundrows" => $roundrows, "fullname" => getFullName($conn)]);
 
 ?>

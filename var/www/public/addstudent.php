@@ -6,8 +6,7 @@ checkSession("admin");
 
 $conn = dbConnect_new();
 
-if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["nickname"]) ||
-                           !isset($_POST["gender"]) || (sempty($_POST["firstname"]) && sempty($_POST["lastname"])))
+if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["nickname"]) || sempty($_POST["firstname"]))
 {
 	exit;
 }
@@ -16,13 +15,11 @@ if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastn
                                 SCID=:scid,
                                 first_name=:firstname,
                                 last_name=:lastname,
-                                nickname=:nickname,
-                                gender=:gender", [
+                                nickname=:nickname", [
                                         "scid" => $_POST["scid"],
                                         "firstname" => $_POST["firstname"],
                                         "lastname" => $_POST["lastname"],
-                                        "nickname" => $_POST["nickname"],
-                                        "gender" => $_POST["gender"]
+                                        "nickname" => $_POST["nickname"]
                                 ]
                         );
 

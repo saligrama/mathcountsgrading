@@ -118,8 +118,8 @@
 	// Get competition types for the dropdown
         $comptypes = dbQuery_new($conn, "SELECT CTID, type_name FROM competition_type");
         if(empty($comptypes)) {
-                popupAlert("There aren't any competition types yet. Press ok to create one");
-                redirectTo("/createtype.php");
+                popupAlert("Internal error: there aren't any competition types yet.");
+                redirectTo("/admin.php");
         }
 
 	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info");

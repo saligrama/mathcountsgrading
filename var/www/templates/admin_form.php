@@ -2,7 +2,7 @@
 
 <head>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="./scripts/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
@@ -525,6 +525,9 @@ td .noneyet {
 
 .small-select {
 	padding: 4px;
+}
+
+.lacking-info {
 }
 
 </style>
@@ -1512,9 +1515,13 @@ function init()
 <div class="main">
 	<div class="container ncont text-center">
 		<?php if($comprow == 0): ?>
-			<div class="jumbotron">
-				<h3>Whoops! The current competition hasn't been set yet.</h3>
-				<div class="btn-group" role="group">
+			<div class="jumbotron lacking-info">
+				<?php if($result == 0): ?>
+                                        <h3>No competitions have been created yet. <br> Click on 'Add competition' to create one.</h3>
+				<?php else: ?>
+                                        <h3>The current competition hasn't been set yet. <br> Please select a competition below.</h3>
+                                <?php endif; ?>
+                                <div class="btn-group" role="group">
 					<a href="/create.php" class="btn btn-default">Add competition</a>
 					<button class="btn btn-default">Select competition </button>
 					<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
@@ -1728,7 +1735,7 @@ function init()
 																<option value="0">All</option>
 																<optgroup label="Schools">
                                                                                                                                         <?php foreach($schools as $school): ?>
-                                                                                                                                                <option value="s<?= $school['SCID'] ?>"><?php echo clean($school["team_name"]); ?></option>
+                                                                                                                                                <option value="s<?= $school['SCID'] ?>"><?php echo clean(getSchoolName($school)); ?></option>
                                                                                                                                         <?php endforeach; ?>
                                                                                                                                 </optgroup>
 																<optgroup label="Students">
@@ -1758,7 +1765,7 @@ function init()
                                                                                                                                         <tr class="more-progress-tr" id="s<?= $school['SCID'] . 'a' . $round['RNDID'] . 'a' . $i ?>" data-scid="<?= $school['SCID'] ?>" data-sid="0" data-rndid="<?= $round['RNDID'] ?>" data-pnum="<?= $i ?>" data-answer="3">
                                                                                                                                                 <td><?php echo clean($round["round_name"]); ?></td>
                                                                                                                                                 <td><?= $i ?></td>
-                                                                                                                                                <td><b><?php echo clean($school["team_name"]); ?></b></td>
+                                                                                                                                                <td><b><?php echo clean(getSchoolName($school)); ?></b></td>
                                                                                                                                                 <td class="panswer">
 																			<div class="answer-normal">
 																				<p class="noneyet">None yet</p>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="./scripts/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
@@ -56,8 +56,8 @@
 		<div class="panel-body">
 			<form id="input_form" action="" method="post">
 				<div class="form-group">
-					<label for="logname">Email</label>
-        				<input type="email" class="form-control" id="logname" name="logname" placeholder="email" autofocus>
+					<label for="logname">Username</label>
+        				<input type="text" class="form-control" id="logname" name="logname" placeholder="email" autofocus>
 				</div>
 				<div class="form-group">
 					<label for="passwd">Password</label>

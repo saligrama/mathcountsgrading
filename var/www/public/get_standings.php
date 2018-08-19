@@ -57,7 +57,7 @@ if($cid !== 0)
 	if(empty($type))
 		exit;
 
-	$schools = dbQuery_new($conn, "SELECT SUM(a.raw) as score, b.team_name, b.SCID FROM team_cleaner AS a RIGHT JOIN (school_info AS b) ON (a.CID=:cid AND a.SCID=b.SCID) WHERE b.SCID IN (SELECT SCID FROM competition_participants WHERE CID=:cid2) GROUP BY SCID", ["cid" => $cid, "cid2" => $cid]);
+	$schools = dbQuery_new($conn, "SELECT SUM(a.raw) as score, b.town, b.team_name, b.SCID FROM team_cleaner AS a RIGHT JOIN (school_info AS b) ON (a.CID=:cid AND a.SCID=b.SCID) WHERE b.SCID IN (SELECT SCID FROM competition_participants WHERE CID=:cid2) GROUP BY SCID", ["cid" => $cid, "cid2" => $cid]);
 
 	$h = 0;
 	foreach($schools as $school)
@@ -76,6 +76,7 @@ if($cid !== 0)
 			exit;
 
 		$school["score"] += $student[0]["total"];
+                $school["team_name"] = getSchoolName($school);
 		$array["teams"][$h++] = $school;
 	}
 

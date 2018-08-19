@@ -3,7 +3,7 @@
 
 <head>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="./scripts/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
@@ -41,39 +41,11 @@
 
 function checkSubmit()
 {
-	var name = document.getElementById("teamname").value;
         var town = document.getElementById("town").value;
-        var address = document.getElementById("address").value;
-        var coach = document.getElementById("coach").value;
-        var email = document.getElementById("email").value;
-
-        if(name === "")
-        {
-                malert("Please fill out the school name");
-                return false;
-        }
 
         if(town === "")
         {
                 malert("Please fill out the school town");
-                return false;
-        }
-
-        if(address === "")
-        {
-                malert("Please fill out the school address");
-                return false;
-        }
-
-        if(coach === "")
-        {
-                malert("Please fill out the school coach");
-                return false;
-        }
-
-        if(email === "")
-        {
-                malert("Please fill out the school email");
                 return false;
         }
 
@@ -111,17 +83,13 @@ function checkSubmit()
 	<div class="container-fluid panel panel-primary">
 		<div class="panel-heading">
 			<h4>Fill out the boxes below to create a new school</h4>
-			<p>You can create students to add to this school by editing it later</p>
 		</div>
         	<div class="panel-body">
-			<form id="schoolinfo" onsubmit="return checkSubmit();" action="" method="post">
+                        <div class="alert alert-info alert-dismissable col-sm-offset-0 col-sm-12">
+			        Once you create the school here, you can add students who will be competing from this school by clicking on the Edit button next to the school name in the create or edit competition pages.
+                        </div>
+                        <form id="schoolinfo" onsubmit="return checkSubmit();" action="" method="post">
                 		<div class="col-xs-offset-1 col-xs-10">
-					<div class="row">
-						<div class="form-group">
-							<label for="teamname">Team name</label>
-							<input id="teamname" type="text" class="form-control" name="teamname" placeholder="School Name" required>
-                				</div>
-					</div>
 					<div class="row">
 						<div class="form-group">
 							<label for="town">Town</label>
@@ -130,23 +98,12 @@ function checkSubmit()
 					</div>
 					<div class="row">
 						<div class="form-group">
-							<label for="address">Address</label>
-							<input id="address" type="text" class="form-control" name="address" placeholder="School Address" required>
+							<label for="teamname">Team name (optional)</label>
+							<input id="teamname" type="text" class="form-control" name="teamname" placeholder="School Name">
                 				</div>
 					</div>
-					<div class="row">
-						<div class="form-group">
-							<label for="coach">Coach</label>
-							<input id="coach" type="text" class="form-control" name="coach" placeholder="Coach Name" required>
-                				</div>
-					</div>
-					<div class="row">
-						<div class="form-group">
-							<label for="email">Email</label>
-							<input id="email" type="email" class="form-control" name="email" placeholder="Contact Email">
-                				</div>
-					</div><br>
-				</div>
+				        <br>
+                                </div>
 			</form>
 		</div>
 		<div class="panel-footer">

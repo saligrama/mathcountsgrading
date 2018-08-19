@@ -167,7 +167,7 @@ if($cid !== 0)
 		// Arranges an array of each student, where each element is the student's info and and array of their conflicts
 		for($i = 0; $i < count($result); $i++)
 		{
-			$name = dbQuery_new($conn, "SELECT team_name FROM school_info WHERE SCID=:scid", ["scid" => $result[$i]["SCID"]]);
+			$name = dbQuery_new($conn, "SELECT town, team_name FROM school_info WHERE SCID=:scid", ["scid" => $result[$i]["SCID"]]);
 			if(empty($name)) {
 				echo "invalid school id";
 				exit;
@@ -190,7 +190,7 @@ if($cid !== 0)
 
 				array_push($array, [
 					"SCID" => $result[$i]["SCID"],
-					"team_name" => $name["team_name"],
+					"team_name" => getSchoolName($name),
 					"conflicts" => [[
 						"TCID" => $result[$i]["TCID"],
 						"pn" => $result[$i]["problem_number"],

@@ -2,7 +2,7 @@
 
 <head>
 
-<title>Add new user</title>
+<title>Create admin user</title>
 
 <script src="./scripts/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
@@ -113,9 +113,7 @@ function checkSubmit()
 		return false;
 	}
 
-	var mes = "Are you sure you want to register ";
-	mes += (document.getElementById("schaf").value != 0) ? "a grader" : "an admin";
-	mes += " account with the username '";
+	var mes = "Are you sure you want to register an admin account with the username '";
 	mes += document.getElementById("logname").value;
 	mes += "'?";
 
@@ -146,20 +144,14 @@ function checkSubmit()
 <?php endif; ?>
 <div class="container-fluid main">
 	<div class="container-fluid panel panel-default">
-        	<div class="panel-heading"><h4>Register new user</h4></div>
+        	<div class="panel-heading"><h4>Create the global admin user</h4></div>
 		<div class="panel-body">
+                        <div class="alert alert-info alert-dismissable col-sm-offset-0 col-sm-12">
+                                Create the first administrator for use of this system. The account you create here will have access to all aspects of the grading, and it will be used for monitoring progress, examining the result of the competition (standings, etc.), and for giving access to graders by creating grader accounts.
+                        </div>
 			<form id="input_form" onsubmit="return checkSubmit();" action="" method="post">
                 		<label for="logname">Username</label>
                 		<input type="text" class="form-control" id="logname" name="logname" placeholder="username" autofocus required><br>
-
-				<label for="schaf">School Affiliation</label>
-                                <select id="schaf" name="schaf" class="js-select">
-					<option value="-1">None (grader)</option>
-					<option value="0">None (admin)</option>
-                                        <?php foreach($schoolrows as $row): ?>
-                                                <option value='<?= $row["SCID"] ?>'><?php echo clean($row["team_name"]); ?></option>
-                                        <?php endforeach; ?>
-                                </select><br><br>
 
 				<label for="passwd">Password</label>
                 		<input type="password" oninput="checkConfirm();" class="form-control" name="passwd" id="passwd" placeholder="password" required><br>

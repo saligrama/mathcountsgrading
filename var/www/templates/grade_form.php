@@ -2,7 +2,7 @@
 
 <head>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="./scripts/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
@@ -851,124 +851,132 @@ function gradeProblem(input)
         </div>
 </nav>
 <div class="container-fluid main">
-	<div class="row text-center all-wrap">
-                <div class="col-md-4 filters-wrap">
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h4>Filters</h4>
-				</div>
-				<div class="panel-body">
-					<div class="row">
-						<div class="form-group col-xs-12">
-							<label>School</label>
-							<select form="answers" name="SCID" class="form-control js-select" id="schoollist">
-								<option value="0" selected>All schools</option>
-								<?php foreach($schoolrows as $row): ?>
-									<option value="<?= $row['SCID']?>" <?php if($row["SCID"] == $scid) echo "disabled"; ?>> <?php echo clean($row["team_name"]); ?></option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-					</div>
-					<div class="row">
-                                                <div class="form-group col-xs-12">
-                                                        <label>Round</label>
-                                                        <select form="answers" name="RNDID" class="form-control js-select" id="roundlist">
-                                                                <?php foreach($roundrows as $row): ?>
-                                                                        <option value="<?= $row['RNDID']?>"> <?php echo clean($row["round_name"]); ?></option>
-                                                                <?php endforeach; ?>
-                                                        </select>
+        <?php if($cid == 0): ?>
+                <div class="container text-center">
+			<div class="jumbotron">
+				<h3>Whoops! the current competition hasn't been set yet. Please set it or create a new competition.</h3>
+			</div>
+                </div>
+        <?php else: ?>
+	        <div class="row text-center all-wrap">
+                        <div class="col-md-4 filters-wrap">
+                                <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                                <h4>Filters</h4>
+                                        </div>
+                                        <div class="panel-body">
+                                                <div class="row">
+                                                        <div class="form-group col-xs-12">
+                                                                <label>School</label>
+                                                                <select form="answers" name="SCID" class="form-control js-select" id="schoollist">
+                                                                        <option value="0" selected>All schools</option>
+                                                                        <?php foreach($schoolrows as $row): ?>
+                                                                                <option value="<?= $row['SCID']?>" <?php if($row["SCID"] == $scid) echo "disabled"; ?>> <?php echo clean(getSchoolName($row)); ?></option>
+                                                                        <?php endforeach; ?>
+                                                                </select>
+                                                        </div>
+                                                </div>
+                                                <div class="row">
+                                                        <div class="form-group col-xs-12">
+                                                                <label>Round</label>
+                                                                <select form="answers" name="RNDID" class="form-control js-select" id="roundlist">
+                                                                        <?php foreach($roundrows as $row): ?>
+                                                                                <option value="<?= $row['RNDID']?>"> <?php echo clean($row["round_name"]); ?></option>
+                                                                        <?php endforeach; ?>
+                                                                </select>
+                                                        </div>
                                                 </div>
                                         </div>
-				</div>
-			</div>
-		</div>
-                <div class="answers-wrap">
-			<div class="panel panel-primary">
-               			<div class="panel-heading"><h4>Fill out answers</h4></div>
-                		<div class="panel-body relative-panel">
-					<form id="answers">
-						<div class="answers-table">
-							<div id="table-names" class="answers-subtable-wrap answers-subtable-fixed">
-								<div class="answers-header-row answers-header-row-s">
-                                                                        <div class="answers-header-s" id="student-header">Student</div>
-                                                                </div>
-								<div class="answers-subtable">
-									<?php if($studentrows !== 0): ?>
-										<?php foreach($studentrows as $student): ?>
-											<div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
-												<div class="answers-input-student">
-													<span class="answer-input-span"><?php echo clean(getStudentFullName($student)); ?></span>
-												</div>
-											</div>
-										<?php endforeach; ?>
-									<?php endif; ?>
-									<?php if($schoolrows !== 0): ?>
-										<?php foreach($schoolrows as $school): ?>
-                                                                			<div class="answers-row" data-scid="<?= $school['SCID'] ?>" style="display: none">
-                                                                        			<div class="answers-input-school">
-                                                                                			<span class="answer-input-span"><?php echo clean($school["team_name"]); ?></span>
-                                                                        			</div>
-                                                                			</div>
-                                                        			<?php endforeach; ?>
-									<?php endif; ?>
-								</div>
-							</div>
-							<div id="table-scroll" class="answers-subtable-wrap answers-subtable-fluid">
-								<div class="answers-header-row" id="numbers-header">
-                                                                        <div class="answers-header-wrap" id="answers-header-list"></div>
-                                                                </div>
-								<div class="answers-subtable">
-									<?php if($studentrows !== 0): ?>
-										<?php foreach($studentrows as $student): ?>
-               	                                                        		<div class="answers-row" data-haslist="y" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
-               	                                	                      			<div class="answer-input-list-wrap">
-													<div class="answer-input-list"></div>
-												</div>
-											</div>
-                                                                		<?php endforeach; ?>
-                                                                	<?php endif; ?>
-									<?php if($schoolrows !== 0): ?>
-										<?php foreach($schoolrows as $school): ?>
-                                                                       		 	<div class="answers-row" data-haslist="y" data-scid="<?= $school['SCID'] ?>" style="display: none">
-                                                                        			<div class="answer-input-list-wrap">
-                                                                                	                <div class="answer-input-list"></div>
-                                                                                	        </div>
-											</div>
-                                                                		<?php endforeach; ?>
-									<?php endif; ?>
-								</div>
-							</div>
-							<?php if($typerow["fluid_regulars"] == "1"): ?>
-							<div class="answers-subtable-wrap answers-subtable-fixed" id="subtable-regulars">
-								<div class="answers-subtable">
-									<div style="margin-left: 3px" class="answers-header-row answers-header-row-s">
-                                                                                <div class="answers-header-s">R</div>
+                                </div>
+                        </div>
+                        <div class="answers-wrap">
+                                <div class="panel panel-primary">
+                                        <div class="panel-heading"><h4>Fill out answers</h4></div>
+                                        <div class="panel-body relative-panel">
+                                                <form id="answers">
+                                                        <div class="answers-table">
+                                                                <div id="table-names" class="answers-subtable-wrap answers-subtable-fixed">
+                                                                        <div class="answers-header-row answers-header-row-s">
+                                                                                <div class="answers-header-s" id="student-header">Student</div>
                                                                         </div>
-									<?php if($studentrows !== 0): ?>
-										<?php foreach($studentrows as $student): ?>
-                                                                        		<div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
-                                                                                		<div class="answers-input-regular">
-													<input type="checkbox" class="checkbox-custom"></input>
-													<label class="checkbox-custom-label"></label>
-                                                                                		</div>
-                                                                        		</div>
-                                                                		<?php endforeach; ?>
-									<?php endif; ?>
-								</div>
-							</div>
-							<?php endif; ?>
-						</div>
-					</form>
-				</div>
-				<div class="panel-footer">
-					<div class="row">
-						<a type="submit" class="btn btn-danger col-xs-offset-1 col-xs-4" href="/admin.php">Back</a>
-						<div id="saved" class="col-xs-offset-1 col-xs-4 yes">Saved</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                                                                        <div class="answers-subtable">
+                                                                                <?php if($studentrows !== 0): ?>
+                                                                                        <?php foreach($studentrows as $student): ?>
+                                                                                                <div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
+                                                                                                        <div class="answers-input-student">
+                                                                                                                <span class="answer-input-span"><?php echo clean(getStudentFullName($student)); ?></span>
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                        <?php endforeach; ?>
+                                                                                <?php endif; ?>
+                                                                                <?php if($schoolrows !== 0): ?>
+                                                                                        <?php foreach($schoolrows as $school): ?>
+                                                                                                <div class="answers-row" data-scid="<?= $school['SCID'] ?>" style="display: none">
+                                                                                                        <div class="answers-input-school">
+                                                                                                                <span class="answer-input-span"><?php echo clean(getSchoolName($school)); ?></span>
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                        <?php endforeach; ?>
+                                                                                <?php endif; ?>
+                                                                        </div>
+                                                                </div>
+                                                                <div id="table-scroll" class="answers-subtable-wrap answers-subtable-fluid">
+                                                                        <div class="answers-header-row" id="numbers-header">
+                                                                                <div class="answers-header-wrap" id="answers-header-list"></div>
+                                                                        </div>
+                                                                        <div class="answers-subtable">
+                                                                                <?php if($studentrows !== 0): ?>
+                                                                                        <?php foreach($studentrows as $student): ?>
+                                                                                                <div class="answers-row" data-haslist="y" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
+                                                                                                        <div class="answer-input-list-wrap">
+                                                                                                                <div class="answer-input-list"></div>
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                        <?php endforeach; ?>
+                                                                                <?php endif; ?>
+                                                                                <?php if($schoolrows !== 0): ?>
+                                                                                        <?php foreach($schoolrows as $school): ?>
+                                                                                                <div class="answers-row" data-haslist="y" data-scid="<?= $school['SCID'] ?>" style="display: none">
+                                                                                                        <div class="answer-input-list-wrap">
+                                                                                                                <div class="answer-input-list"></div>
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                        <?php endforeach; ?>
+                                                                                <?php endif; ?>
+                                                                        </div>
+                                                                </div>
+                                                                <?php if($typerow["fluid_regulars"] == "1"): ?>
+                                                                <div class="answers-subtable-wrap answers-subtable-fixed" id="subtable-regulars">
+                                                                        <div class="answers-subtable">
+                                                                                <div style="margin-left: 3px" class="answers-header-row answers-header-row-s">
+                                                                                        <div class="answers-header-s">R</div>
+                                                                                </div>
+                                                                                <?php if($studentrows !== 0): ?>
+                                                                                        <?php foreach($studentrows as $student): ?>
+                                                                                                <div class="answers-row" data-sid="<?= $student['SID'] ?>" data-scid="<?= $student['SCID'] ?>" style="display: none">
+                                                                                                        <div class="answers-input-regular">
+                                                                                                                <input type="checkbox" class="checkbox-custom"></input>
+                                                                                                                <label class="checkbox-custom-label"></label>
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                        <?php endforeach; ?>
+                                                                                <?php endif; ?>
+                                                                        </div>
+                                                                </div>
+                                                                <?php endif; ?>
+                                                        </div>
+                                                </form>
+                                        </div>
+                                        <div class="panel-footer">
+                                                <div class="row">
+                                                        <a type="submit" class="btn btn-danger col-xs-offset-1 col-xs-4" href="/admin.php">Back</a>
+                                                        <div id="saved" class="col-xs-offset-1 col-xs-4 yes">Saved</div>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        <?php endif; ?>
 </div>
 
 </body>

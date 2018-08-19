@@ -37,7 +37,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 			$name = $_POST["logname"];
 			$passwd = $_POST["passwd"];
 
-			$result = dbQuery_new($conn, "SELECT UID, password, type FROM user WHERE email = :name", ["name" => $name]);
+			$result = dbQuery_new($conn, "SELECT UID, password, type FROM user WHERE username = :name", ["name" => $name]);
 
 			if(empty($result)) {
 				$error = 2;

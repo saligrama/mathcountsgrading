@@ -211,7 +211,8 @@
                 redirectTo("/createtype.php");
         }
 
-	usort($schinfo, 'schoolSort');
+        if($schinfo != 0)
+	        usort($schinfo, 'schoolSort');
 
 	$studentinfo = dbQuery_new($conn, "SELECT * FROM mathlete_info");
 	if(empty($studentinfo))

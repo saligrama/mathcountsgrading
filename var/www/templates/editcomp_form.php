@@ -2,7 +2,7 @@
 
 <head>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="./scripts/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap-theme.css">
 <script src="./bootstrap/dist/js/bootstrap.js"></script>
@@ -15,8 +15,8 @@
 
 <link rel="stylesheet" type="text/css" href="./styles/custom-checkbox.css">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="./styles/bootstrap-datepicker.css">
+<script src="./scripts/bootstrap-datepicker.js"></script>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -51,7 +51,6 @@
     -ms-transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
     background-color: rgba(1, 1, 1, 0);
-    //background-image: url("https://upload.wikimedia.org/wikipedia/commons/a/ab/Harvard_Crimson.svg");
     vertical-align: middle;
 }
 
@@ -962,13 +961,13 @@ function deleteComp()
 								<div class="slider-top-divider"></div>
 								<ul class="slider-container-fixed" id="scont">
 									<?php if($schinfo == 0): ?>
-										<li class="noschool" style="display:block;">Looks like there aren't any schools yet.</li>
+										<li class="noschool" style="display:block;">Looks like there aren't any schools yet. You can add a school by clicking on on the 'New school' button at the bottom of the page.</li>
 									<?php else: ?>
 										<li id="schsearchres" class="noschool" style="display:none;">No results found</li>
 										<?php foreach($schinfo as $row): ?>
 											<li class="slider-li">
 												<input onchange="schoolSelect(<?= $row['SCID'] ?>, true);" type="checkbox" class="checkbox-custom" id=<?= "check" . $row["SCID"] ?> name="<?= $row['SCID'] ?>" value="yes" <?php echo (in_array($row["SCID"], $participants_row) ? "checked" : "") ?>>
-												<label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean($row["team_name"]); ?></label>
+												<label id="label<?= $row['SCID'] ?>" for=<?= "check" . $row["SCID"] ?> class="checkbox-custom-label"><?php echo clean(getSchoolName($row)); ?></label>
 												<a class="btn btn-primary slider-edit" href="/editschool.php?SCID=<?= $row['SCID'] ?>&returnCID=<?= $_GET['CID'] ?>">Edit</a>
 											</li>
 											<li class="divider slider-divider"></li>
@@ -993,7 +992,7 @@ function deleteComp()
 								<?php foreach($schinfo as $row): ?>
 									<option data-numstudents="<?= $row['num_students']; ?>" id="<?= $row['SCID'] ?>schoption" value="<?= $row['SCID'] ?>"
 									<?php if(!in_array($row["SCID"], $participants_row)) echo "disabled"; ?>>
-									<?php echo clean($row["team_name"] . " (" . $row["num_students"] . " students)"); ?></option>
+									<?php echo clean(getSchoolName($row) . " (" . $row["num_students"] . " students)"); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
@@ -1018,15 +1017,15 @@ function deleteComp()
                  		        		        <ul class="slider-container-fixed" id="stcont">
                        		               	      	       		<?php if($studentinfo == 0): ?>
 										<?php if($schinfo == 0): ?>
-											<li class="noschool" style="display:block;">Looks like there aren't any schools or students yet.</li>
+											<li class="noschool" style="display:block;">Looks like there aren't any schools or students yet. You must add the schools that will be competiting before creating the competition - click on the 'New school' button at the bottom.</li>
 										<?php else: ?>
-											<li class="noschool" style="display:block;">Looks like there aren't any students at all yet.</li>
+											<li class="noschool" style="display:block;">Looks like there aren't any students at all yet. You can add some students by clicking on the 'Edit' button next to the school you wish to add students to in the list above. Once you have added students, you can select which ones will compete in this competition from inside this panel.</li>
 										<?php endif; ?>
 									<?php elseif($schinfo == 0): ?>
-										<li class="noschool" style="display:block">Looks like there aren't any schools yet.</li>
+										<li class="noschool" style="display:block">Looks like there aren't any schools yet. You must add the schools that will be competiting before creating the competition - click on the 'New school' button at the bottom.</li>
 									<?php else: ?>
 										<li class="noschool" id="stusearchres" style="display:none;">No results found</li>
-										<li class="noschool" id="nostusch" style="display:none;">Looks like there aren't any students in your selection.</li>
+										<li class="noschool" id="nostusch" style="display:block;">Looks like there aren't any students in your selection. You can add students by clicking on the 'Edit' button next to the school you wish to add students to in the list above.</li>
 										<?php foreach($studentinfo as $row): ?>
                       		                                      	        	<li class="slider-li" id="<?= $row['SCID'] ?>student<?= $row['SID'] ?>">
 												<h5 class="text-center"><?php echo clean(getStudentFullName($row)); ?></h5>
