@@ -854,7 +854,7 @@ function gradeProblem(input)
         <?php if($cid == 0): ?>
                 <div class="container text-center">
 			<div class="jumbotron">
-				<h3>Whoops! the current competition hasn't been set yet. Please set it or create a new competition.</h3>
+				<h3>Whoops! the current competition hasn't been set yet. Please set it or create a competition in the <a href="/admin.php">home page</a>.</h3>
 			</div>
                 </div>
         <?php else: ?>

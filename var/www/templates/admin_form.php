@@ -694,8 +694,10 @@ function filterMoreProgress(resetShow)
 	var checked_for_more = 0;
 	var should_show_more_option = 0;
 
-	if(resetShow)
+	if(resetShow) {
+
 		max_shown = start_max_shown;
+        }
 
 	$("#more-progress-list .more-progress-tr").each(function() {
 		this.style.display = "none";
@@ -1523,8 +1525,7 @@ function init()
                                 <?php endif; ?>
                                 <div class="btn-group" role="group">
 					<a href="/create.php" class="btn btn-default">Add competition</a>
-					<button class="btn btn-default">Select competition </button>
-					<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
+					<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="">Select competition <span class="caret"></span></button>
 					<ul class="dropdown-menu slider-container">
                                                 <?php if ($result == 0): ?>
                                                         <li class="nocomp">Looks like there aren't any competitions yet.</li>
@@ -1547,8 +1548,7 @@ function init()
 				<div class="btn-group" role="group">
 					<a class="btn btn-default" href=<?php echo "/editcompetition.php?CID=" . $comprow["CID"]; ?>>Edit </a>
 					<a class="btn btn-default" href="/create.php">Add </a>
-					<button class="btn btn-default">Change</button>
-					<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
+					<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="">Change <span class="caret"></span></a>
 					<ul class="dropdown-menu slider-container">
                                                 <?php if ($result == 0): ?>
                                                         <li class="nocomp">Looks like there aren't any competitions yet.</li>

@@ -331,7 +331,7 @@ function deleteStudent()
                                                                 	</div>
                                                                 	<ul class="slider-container-fixed" id="stcont">
                                                                         	<?php if($studentinfo == 0): ?>
-                                                                                	<li id="nostudentsatall" class="nostudent" style="display:block;">Looks like there aren't any students in this school yet. You can add a student in the 'Add student' panel below or to the right.</li>
+                                                                                	<li id="nostudentsatall" class="nostudent" style="display:block;">Looks like there aren't any students in this school yet. You can add a student in the 'Add student' panel.</li>
                                                                         	<?php else: ?>
                                                                                 	<li id="nostusearchres" class="nostudent" style="display:none;">No results found</li>
                                                                                 	<?php foreach($studentinfo as $row): ?>
@@ -367,7 +367,7 @@ function deleteStudent()
 			<div class="panel-heading">Add student</div>
 			<div class="panel-body">
                                 <div class="alert alert-info alert-dismissable col-sm-offset-0 col-sm-12">
-				        Enter either a first name or last name, or both. A nickname is optional. Any name you write here can be edited in the future
+				        Enter either a first name or last name, or both, and then press the enter key to create the student. A nickname is optional. Any name you write here can be edited in the future.
                                 </div>
                                 <form id="addstudent">
 					<div class="col-xs-offset-1 col-xs-10">

@@ -851,7 +851,7 @@ function checkSubmit()
 										<?php if($schinfo == 0): ?>
 											<li class="noschool" style="display:block;">Looks like there aren't any schools or students yet. You must add the schools that will be competiting before creating the competition - click on the 'New school' button at the bottom.</li>
 										<?php else: ?>
-											<li class="noschool" style="display:block;">Looks like there aren't any students at all yet. You can add some students by clicking on the 'Edit' button next to the school you wish to add students to in the list above. Once you have added students, you can select which ones will compete in this competition from inside this panel.</li>
+											<li class="noschool" style="display:block;">Looks like there aren't any students at all yet. You can add some students by clicking on the 'Edit' button next to the school you wish to add students to in the 'Participating Schools' panel. Once you have added students, you can select which ones will compete in this competition from inside this panel.</li>
 										<?php endif; ?>
 									<?php elseif($schinfo == 0): ?>
 										<li class="noschool" style="display:block">Looks like there aren't any schools yet. You must add the schools that will be competiting before creating the competition - click on the 'New school' button at the bottom.</li>
