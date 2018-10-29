@@ -6,20 +6,16 @@ checkSession("admin");
 
 $conn = dbConnect_new();
 
-if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["nickname"]) || sempty($_POST["firstname"]))
+if(!isset($_POST["scid"]) || !isset($_POST["name"]) || sempty($_POST["name"]))
 {
 	exit;
 }
                         dbQuery_new($conn,
                                 "INSERT INTO mathlete_info SET
                                 SCID=:scid,
-                                first_name=:firstname,
-                                last_name=:lastname,
-                                nickname=:nickname", [
+                                name=:name", [
                                         "scid" => $_POST["scid"],
-                                        "firstname" => $_POST["firstname"],
-                                        "lastname" => $_POST["lastname"],
-                                        "nickname" => $_POST["nickname"]
+                                        "name" => $_POST["name"]
                                 ]
                         );
 

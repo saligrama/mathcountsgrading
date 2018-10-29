@@ -10,7 +10,7 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["createschool"])) {
 
-	if(!isset($_POST["teamname"]) || !isset($_POST["town"]) || sempty($_POST["town"]))
+	if(!isset($_POST["teamname"]) || !isset($_POST["town"]) || !isset($_POST["students"]) || sempty($_POST["town"]))
 	{
         	internalErrorRedirect(isset($_POST["scid"]) ? "/editschool.php?SCID=" . $_POST["scid"] : "/admin.php");
         }
@@ -29,13 +29,18 @@
                  "teamname" => $_POST["teamname"],
                  "town" => $_POST["town"]
              ]
-
         );
+
+        foreach(preg_split(";", $_POST["students"]) as $a) {
+                dbQuery_new($conn, "INSERT INTO mathlete_info SET SCID=:scid, name=:name", [
+                        "scid" => $scid,
+                        "name" => $a
+                ]);
+        }
 
 	if($cid)
         	updateCompStatusAll($conn, $cid);
 
-	//popupAlert("Success! school created");
 	redirectTo("/create.php");
 
     }

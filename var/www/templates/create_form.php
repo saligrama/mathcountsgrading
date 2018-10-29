@@ -767,16 +767,6 @@ function checkSubmit()
 							</select>
 						</div>
 					</div><br>
-					 <div class="row">
-                                                <div class="form-group">
-                                                        <label for="complevel">Competition Level</label><br>
-                                                        <select name="complevel" id="complevel" class="js-select form-control">
-                                                                <option value="chapter">Chapter</option>
-                                                                <option value="state">State</option>
-                                                                <option value="national">National</option>
-                                                        </select>
-                                                </div>
-                                        </div><br>
 					<div class="row">
 						<div class="form-group">
 							<label for="compname">Competition Name (optional)</label>
@@ -799,7 +789,7 @@ function checkSubmit()
 								<div class="slider-top-divider"></div>
 								<ul class="slider-container-fixed" id="scont">
 									<?php if($schinfo == 0): ?>
-										<li class="noschool" style="display:block;">Looks like there aren't any schools yet. You can add a school by clicking on on the 'New school' button at the bottom of the page.</li>
+										<li class="noschool" style="display:block;">Looks like there aren't any schools yet. You can add a school by clicking on the 'New school' button at the bottom of the page.</li>
 									<?php else: ?>
 										<li id="schsearchres" class="noschool" style="display:none;">No results found</li>
 										<?php foreach($schinfo as $row): ?>

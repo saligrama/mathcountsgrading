@@ -190,7 +190,6 @@
 	dbQuery_new($conn, "DELETE FROM team_cleaner WHERE CID = :cid", ["cid" => $_POST["cid"]]);
 	dbQuery_new($conn, "DELETE FROM competition WHERE CID = :cid", ["cid" => $_POST["cid"]]);
 
-	popupAlert("Success! The competition has been deleted");
 	redirectTo("/admin.php");
 
     }

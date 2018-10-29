@@ -35,6 +35,32 @@
 	font-size: 20px;
 }
 
+#student-list {
+        list-style-type: none;
+        padding: 0px;
+        margin: 0px;
+        text-align: left;
+}
+
+#student-list li {
+        padding: 11px;
+        border-bottom: 1px solid #ddd;
+}
+
+#student-list li:last-child {
+        border-bottom: none;
+}
+
+#student-list li p {
+        text-align: left;
+        width: 50%;
+        display: inline-block;
+}
+
+#student-list li button {
+        float: right;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -58,6 +84,28 @@ function checkSubmit()
 	*/
 
 	//return confirm(mes);
+}
+
+$(document).ready(function() {
+        $("#student-input").keypress(function(e) {
+                if(e.which == 13) {
+                        e.preventDefault();
+                        var name = $("#student-input").val() ;
+                        $("#student-list").append("<li><p>" + name + "</p><button form=\"none\" class=\"btn btn-danger\" onclick=\"deleteStudent(this);\">Delete</button></li>");
+                        $("#students").val($("#students").val() + name + ";");
+                        $("#student-input").val("");
+                }
+                else if(e.which == 59)
+                        e.preventDefault();
+                else
+                        $("#student-input").val($("#student-input").val().replace(";", ""));
+        });
+});
+
+function deleteStudent(e)
+{
+        $("#students").val($("#students").val().replace(e.previousSibling.innerHTML + ";", ""));
+        $(e.parentNode).remove();
 }
 
 </script>
@@ -85,9 +133,6 @@ function checkSubmit()
 			<h4>Fill out the boxes below to create a new school</h4>
 		</div>
         	<div class="panel-body">
-                        <div class="alert alert-info alert-dismissable col-sm-offset-0 col-sm-12">
-			        Once you create the school here, you can add students who will be competing from this school by clicking on the Edit button next to the school name in the create or edit competition pages.
-                        </div>
                         <form id="schoolinfo" onsubmit="return checkSubmit();" action="" method="post">
                 		<div class="col-xs-offset-1 col-xs-10">
 					<div class="row">
@@ -103,6 +148,15 @@ function checkSubmit()
                 				</div>
 					</div>
 				        <br>
+                                        <div class="row text-center">
+                                                <h4><b>Add students</b></h4>
+                                                <div class="well">
+                                                        <input id="students" type="hidden" name="students" value="">
+                                                        <ul id="student-list">
+                                                        </ul>
+                                                        <input id="student-input" class="form-control" type="text" placeholder="Student Name" form="none">
+                                                </div>
+                                        </div>
                                 </div>
 			</form>
 		</div>

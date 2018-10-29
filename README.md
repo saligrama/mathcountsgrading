@@ -1,6 +1,17 @@
 # Mathcountsgrading
 Automated grading system for Mathcounts competition. Please see http://github.com/saligrama/MCGExpression for parsing and arithmetic comparison functionality.
 
+## Screenshots
+
+![](https://www.github.com/saligrama/mathcountsgrading/raw/master/image1.png)
+
+![](https://www.github.com/saligrama/mathcountsgrading/raw/master/image2.png)
+
+![](https://www.github.com/saligrama/mathcountsgrading/raw/master/image3.png)
+
+![](https://www.github.com/saligrama/mathcountsgrading/raw/master/image4.png)
+
+
 ## Installation instructions
 
 The system is designed to work on a LAMP stack, so make sure you have Apache, PHP, and MySQL installed first on your linux server that your intend to place the system on.

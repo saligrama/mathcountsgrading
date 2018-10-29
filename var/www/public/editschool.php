@@ -67,7 +67,6 @@
 			if($cid)
                         	updateCompStatusAll($conn, $cid);
 
-			popupAlert("Success! school deleted");
        			redirectTo("/create.php");
 		}
 		else if(isset($_POST["deletestudent"]))
@@ -90,22 +89,18 @@
 		}
 		else if(isset($_POST["editstudent"]))
                 {
-                        if(!isset($_POST["scid"]) || !isset($_POST["firstname"]) || !isset($_POST["lastname"]) || !isset($_POST["nickname"]) ||
-                           !isset($_POST["sid"]) || sempty($_POST["firstname"]))
+                        if(!isset($_POST["scid"]) || !isset($_POST["name"]) ||
+                           !isset($_POST["sid"]) || sempty($_POST["name"]))
                         {
                                 internalErrorRedirect(isset($_POST["scid"]) ? "/editschool.php?SCID=" . $_POST["scid"] : "/admin.php");
                         }
 
                         dbQuery_new($conn,
                                 "UPDATE mathlete_info SET
-                                first_name=:firstname,
-                                last_name=:lastname,
-                                nickname=:nickname
+                                name=:name,
 				WHERE SID=:sid", [
                                         "sid" => $_POST["sid"],
-                                        "firstname" => $_POST["firstname"],
-                                        "lastname" => $_POST["lastname"],
-                                        "nickname" => $_POST["nickname"]
+                                        "name" => $_POST["name"]
                                 ]
                         );
 

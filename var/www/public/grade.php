@@ -8,7 +8,7 @@
 
 	$cid = getCurrentComp($conn);
 
-                $studentrows = dbQuery_new($conn, "SELECT * FROM mathlete_info WHERE SID IN (SELECT SID FROM student_participants WHERE CID=:cid) ORDER BY CONCAT(first_name, last_name);", ["cid" => $cid]);
+                $studentrows = dbQuery_new($conn, "SELECT * FROM mathlete_info WHERE SID IN (SELECT SID FROM student_participants WHERE CID=:cid) ORDER BY name;", ["cid" => $cid]);
                 if(empty($studentrows))
 			$studentrows = 0;
 

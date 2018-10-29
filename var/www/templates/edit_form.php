@@ -128,38 +128,32 @@ function checkSubmitAddStudent(e)
 {
 	e.preventDefault();
 
-	var firstname = document.getElementById("firstname-add").value;
-	var lastname = document.getElementById("lastname-add").value;
-	var nickname = document.getElementById("nickname-add").value;
+	var name = document.getElementById("name-add").value;
 	var scid = document.getElementById("scid-add").value;
 
-	if(firstname === "" && lastname === "")
+	if(name === "")
 	{
-		alert("Please enter a either a first name or a last name, or both");
+		alert("Please enter a name");
 		return;
 	}
 
-	$.post("/addstudent.php", { firstname: firstname, lastname: lastname, nickname: nickname, scid: scid }, function(r) {
+	$.post("/addstudent.php", { name: name, scid: scid }, function(r) {
                 console.log(r)
 		var sid = parseInt(r);
 
 		if(!isNaN(sid) && sid > 0)
 		{
-			document.getElementById("lastname-add").value = "";
-			document.getElementById("firstname-add").value = "";
-			document.getElementById("nickname-add").value = "";
-			document.getElementById("firstname-add").focus();
+			document.getElementById("name-add").value = "";
+			document.getElementById("name-add").focus();
 
 			studentinfo[sid] = [];
-			studentinfo[sid]["first_name"] = firstname;
-			studentinfo[sid]["last_name"] = lastname;
-			studentinfo[sid]["nickname"] = nickname;
+			studentinfo[sid]["name"] = name;
 
 			var n = document.getElementById("nostudentsatall");
 			if(n)
 				n.style.display = "none";
 
-			$("#stcont").append("<li class='slider-li'><p class='slider-text'>" + firstname + " " + lastname + "</p><button onclick='chooseStudentEdit(" + sid + ");' class='btn btn-primary slider-edit' form=''>Edit</button></li><li class='divider slider-divider'></li>");
+			$("#stcont").append("<li class='slider-li'><p class='slider-text'>" + name + "</p><button onclick='chooseStudentEdit(" + sid + ");' class='btn btn-primary slider-edit' form=''>Edit</button></li><li class='divider slider-divider'></li>");
 		}
 		else
 			alert("Error creating student!");
@@ -168,12 +162,11 @@ function checkSubmitAddStudent(e)
 
 function checkSubmitEditStudent()
 {
-	var firstname = document.getElementById("firstname-edit").value;
-        var lastname = document.getElementById("lastname-edit").value;
+	var name = document.getElementById("name-edit").value;
 
-        if(firstname === "" && lastname === "")
+        if(name === "")
         {
-                alert("Please enter a either a first name or a last name, or both");
+                alert("Please enter a either name");
                 return false;
         }
 
@@ -182,10 +175,7 @@ function checkSubmitEditStudent()
 
 function clearAddStudent()
 {
-	document.getElementById("firstname-add").value = "";
-	document.getElementById("lastname-add").value = "";
-
-	document.getElementById("nickname-add").value = "";
+	document.getElementById("name-add").value = "";
 
 	reloadSelect2();
 }
@@ -204,9 +194,7 @@ var studentinfo = [];
 <?php if($studentinfo): ?>
 	<?php foreach($studentinfo as $row): ?>
 		studentinfo[<?= $row["SID"] ?>] = [];
-		studentinfo[<?= $row["SID"] ?>]["first_name"] = "<?php echo clean($row['first_name']); ?>";
-		studentinfo[<?= $row["SID"] ?>]["last_name"] = "<?php echo clean($row['last_name']); ?>";
-		studentinfo[<?= $row["SID"] ?>]["nickname"] = "<?php echo clean($row['nickname']); ?>";
+		studentinfo[<?= $row["SID"] ?>]["name"] = "<?php echo clean($row['name']); ?>";
 	<?php endforeach; ?>
 <?php endif; ?>
 
@@ -239,9 +227,7 @@ function chooseStudentEdit(sid)
 
 	document.getElementById("sideditstudent").value = sid;
 
-	document.getElementById("firstname-edit").value = studentinfo[sid]["first_name"];
-	document.getElementById("lastname-edit").value = studentinfo[sid]["last_name"];
-	document.getElementById("nickname-edit").value = studentinfo[sid]["nickname"];
+	document.getElementById("name-edit").value = studentinfo[sid]["name"];
 
 	document.getElementById("sid-delete").value = sid;
 
@@ -366,27 +352,12 @@ function deleteStudent()
 		<div class="container-fluid panel panel-primary">
 			<div class="panel-heading">Add student</div>
 			<div class="panel-body">
-                                <div class="alert alert-info alert-dismissable col-sm-offset-0 col-sm-12">
-				        Enter either a first name or last name, or both, and then press the enter key to create the student. A nickname is optional. Any name you write here can be edited in the future.
-                                </div>
                                 <form id="addstudent">
 					<div class="col-xs-offset-1 col-xs-10">
 						<div class="row">
                                                         <div class="form-group">
-                                                                <label for="firstname-add">First name</label>
-                                                                <input id="firstname-add" type="text" class="form-control" name="firstname" placeholder="First Name" required>
-                                                        </div>
-                                                </div>
-                                                <div class="row">
-                                                        <div class="form-group">
-                                                                <label for="lastname-add">Last name</label>
-                                                                <input id="lastname-add" type="text" class="form-control" name="lastname" placeholder="Last Name">
-                                                        </div>
-                                                </div>
-						<div class="row">
-                                                        <div class="form-group">
-                                                                <label for="nickname-add">Nickname (optional)</label>
-                                                                <input id="nickname-add" type="text" class="form-control" name="nickname" placeholder="Nickname">
+                                                                <label for="name-add">First name</label>
+                                                                <input id="name-add" type="text" class="form-control" name="name" placeholder="Name" required>
                                                         </div>
                                                 </div>
 						<input type="hidden" id="scid-add" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
@@ -412,22 +383,10 @@ function deleteStudent()
 					<div class="col-xs-offset-1 col-xs-10">
 						<div class="row">
                                                        	<div class="form-group">
-                                                               	<label for="firstname-edit">First name</label>
-                                                               	<input id="firstname-edit" type="text" class="form-control" name="firstname" placeholder="First Name" required>
+                                                               	<label for="name-edit">First name</label>
+                                                               	<input id="name-edit" type="text" class="form-control" name="name" placeholder="Name" required>
                                                        	</div>
                                                	</div>
-                                               	<div class="row">
-                                                       	<div class="form-group">
-                                                               	<label for="lastname-edit">Last name</label>
-                                                               	<input id="lastname-edit" type="text" class="form-control" name="lastname" placeholder="Last Name">
-                                                       	</div>
-                                               	</div>
-						<div class="row">
-                                                       <div class="form-group">
-                                                               <label for="nickname-edit">Nickname (optional)</label>
-                                                               <input id="nickname-edit" type="text" class="form-control" name="nickname" placeholder="Nickname">
-                                                       </div>
-                                                </div>
 						<input id="sideditstudent" type="hidden" name="sid" value="0">
                                                 <input type="hidden" name="scid" value="<?php echo clean($_GET['SCID']); ?>">
 					</div>

@@ -417,18 +417,7 @@ function getCompFullName($comprow)
 
 function getStudentFullName($row)
 {
-	if(sempty($row["first_name"])) {
-		if(sempty($row["last_name"]))
-			return "No name";
-		else
-			return $row["last_name"];
-	}
-	else {
-		if(sempty($row["last_name"]))
-			return $row["first_name"];
-		else
-			return $row["first_name"] . " " . $row["last_name"];
-	}
+        return $row["name"];
 }
 
 function clean($data)

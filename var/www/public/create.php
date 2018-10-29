@@ -14,8 +14,8 @@
 */
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["finalize"])) {
 
-	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) || !isset($_POST["complevel"]) ||
-	   sempty($_POST["compdate"]) || sempty($_POST["complevel"]))
+	if(!isset($_POST["compdate"]) || !isset($_POST["compname"]) || !isset($_POST["comptype"]) ||
+	   sempty($_POST["compdate"]))
 	{
 		internalErrorRedirect("/create.php");
 	}
@@ -52,11 +52,9 @@
 
         dbQuery_new($conn, "INSERT INTO competition SET
                             competition_date = :compdate,
-                            competition_level = :complevel,
                             competition_name = :compname,
 			    CTID = :ctid", [
                                 "compdate" => $_POST["compdate"],
-                                "complevel" => $_POST["complevel"],
                                 "compname" => $_POST["compname"],
 				"ctid" => $_POST["comptype"]
                             ]
